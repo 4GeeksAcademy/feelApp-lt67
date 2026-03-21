@@ -32,4 +32,17 @@ class Client(db.Model):
             "id": self.id,
             "email": self.email,
             "sign_up_date": self.sign_up_date.isoformat()
-        }        
+        }     
+       
+class Admint(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(String(60), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(nullable=False)
+    sign_up_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "sign_up_date": self.sign_up_date.isoformat()
+        }    
