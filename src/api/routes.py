@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Client, Admint
+from api.models import db, User, Client, Admint, Coach
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -160,3 +160,71 @@ def delete_admint(admint_id):
     return jsonify({"message": "admin deleted succesfully"}), 200
 
 
+# Coach 
+
+# GET all coachs
+@api.route('/coachs', methods=['GET'])
+def get_coachs():
+    coachs = Coach.query.all()
+    return jsonify([c.serialize() for c in coachs]), 200
+
+# GET coach from id
+@api.route('/coach/<int:coach_id>', methods=['GET'])
+def get_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": "Coach not found"}), 404
+    return jsonify(coach.serialize()), 200
+
+# POST create coach
+@api.route('/coachs', methods=['POST'])
+def create_coach():
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+    if not body.get("email"):
+        return jsonify({"error": "An Email is required"}), 400
+    if not body.get("password"):
+        return jsonify({"error": "A password is required"}), 400
+
+    coach_exists = Coach.query.filter_by(email=body["email"]).first()
+    if coach_exists:
+        return jsonify({"error": "There is already an account with this Email"}), 400
+
+    new_coach = Coach(
+        email=body["email"],
+        password=body["password"]
+    )
+    db.session.add(new_coach)
+    db.session.commit()
+    return jsonify(new_coach.serialize()), 201
+
+# PUT update coach
+@api.route('/coachs/<int:coach_id>', methods=['PUT'])
+def update_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": "Coach not found"}), 404
+
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+
+    if "email" in body:
+        coach.email = body["email"]
+    if "password" in body:
+        coach.password = body["password"]
+
+    db.session.commit()
+    return jsonify(coach.serialize()), 200
+
+# DELETE coach
+@api.route('/coachs/<int:coach_id>', methods=['DELETE'])
+def delete_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": "Coach not found"}), 404
+
+    db.session.delete(coach)
+    db.session.commit()
+    return jsonify({"message": "Coach deleted succesfully"}), 200
