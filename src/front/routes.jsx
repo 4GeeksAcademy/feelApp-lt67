@@ -11,6 +11,7 @@ import ClientsCRUD from "./pages/ClientsCRUD";
 import CoachesCRUD from "./pages/CoachesCRUD";
 import AdminsCRUD from "./pages/AdminsCRUD";
 import EmotionsCRUD from "./pages/EmotionsCRUD";
+import AdminsPostsCRUD from "./pages/AdminsPostsCRUD";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,6 +30,7 @@ export const router = createBrowserRouter(
       <Route path="/coaches" element={<CoachesCRUD />} />
       <Route path="/admins" element={<AdminsCRUD />} />
       <Route path="/emotions" element={<EmotionsCRUD />} />
+      <Route path="/admins-posts" element={<AdminsPostsCRUD/>} />
     </Route>
   )
 );

@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Client, Admint, Coach, Emotion
+from api.models import db, User, Client, Admint, Coach, Emotion, AdmintPost
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -303,3 +303,79 @@ def delete_emotion(emotion_id):
     db.session.delete(emotion)
     db.session.commit()
     return jsonify({"message": "Emotion deleted succesfully"}), 200
+
+
+# AdmintPost routes
+
+# Get posts
+@api.route('/admint-posts', methods=['GET'])
+def get_admint_posts():
+    posts = AdmintPost.query.all()
+    return jsonify([p.serialize() for p in posts]), 200
+
+# Get post by id
+@api.route('/admint-posts/<int:post_id>', methods=['GET'])
+def get_admint_post(post_id):
+    post = AdmintPost.query.get(post_id)
+    if post is None:
+        return jsonify({"error": "Post not found"}), 404
+    return jsonify(post.serialize()), 200
+
+# Create post
+@api.route('/admint-posts', methods=['POST'])
+def create_admint_post():
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+    if not body.get("admint_id"):
+        return jsonify({"error": "An admin id is required"}), 400
+    if not body.get("title"):
+        return jsonify({"error": "A title is required"}), 400
+    if not body.get("text"):
+        return jsonify({"error": "A text is required"}), 400
+
+    admint_exists = Admint.query.get(body["admint_id"])
+    if admint_exists is None:
+        return jsonify({"error": "Admin not found"}), 404
+
+    new_post = AdmintPost(
+        admint_id=body["admint_id"],
+        title=body["title"],
+        text=body["text"],
+        img_url=body.get("img_url", None)
+    )
+    db.session.add(new_post)
+    db.session.commit()
+    return jsonify(new_post.serialize()), 201
+
+# Update post
+@api.route('/admint-posts/<int:post_id>', methods=['PUT'])
+def update_admint_post(post_id):
+    post = AdmintPost.query.get(post_id)
+    if post is None:
+        return jsonify({"error": "Post not found"}), 404
+
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+
+    if "title" in body:
+        post.title = body["title"]
+    if "text" in body:
+        post.text = body["text"]
+    if "img_url" in body:
+        post.img_url = body["img_url"]
+
+    db.session.commit()
+    return jsonify(post.serialize()), 200
+
+# Delete post
+@api.route('/admint-posts/<int:post_id>', methods=['DELETE'])
+def delete_admint_post(post_id):
+    post = AdmintPost.query.get(post_id)
+    if post is None:
+        return jsonify({"error": "Post not found"}), 404
+
+    db.session.delete(post)
+    db.session.commit()
+    return jsonify({"message": "Post deleted successfully"}), 200
