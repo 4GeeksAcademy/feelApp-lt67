@@ -10,6 +10,7 @@ import { Home } from "./pages/Home";
 import ClientsCRUD from "./pages/ClientsCRUD";
 import CoachesCRUD from "./pages/CoachesCRUD";
 import AdminsCRUD from "./pages/AdminsCRUD";
+import EmotionsCRUD from "./pages/EmotionsCRUD";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,6 +28,7 @@ export const router = createBrowserRouter(
       <Route path="/clients" element={<ClientsCRUD />} />
       <Route path="/coaches" element={<CoachesCRUD />} />
       <Route path="/admins" element={<AdminsCRUD />} />
+      <Route path="/emotions" element={<EmotionsCRUD />} />
     </Route>
   )
 );
