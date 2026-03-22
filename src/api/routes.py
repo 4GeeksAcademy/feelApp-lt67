@@ -99,7 +99,7 @@ def get_admints():
     return jsonify([a.serialize() for a in admints]), 200
 
 #Get admin por Id
-@api.route('/admint/<int:admint_id>', methods=['GET'])
+@api.route('/admints/<int:admint_id>', methods=['GET'])
 def get_admint(admint_id):
     admint = Admint.query.get(admint_id)
     if admint is None:
@@ -130,7 +130,7 @@ def create_admint():
 
 #PUT actualizar admin
 
-@api.route('/admint/<int:admint_id>', methods=['PUT'])
+@api.route('/admints/<int:admint_id>', methods=['PUT'])
 def update_admint(admint_id):
     admint = Admint.query.get(admint_id)
     if admint is None:
@@ -149,7 +149,7 @@ def update_admint(admint_id):
     return jsonify(admint.serialize()), 200
 
 # DELETE admin
-@api.route('/admint/<int:admint_id>', methods=['DELETE'])
+@api.route('/admints/<int:admint_id>', methods=['DELETE'])
 def delete_admint(admint_id):
     admint = Admint.query.get(admint_id)
     if admint is None:
@@ -169,7 +169,7 @@ def get_coachs():
     return jsonify([c.serialize() for c in coachs]), 200
 
 # GET coach from id
-@api.route('/coach/<int:coach_id>', methods=['GET'])
+@api.route('/coachs/<int:coach_id>', methods=['GET'])
 def get_coach(coach_id):
     coach = Coach.query.get(coach_id)
     if coach is None:
