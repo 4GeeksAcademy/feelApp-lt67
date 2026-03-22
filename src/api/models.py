@@ -60,3 +60,17 @@ class Coach(db.Model):
             "email": self.email,
             "sign_up_date": self.sign_up_date.isoformat()
         }     
+
+class Emotion(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
+    emoji: Mapped[str] = mapped_column(nullable=False)
+    color: Mapped[str] = mapped_column(nullable=False)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "emoji": self.emoji,
+            "color": self.color
+        } 
