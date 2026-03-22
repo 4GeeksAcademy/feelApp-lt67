@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
-const coachCRUD = () => {
+const CoachCRUD = () => {
     const { store, dispatch } = useGlobalReducer();
 
     const [email, setEmail] = useState("");
@@ -64,7 +64,7 @@ const coachCRUD = () => {
         });
         if (!resp.ok) return;
         dispatch({
-            type: "set_coach",
+            type: "set_coachs",
             payload: store.coachs.filter(c => c.id !== id)
         });
     };
@@ -192,7 +192,7 @@ const coachCRUD = () => {
     );
 };
 
-export default coachCRUD;
+export default CoachCRUD;
 
 
 

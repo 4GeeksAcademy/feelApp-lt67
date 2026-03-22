@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
-const admintCRUD = () => {
+const AdminsCRUD = () => {
     const { store, dispatch } = useGlobalReducer();
 
     const [email, setEmail] = useState("");
@@ -43,7 +43,7 @@ const admintCRUD = () => {
         const body = {};
         if (editEmail) body.email = editEmail;
         if (editPassword) body.password = editPassword;
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint/${id}`, {
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admints/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
@@ -58,20 +58,20 @@ const admintCRUD = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm("Are you sure you want to delete this admint?")) return;
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint/${id}`, {
+        if (!confirm("Are you sure you want to delete this admin?")) return;
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admints/${id}`, {
             method: "DELETE"
         });
         if (!resp.ok) return;
         dispatch({
-            type: "set_admint",
+            type: "set_admints",
             payload: store.admints.filter(a => a.id !== id)
         });
     };
 
     return (
         <div className="container mt-4">
-            <h2>Admint</h2>
+            <h2>Admin</h2>
 
             {error && (
                 <div className="alert alert-danger">{error}</div>
@@ -79,7 +79,7 @@ const admintCRUD = () => {
 
             <div className="card mb-4">
                 <div className="card-body">
-                    <h5 className="card-title">Create admint</h5>
+                    <h5 className="card-title">Create admin</h5>
                     <form onSubmit={handleCreate} className="row g-2">
                         <div className="col-md-5">
                             <input
@@ -123,7 +123,7 @@ const admintCRUD = () => {
                     {store.admints.length === 0 ? (
                         <tr>
                             <td colSpan="4" className="text-center text-muted">
-                                No admint yet
+                                No admin yet
                             </td>
                         </tr>
                     ) : (
@@ -192,4 +192,4 @@ const admintCRUD = () => {
     );
 };
 
-export default admintCRUD;
+export default AdminsCRUD;
