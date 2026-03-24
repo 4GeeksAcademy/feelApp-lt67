@@ -7,9 +7,14 @@ import {
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
-import ClientsCRUD from "./pages/ClientsCRUD";
 import CoachesCRUD from "./pages/CoachesCRUD";
 import AdminsCRUD from "./pages/AdminsCRUD";
+import EmotionsCRUD from "./pages/EmotionsCRUD";
+import AdminsPostsCRUD from "./pages/AdminsPostsCRUD";
+import ClientsList from "./pages/clientsCRUD/ClientsList";
+import ClientsCreate from "./pages/clientsCRUD/ClientsCreate";
+import ClientsDetails from "./pages/clientsCRUD/ClientsDetails";
+import ClientsUpdate from "./pages/clientsCRUD/ClientsUpdate";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,9 +29,14 @@ export const router = createBrowserRouter(
 
       {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
       <Route path="/" element={<Home />} />
-      <Route path="/clients" element={<ClientsCRUD />} />
+      <Route path="/clients" element={<ClientsList />} />
+      <Route path="/clients/create" element={<ClientsCreate />} />
+      <Route path="/clients/:id" element={<ClientsDetails />} />
+      <Route path="/clients/:id/edit" element={<ClientsUpdate />} />
       <Route path="/coaches" element={<CoachesCRUD />} />
       <Route path="/admins" element={<AdminsCRUD />} />
+      <Route path="/emotions" element={<EmotionsCRUD />} />
+      <Route path="/admins-posts" element={<AdminsPostsCRUD/>} />
     </Route>
   )
 );
