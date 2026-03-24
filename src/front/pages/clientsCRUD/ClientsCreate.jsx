@@ -59,7 +59,7 @@ const ClientsCreate = () => {
                     required
                 />
 
-                <button className="btn btn-lila">Create</button>
+                <button className="btn btn-primary">Create</button>
 
                 <Link to="/clients" className="btn btn-secondary ms-2">
                     Back

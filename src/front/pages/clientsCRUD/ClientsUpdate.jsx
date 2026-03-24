@@ -58,7 +58,7 @@ const ClientsUpdate = () => {
                     onChange={e => setPassword(e.target.value)}
                 />
 
-                <button className="btn btn-lila">Save</button>
+                <button className="btn btn-primary">Save</button>
 
                 <Link to={`/clients/${id}`} className="btn btn-secondary ms-2">
                     Cancel

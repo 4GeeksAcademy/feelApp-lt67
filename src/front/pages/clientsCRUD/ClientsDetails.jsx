@@ -41,11 +41,11 @@ const ClientsDetails = () => {
             <p><strong>Email:</strong> {client.email}</p>
             <p><strong>Date:</strong> {new Date(client.sign_up_date).toLocaleDateString()}</p>
 
-            <Link to={`/clients/${id}/edit`} className="btn btn-lila">
+            <Link to={`/clients/${id}/edit`} className="btn btn-primary">
                 Edit
             </Link>
 
-            <button onClick={handleDelete} className="btn btn-white ms-2">
+            <button onClick={handleDelete} className="btn btn-outline-secondary ms-2">
                 Delete
             </button>
 
