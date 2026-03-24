@@ -64,8 +64,8 @@ const coachCRUD = () => {
         });
         if (!resp.ok) return;
         dispatch({
-            type: "set_coach",
-            payload: store.coachs.filter(c => c.id !== id)
+            type: "delete_coach",
+            payload: id
         });
     };
 
