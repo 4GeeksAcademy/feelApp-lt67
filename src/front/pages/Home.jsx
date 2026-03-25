@@ -6,7 +6,7 @@ export const Home = () => {
             <h1 className="display-4">FeelApp</h1>
             <div className="d-flex justify-content-center gap-3 mt-4">
 				<Link to="/emotions">
-				<button className="btn btn-primary">Emotions CRUD</button>
+				<button className="btn btn-primary">Emotions</button>
 				</Link>
                 <Link to="/admins-posts">
 				<button className="btn btn-primary">Admins posts CRUD</button>

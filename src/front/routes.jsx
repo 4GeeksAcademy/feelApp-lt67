@@ -18,6 +18,10 @@ import AdmintsList from "./pages/adminsCRUD/AdminsList";
 import AdmintsCreate from "./pages/adminsCRUD/AdminsCreate";
 import AdmintsDetails from "./pages/adminsCRUD/AdminsDetails";
 import AdmintsUpdate from "./pages/adminsCRUD/AdminsUpdate";
+import EmotionsCreate from "./pages/emotionsCRUD/EmotionsCreate";
+import EmotionsDetails from "./pages/emotionsCRUD/EmotionDetails";
+import EmotionsUpdate from "./pages/emotionsCRUD/EmotionsUpdate";
+import EmotionsList from "./pages/emotionsCRUD/EmotionList";
 export const router = createBrowserRouter(
   createRoutesFromElements(
     // CreateRoutesFromElements function allows you to build route elements declaratively.
@@ -40,7 +44,10 @@ export const router = createBrowserRouter(
       <Route path="/admints/create" element={<AdmintsCreate />} />
       <Route path="/admints/:id" element={<AdmintsDetails />} />
       <Route path="/admints/:id/edit" element={<AdmintsUpdate />} />
-      <Route path="/emotions" element={<EmotionsCRUD />} />
+      <Route path="/emotions" element={<EmotionsList />} />
+      <Route path="/emotions/create" element={<EmotionsCreate/>} />
+      <Route path="/emotions/:id" element={<EmotionsDetails />} />
+      <Route path="/emotions/:id/edit" element={<EmotionsUpdate />} />
       <Route path="/admins-posts" element={<AdminsPostsCRUD />} />
     </Route>
   )
