@@ -8,8 +8,8 @@ export const Home = () => {
 				<Link to="/emotions">
 				<button className="btn btn-primary">Emotions</button>
 				</Link>
-                <Link to="/admins-posts">
-				<button className="btn btn-primary">Admins posts CRUD</button>
+                <Link to="/admint-posts">
+				<button className="btn btn-primary">Admins posts</button>
 				</Link>
 			</div>
         </div>
