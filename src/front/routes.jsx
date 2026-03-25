@@ -8,14 +8,16 @@ import {
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import CoachesCRUD from "./pages/CoachesCRUD";
-import AdminsCRUD from "./pages/AdminsCRUD";
 import EmotionsCRUD from "./pages/EmotionsCRUD";
 import AdminsPostsCRUD from "./pages/AdminsPostsCRUD";
 import ClientsList from "./pages/clientsCRUD/ClientsList";
 import ClientsCreate from "./pages/clientsCRUD/ClientsCreate";
 import ClientsDetails from "./pages/clientsCRUD/ClientsDetails";
 import ClientsUpdate from "./pages/clientsCRUD/ClientsUpdate";
-
+import AdmintsList from "./pages/adminsCRUD/AdminsList";
+import AdmintsCreate from "./pages/adminsCRUD/AdminsCreate";
+import AdmintsDetails from "./pages/adminsCRUD/AdminsDetails";
+import AdmintsUpdate from "./pages/adminsCRUD/AdminsUpdate";
 export const router = createBrowserRouter(
   createRoutesFromElements(
     // CreateRoutesFromElements function allows you to build route elements declaratively.
@@ -34,9 +36,12 @@ export const router = createBrowserRouter(
       <Route path="/clients/:id" element={<ClientsDetails />} />
       <Route path="/clients/:id/edit" element={<ClientsUpdate />} />
       <Route path="/coaches" element={<CoachesCRUD />} />
-      <Route path="/admins" element={<AdminsCRUD />} />
+      <Route path="/admints" element={<AdmintsList />} />
+      <Route path="/admints/create" element={<AdmintsCreate />} />
+      <Route path="/admints/:id" element={<AdmintsDetails />} />
+      <Route path="/admints/:id/edit" element={<AdmintsUpdate />} />
       <Route path="/emotions" element={<EmotionsCRUD />} />
-      <Route path="/admins-posts" element={<AdminsPostsCRUD/>} />
+      <Route path="/admins-posts" element={<AdminsPostsCRUD />} />
     </Route>
   )
 );

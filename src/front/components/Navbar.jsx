@@ -19,7 +19,7 @@ export const Navbar = () => {
 					</Link>
 				</div>
 				<div className="ml-auto">
-					<Link to="/Admins">
+					<Link to="/admints">
 						<button className="btn btn-primary">Admins CRUD</button>
 					</Link>
 				</div>
