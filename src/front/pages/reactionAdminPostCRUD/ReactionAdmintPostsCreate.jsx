@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
+const REACTIONS = ["👍", "🎉", "💪", "❤️", "💡"];
+
 const ReactionAdmintPostsCreate = () => {
     const { store, dispatch } = useGlobalReducer();
     const navigate = useNavigate();
 
     const [client_id, setClientId] = useState("");
     const [admint_post_id, setPostId] = useState("");
-    const [emotion_id, setEmotionId] = useState("");
+    const [reaction, setReaction] = useState("");
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -19,17 +21,13 @@ const ReactionAdmintPostsCreate = () => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts`)
             .then(r => r.json())
             .then(data => dispatch({ type: "set_admint_posts", payload: data }));
-
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
-            .then(r => r.json())
-            .then(data => dispatch({ type: "set_emotions", payload: data }));
     }, []);
 
     const handleCreate = async (e) => {
         e.preventDefault();
         setError("");
 
-        if (!emotion_id) {
+        if (!reaction) {
             setError("Select a reaction");
             return;
         }
@@ -40,7 +38,7 @@ const ReactionAdmintPostsCreate = () => {
             body: JSON.stringify({
                 client_id: parseInt(client_id),
                 admint_post_id: parseInt(admint_post_id),
-                emotion_id: parseInt(emotion_id)
+                reaction
             })
         });
 
@@ -84,12 +82,10 @@ const ReactionAdmintPostsCreate = () => {
                 </select>
 
                 <label>Reaction</label>
-                <select className="form-select mb-3" value={emotion_id} onChange={e => setEmotionId(e.target.value)} required>
+                <select className="form-select mb-3" value={reaction} onChange={e => setReaction(e.target.value)} required>
                     <option value="">Select reaction</option>
-                    {store.emotions.map(e => (
-                        <option key={e.id} value={e.id}>
-                            {e.emoji} {e.name}
-                        </option>
+                    {REACTIONS.map(r => (
+                        <option key={r} value={r}>{r}</option>
                     ))}
                 </select>
 
