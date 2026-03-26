@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Client, Admint, Coach, Emotion, AdmintPost
+from api.models import db, User, Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -379,3 +379,86 @@ def delete_admint_post(post_id):
     db.session.delete(post)
     db.session.commit()
     return jsonify({"message": "Post deleted successfully"}), 200
+
+# Reaction Admin Post
+
+@api.route('/reaction-admint-posts', methods=['GET'])
+def get_reaction_admint_posts():
+    reactions = ReactionAdmintPost.query.all()
+    return jsonify([r.serialize() for r in reactions]), 200
+
+@api.route('/reaction-admint-posts/<int:reaction_id>', methods=['GET'])
+def get_reaction_admint_post(reaction_id):
+    reaction = ReactionAdmintPost.query.get(reaction_id)
+    if reaction is None:
+        return jsonify({"error": "Reaction not found"}), 404
+    return jsonify(reaction.serialize()), 200
+
+@api.route('/reaction-admint-posts', methods=['POST'])
+def create_reaction_admint_post():
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+
+    if not body.get("client_id"):
+        return jsonify({"error": "client_id is required"}), 400
+    if not body.get("admint_post_id"):
+        return jsonify({"error": "admint_post_id is required"}), 400
+    if not body.get("emotion_id"):
+        return jsonify({"error": "emotion_id is required"}), 400
+
+    client = Client.query.get(body["client_id"])
+    if client is None:
+        return jsonify({"error": "Client not found"}), 404
+
+    post = AdmintPost.query.get(body["admint_post_id"])
+    if post is None:
+        return jsonify({"error": "Post not found"}), 404
+
+    emotion = Emotion.query.get(body["emotion_id"])
+    if emotion is None:
+        return jsonify({"error": "Emotion not found"}), 404
+
+    new_reaction = ReactionAdmintPost(
+        client_id=body["client_id"],
+        admint_post_id=body["admint_post_id"],
+        emotion_id=body["emotion_id"],
+        reaction=emotion.name
+    )
+
+    db.session.add(new_reaction)
+    db.session.commit()
+
+    return jsonify(new_reaction.serialize()), 201
+
+@api.route('/reaction-admint-posts/<int:reaction_id>', methods=['PUT'])
+def update_reaction_admint_post(reaction_id):
+    reaction = ReactionAdmintPost.query.get(reaction_id)
+    if reaction is None:
+        return jsonify({"error": "Reaction not found"}), 404
+
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+
+    if "emotion_id" in body:
+        emotion = Emotion.query.get(body["emotion_id"])
+        if emotion is None:
+            return jsonify({"error": "Emotion not found"}), 404
+
+        reaction.emotion_id = body["emotion_id"]
+        reaction.reaction = emotion.name
+
+    db.session.commit()
+    return jsonify(reaction.serialize()), 200
+
+@api.route('/reaction-admint-posts/<int:reaction_id>', methods=['DELETE'])
+def delete_reaction_admint_post(reaction_id):
+    reaction = ReactionAdmintPost.query.get(reaction_id)
+    if reaction is None:
+        return jsonify({"error": "Reaction not found"}), 404
+
+    db.session.delete(reaction)
+    db.session.commit()
+
+    return jsonify({"message": "Reaction deleted successfully"}), 200

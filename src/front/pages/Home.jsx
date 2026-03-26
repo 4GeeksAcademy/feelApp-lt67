@@ -11,6 +11,9 @@ export const Home = () => {
                 <Link to="/admint-posts">
 				<button className="btn btn-primary">Admins posts</button>
 				</Link>
+                <Link to="/reactions">
+				<button className="btn btn-primary">Reaction admins posts</button>
+				</Link>
 			</div>
         </div>
     );

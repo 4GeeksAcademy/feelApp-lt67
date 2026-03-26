@@ -27,6 +27,9 @@ import CoachsList from "./pages/coachesCRUD/coachsList";
 import CoachsCreate from "./pages/coachesCRUD/coachsCreate";
 import CoachsDetails from "./pages/coachesCRUD/coachsDetails";
 import CoachsUpdate from "./pages/coachesCRUD/coachsUpdate";
+import ReactionAdmintPostsList from "./pages/reactionAdminPostCRUD/ReactionAdmintPostsList";
+import ReactionAdmintPostsCreate from "./pages/reactionAdminPostCRUD/ReactionAdmintPostsCreate";
+import ReactionAdmintPostsUpdate from "./pages/reactionAdminPostCRUD/ReactionAdmintPostsUpdate";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -61,6 +64,9 @@ export const router = createBrowserRouter(
       <Route path="/admint-posts/create" element={<AdminsPostsCreate/>} />
       <Route path="/admint-posts/:id" element={<AdminsPostsDetails/>} />
       <Route path="/admint-posts/:id/edit" element={<AdminsPostsUpdate />} />
+      <Route path="/reactions" element={<ReactionAdmintPostsList />} />
+      <Route path="/reactions/create" element={<ReactionAdmintPostsCreate />} />
+      <Route path="/reactions/:id/edit" element={<ReactionAdmintPostsUpdate />} />
     </Route>
   )
 );
