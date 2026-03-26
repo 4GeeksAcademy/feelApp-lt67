@@ -22,10 +22,14 @@ class User(db.Model):
 db = SQLAlchemy()
     
 class Client(db.Model):
+    __tablename__ = "client"
+
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(60), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
     sign_up_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    reactions = db.relationship("ReactionAdmintPost", back_populates="client")
 
     def serialize(self):
         return {
@@ -62,10 +66,14 @@ class Coach(db.Model):
         }     
 
 class Emotion(db.Model):
+    __tablename__ = "emotion"
+
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
     emoji: Mapped[str] = mapped_column(nullable=False)
     color: Mapped[str] = mapped_column(nullable=False)
+
+    reactions = db.relationship("ReactionAdmintPost", back_populates="emotion")
 
     def serialize(self):
         return {
@@ -76,12 +84,16 @@ class Emotion(db.Model):
         } 
 
 class AdmintPost(db.Model):
+    __tablename__ = "admint_post"
+
     id: Mapped[int] = mapped_column(primary_key=True)
     admint_id: Mapped[int] = mapped_column(ForeignKey("admint.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
     img_url: Mapped[str] = mapped_column(String(500), nullable=True)
     date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    reactions = db.relationship("ReactionAdmintPost", back_populates="post")
 
     def serialize(self):
         return {
@@ -91,4 +103,39 @@ class AdmintPost(db.Model):
             "text": self.text,
             "img_url": self.img_url,
             "date": self.date.isoformat()
+        }
+    
+class ReactionAdmintPost(db.Model):
+    __tablename__ = "reaction_admint_post"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    client_id: Mapped[int] = mapped_column(
+        ForeignKey("client.id"),
+        nullable=False
+    )
+
+    admint_post_id: Mapped[int] = mapped_column(
+        ForeignKey("admint_post.id"),
+        nullable=False
+    )
+
+    emotion_id: Mapped[int] = mapped_column(
+        ForeignKey("emotion.id"),
+        nullable=False
+    )
+
+    reaction: Mapped[str] = mapped_column(String(50), nullable=False)
+
+    client = db.relationship("Client", back_populates="reactions")
+    post = db.relationship("AdmintPost", back_populates="reactions")
+    emotion = db.relationship("Emotion", back_populates="reactions")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "admint_post_id": self.admint_post_id,
+            "emotion_id": self.emotion_id,
+            "reaction": self.reaction
         }
