@@ -20,7 +20,7 @@ export const Navbar = () => {
 				</div>
 				<div className="ml-auto">
 					<Link to="/admints">
-						<button className="btn btn-primary">Admins CRUD</button>
+						<button className="btn btn-primary">Admins</button>
 					</Link>
 				</div>
 			</div>

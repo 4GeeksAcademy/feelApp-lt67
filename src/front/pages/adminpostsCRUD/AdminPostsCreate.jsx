@@ -33,13 +33,19 @@ const AdminsPostsCreate = () => {
             <form onSubmit={handleCreate}>
                 <div className="mb-3">
                     <label className="form-label">Admin ID</label>
-                    <input
-                        type="number"
-                        className="form-control"
-                        value={admintId}
-                        onChange={e => setAdmintId(e.target.value)}
-                        required
-                    />
+                    <select
+                    className="form-select"
+                    value={admintId}
+                    onChange={e => setAdmintId(e.target.value)}
+                    required
+                >
+                    <option value="">Select an admin</option>
+                    {store.admints?.map((admint) => (
+                        <option key={admint.id} value={admint.id}>
+                            {admint.name || `Admin ${admint.id}`}
+                        </option>
+                    ))}
+                </select>
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Title</label>

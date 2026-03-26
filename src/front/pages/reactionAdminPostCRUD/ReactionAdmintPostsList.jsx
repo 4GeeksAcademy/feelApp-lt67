@@ -17,10 +17,6 @@ const ReactionAdmintPostsList = () => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts`)
             .then(r => r.json())
             .then(data => dispatch({ type: "set_admint_posts", payload: data }));
-
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
-            .then(r => r.json())
-            .then(data => dispatch({ type: "set_emotions", payload: data }));
     }, []);
 
     return (
@@ -52,43 +48,43 @@ const ReactionAdmintPostsList = () => {
                         store.reactions.map(r => {
                             const client = store.clients.find(c => c.id === r.client_id);
                             const post = store.admint_posts.find(p => p.id === r.admint_post_id);
-                            const emotion = store.emotions.find(e => e.id === r.emotion_id);
 
                             return (
                                 <tr key={r.id}>
                                     <td>{r.id}</td>
                                     <td>{client?.email}</td>
                                     <td>{post?.title}</td>
-                                    <td>{emotion ? `${emotion.emoji} ${emotion.name}` : "—"}</td>
+                                    <td style={{ fontSize: "1.5rem" }}>{r.reaction}</td>
+
                                     <td>
-                                    <Link 
-                                        to={`/reactions/${r.id}/edit`} 
-                                        className="btn btn-sm btn-outline-primary me-2"
-                                    >
-                                        Edit
-                                    </Link>
+                                        <Link 
+                                            to={`/reactions/${r.id}/edit`} 
+                                            className="btn btn-sm btn-outline-primary me-2"
+                                        >
+                                            Edit
+                                        </Link>
 
-                                    <button
-                                        onClick={async () => {
-                                            if (!confirm("Delete reaction?")) return;
+                                        <button
+                                            onClick={async () => {
+                                                if (!confirm("Delete reaction?")) return;
 
-                                            const resp = await fetch(
-                                                `${import.meta.env.VITE_BACKEND_URL}/api/reaction-admint-posts/${r.id}`,
-                                                { method: "DELETE" }
-                                            );
+                                                const resp = await fetch(
+                                                    `${import.meta.env.VITE_BACKEND_URL}/api/reaction-admint-posts/${r.id}`,
+                                                    { method: "DELETE" }
+                                                );
 
-                                            if (!resp.ok) return;
+                                                if (!resp.ok) return;
 
-                                            dispatch({
-                                                type: "set_reactions",
-                                                payload: store.reactions.filter(x => x.id !== r.id)
-                                            });
-                                        }}
-                                        className="btn btn-sm btn-outline-danger"
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
+                                                dispatch({
+                                                    type: "set_reactions",
+                                                    payload: store.reactions.filter(x => x.id !== r.id)
+                                                });
+                                            }}
+                                            className="btn btn-sm btn-outline-danger"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
                                 </tr>
                             );
                         })

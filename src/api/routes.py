@@ -1,8 +1,5 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost
+from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -10,16 +7,6 @@ api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
-
-
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_hello():
-
-    response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-    }
-
-    return jsonify(response_body), 200
 
 # Clients routes
 
@@ -404,8 +391,8 @@ def create_reaction_admint_post():
         return jsonify({"error": "client_id is required"}), 400
     if not body.get("admint_post_id"):
         return jsonify({"error": "admint_post_id is required"}), 400
-    if not body.get("emotion_id"):
-        return jsonify({"error": "emotion_id is required"}), 400
+    if not body.get("reaction"):
+        return jsonify({"error": "reaction is required"}), 400
 
     client = Client.query.get(body["client_id"])
     if client is None:
@@ -414,16 +401,21 @@ def create_reaction_admint_post():
     post = AdmintPost.query.get(body["admint_post_id"])
     if post is None:
         return jsonify({"error": "Post not found"}), 404
+    
+    existing = ReactionAdmintPost.query.filter_by(
+        client_id=body["client_id"],
+        admint_post_id=body["admint_post_id"]
+    ).first()
 
-    emotion = Emotion.query.get(body["emotion_id"])
-    if emotion is None:
-        return jsonify({"error": "Emotion not found"}), 404
+    if existing:
+        existing.reaction = body["reaction"]
+        db.session.commit()
+        return jsonify(existing.serialize()), 200
 
     new_reaction = ReactionAdmintPost(
         client_id=body["client_id"],
         admint_post_id=body["admint_post_id"],
-        emotion_id=body["emotion_id"],
-        reaction=emotion.name
+        reaction=body["reaction"]
     )
 
     db.session.add(new_reaction)
@@ -441,13 +433,8 @@ def update_reaction_admint_post(reaction_id):
     if body is None:
         return jsonify({"error": "Body cannot be empty"}), 400
 
-    if "emotion_id" in body:
-        emotion = Emotion.query.get(body["emotion_id"])
-        if emotion is None:
-            return jsonify({"error": "Emotion not found"}), 404
-
-        reaction.emotion_id = body["emotion_id"]
-        reaction.reaction = emotion.name
+    if "reaction" in body:
+        reaction.reaction = body["reaction"]
 
     db.session.commit()
     return jsonify(reaction.serialize()), 200
