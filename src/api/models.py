@@ -2,6 +2,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Boolean, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
+from sqlalchemy.orm import relationship
+from typing import List
+from sqlalchemy import ForeignKey
 
 db = SQLAlchemy()  
     
@@ -14,6 +17,7 @@ class Client(db.Model):
     sign_up_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     reactions = db.relationship("ReactionAdmintPost", back_populates="client")
+    client_posts: Mapped[List["ClientPost"]] = relationship(back_populates="client")
 
     def serialize(self):
         return {
@@ -130,4 +134,22 @@ class ReactionAdmintPost(db.Model):
             "client_id": self.client_id,
             "admint_post_id": self.admint_post_id,
             "reaction": self.reaction
+        }
+    
+class ClientPost(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    text: Mapped[str] = mapped_column(nullable=False)
+    date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"))
+    client: Mapped["Client"] = relationship(back_populates="client_posts")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "title": self.title,
+            "text": self.text,
+            "date": self.date.isoformat()
         }
