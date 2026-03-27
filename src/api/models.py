@@ -14,6 +14,7 @@ class Client(db.Model):
     sign_up_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     reactions = db.relationship("ReactionAdmintPost", back_populates="client")
+    entries = db.relationship("Entry", back_populates="client")
 
     def serialize(self):
         return {
@@ -62,6 +63,8 @@ class Emotion(db.Model):
     name: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
     emoji: Mapped[str] = mapped_column(nullable=False)
     color: Mapped[str] = mapped_column(nullable=False)
+
+    entries = db.relationship("Entry", back_populates="emotion")
 
     def serialize(self):
         return {
@@ -131,3 +134,39 @@ class ReactionAdmintPost(db.Model):
             "admint_post_id": self.admint_post_id,
             "reaction": self.reaction
         }
+    
+    
+class Entry(db.Model):
+    __tablename__ = "entries"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    client_id: Mapped[int] = mapped_column(
+        ForeignKey("clients.id"),
+        nullable=False
+    )
+
+    title: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    description: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    date: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    emotion_id: Mapped[int] = mapped_column(
+        ForeignKey("emotions.id"),
+        nullable=False
+    )
+
+    client = db.relationship("Client", back_populates="entries")
+    emotion = db.relationship("Emotion", back_populates="entries")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "title": self.title,
+            "description": self.description,
+            "date": self.date,
+            "emotion_id": self.emotion_id
+        }
+    

@@ -35,6 +35,11 @@ import ReactionAdmintPostsList from "./pages/reactionAdminPostCRUD/ReactionAdmin
 import ReactionAdmintPostsCreate from "./pages/reactionAdminPostCRUD/ReactionAdmintPostsCreate";
 import ReactionAdmintPostsUpdate from "./pages/reactionAdminPostCRUD/ReactionAdmintPostsUpdate";
 
+import EntriesList from "./pages/entriesCRUD/entriesList";
+import EntriesCreate from "./pages/entriesCRUD/entriesCreate";
+import EntriesDetails from "./pages/entriesCRUD/entriesDetails";
+import EntriesUpdate from "./pages/entriesCRUD/entriesUpdate";
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
@@ -56,15 +61,20 @@ export const router = createBrowserRouter(
       <Route path="/admints/:id/edit" element={<AdmintsUpdate />} />
 
       <Route path="/emotions" element={<EmotionsList />} />
-      <Route path="/emotions/create" element={<EmotionsCreate/>} />
+      <Route path="/emotions/create" element={<EmotionsCreate />} />
       <Route path="/emotions/:id" element={<EmotionsDetails />} />
       <Route path="/emotions/:id/edit" element={<EmotionsUpdate />} />
 
-      <Route path="/admint-posts" element={<AdminsPostsList/>} />
-      <Route path="/admint-posts/create" element={<AdminsPostsCreate/>} />
-      <Route path="/admint-posts/:id" element={<AdminsPostsDetails/>} />
+      <Route path="/admint-posts" element={<AdminsPostsList />} />
+      <Route path="/admint-posts/create" element={<AdminsPostsCreate />} />
+      <Route path="/admint-posts/:id" element={<AdminsPostsDetails />} />
       <Route path="/admint-posts/:id/edit" element={<AdminsPostsUpdate />} />
-      
+
+      <Route path="/entries" element={<EntriesList />} />
+      <Route path="/entries/create" element={<EntriesCreate />} />
+      <Route path="/entries/:id" element={<EntriesDetails />} />
+      <Route path="/entries/:id/edit" element={<EntriesUpdate />} />
+
       <Route path="/reactions" element={<ReactionAdmintPostsList />} />
       <Route path="/reactions/create" element={<ReactionAdmintPostsCreate />} />
       <Route path="/reactions/:id/edit" element={<ReactionAdmintPostsUpdate />} />
