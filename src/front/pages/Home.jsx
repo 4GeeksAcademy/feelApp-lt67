@@ -14,6 +14,12 @@ export const Home = () => {
                 <Link to="/reactions">
 				<button className="btn btn-primary">Reaction admins posts</button>
 				</Link>
+                <Link to="/entries">
+				<button className="btn btn-primary">Entries</button>
+				</Link>		
+				<Link to="/client-favorites">
+				<button className="btn btn-primary">Client Fav</button>
+				</Link>
 			</div>
         </div>
     );
