@@ -15,6 +15,7 @@ class Client(db.Model):
 
     reactions = db.relationship("ReactionAdmintPost", back_populates="client")
     entries = db.relationship("Entry", back_populates="client")
+    favorites = db.relationship("ClientFavorites", back_populates="client")
 
     def serialize(self):
         return {
@@ -159,6 +160,7 @@ class Entry(db.Model):
 
     client = db.relationship("Client", back_populates="entries")
     emotion = db.relationship("Emotion", back_populates="entries")
+    favorites = db.relationship("ClientFavorites", back_populates="entry")
 
     def serialize(self):
         return {
@@ -170,3 +172,20 @@ class Entry(db.Model):
             "emotion_id": self.emotion_id
         }
     
+class ClientFavorites(db.Model):
+
+    __tablename__ = "client_favorites" 
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
+    entry_id: Mapped[int] = mapped_column(ForeignKey("entries.id"), nullable=False)
+
+    client = db.relationship("Client", back_populates="favorites")
+    entry = db.relationship("Entry", back_populates="favorites")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "entry_id": self.entry_id
+        }
