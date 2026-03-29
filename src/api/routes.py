@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, ClientPost
+from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -620,81 +620,3 @@ def delete_client_favorite(favorite_id):
     db.session.delete(favorite)
     db.session.commit()
     return jsonify({"message": "Favorite removed successfully"}), 200
-
-
-
-# Client-Posts:
-
-# GET Client-Post:
-@api.route('/client-posts', methods=['GET'])
-def get_client_posts():
-    posts = ClientPost.query.all()
-    return jsonify([p.serialize() for p in posts]), 200
-
-
-# GET Client-Post by id:
-@api.route('/client-posts/<int:post_id>', methods=['GET'])
-def get_client_post(post_id):
-    post = ClientPost.query.get(post_id)
-    if post is None:
-        return jsonify({"error": "Post not found"}), 404
-    return jsonify(post.serialize()), 200
-
-
-# (POST) Create Client-Post:
-@api.route('/client-posts', methods=['POST'])
-def create_client_post():
-    body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Body cannot be empty"}), 400
-    if not body.get("client_id"):
-        return jsonify({"error": "An client id is required"}), 400
-    if not body.get("title"):
-        return jsonify({"error": "A title is required"}), 400
-    if not body.get("text"):
-        return jsonify({"error": "A text is required"}), 400
-
-    client_exists = Client.query.get(body["client_id"])
-    if client_exists is None:
-        return jsonify({"error": "Client not found"}), 404
-
-    new_post = ClientPost(
-        client_id=body["client_id"],
-        title=body["title"],
-        text=body["text"],
-    )
-    db.session.add(new_post)
-    db.session.commit()
-    return jsonify(new_post.serialize()), 201
-
-
-# (PUT) Update Client-Post:
-@api.route('/client-posts/<int:post_id>', methods=['PUT'])
-def update_client_post(post_id):
-    post = ClientPost.query.get(post_id)
-    if post is None:
-        return jsonify({"error": "Post not found"}), 404
-
-    body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Body cannot be empty"}), 400
-
-    if "title" in body:
-        post.title = body["title"]
-    if "text" in body:
-        post.text = body["text"]
-
-    db.session.commit()
-    return jsonify(post.serialize()), 200
-
-# DELETE Client-Post:
-
-@api.route('/client-posts/<int:post_id>', methods=['DELETE'])
-def delete_client_post(post_id):
-    post = ClientPost.query.get(post_id)
-    if post is None:
-        return jsonify({"error": "Post not found"}), 404
-
-    db.session.delete(post)
-    db.session.commit()
-    return jsonify({"message": "Post deleted successfully"}), 200
