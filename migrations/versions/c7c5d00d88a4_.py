@@ -70,8 +70,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('client_id', 'admint_post_id', name='unique_client_post_reaction')
     )
-    op.drop_table('admint')
-    op.drop_table('client')
     # ### end Alembic commands ###
 
 

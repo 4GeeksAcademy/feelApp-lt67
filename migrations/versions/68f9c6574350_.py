@@ -26,7 +26,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
-    op.drop_table('user')
     # ### end Alembic commands ###
 
 
