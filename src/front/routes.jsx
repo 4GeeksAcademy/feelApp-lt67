@@ -40,6 +40,9 @@ import EntriesCreate from "./pages/entriesCRUD/entriesCreate";
 import EntriesDetails from "./pages/entriesCRUD/entriesDetails";
 import EntriesUpdate from "./pages/entriesCRUD/entriesUpdate";
 
+import ClientFavoritesList from "./pages/clientfavoritesCRD/ClientFavoritesList";
+import ClientFavoritesCreate from "./pages/clientfavoritesCRD/ClientFavoritesCreate";
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
@@ -78,6 +81,10 @@ export const router = createBrowserRouter(
       <Route path="/reactions" element={<ReactionAdmintPostsList />} />
       <Route path="/reactions/create" element={<ReactionAdmintPostsCreate />} />
       <Route path="/reactions/:id/edit" element={<ReactionAdmintPostsUpdate />} />
+
+      <Route path="/client-favorites" element={<ClientFavoritesList/>} />
+      <Route path="/client-favorites/create" element={<ClientFavoritesCreate />} />
+
     </Route>
   )
 );

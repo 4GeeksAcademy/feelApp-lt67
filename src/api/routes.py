@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost,Entry
+from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -557,3 +557,66 @@ def delete_entry(entry_id):
 
     return jsonify({"message": "Entry deleted successfully"}), 200
 
+
+
+# Get all favorites
+@api.route('/client-favorites', methods=['GET'])
+def get_client_favorites():
+    favorites = ClientFavorites.query.all()
+    return jsonify([f.serialize() for f in favorites]), 200
+
+# Get favorites by client
+@api.route('/client-favorites/client/<int:client_id>', methods=['GET'])
+def get_favorites_by_client(client_id):
+    client = Client.query.get(client_id)
+    if client is None:
+        return jsonify({"error": "Client not found"}), 404
+    favorites = ClientFavorites.query.filter_by(client_id=client_id).all()
+    return jsonify([f.serialize() for f in favorites]), 200
+
+# Add favorite
+@api.route('/client-favorites', methods=['POST'])
+def create_client_favorite():
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+    if not body.get("client_id"):
+        return jsonify({"error": "client_id is required"}), 400
+    if not body.get("entry_id"):
+        return jsonify({"error": "entry_id is required"}), 400
+
+    client = Client.query.get(body["client_id"])
+    if client is None:
+        return jsonify({"error": "Client not found"}), 404
+
+    entry = Entry.query.get(body["entry_id"])
+    if entry is None:
+        return jsonify({"error": "Entry not found"}), 404
+
+    already_exists = ClientFavorites.query.filter_by(
+        client_id=body["client_id"],
+        entry_id=body["entry_id"]
+    ).first()
+    if already_exists:
+        return jsonify({"error": "This entry is already in favorites"}), 409
+
+    new_favorite = ClientFavorites(
+        client_id=body["client_id"],
+        entry_id=body["entry_id"]
+    )
+    db.session.add(new_favorite)
+    db.session.commit()
+    return jsonify(new_favorite.serialize()), 201
+
+
+# Update (unnecesary)
+
+# Delete favorite
+@api.route('/client-favorites/<int:favorite_id>', methods=['DELETE'])
+def delete_client_favorite(favorite_id):
+    favorite = ClientFavorites.query.get(favorite_id)
+    if favorite is None:
+        return jsonify({"error": "Favorite not found"}), 404
+    db.session.delete(favorite)
+    db.session.commit()
+    return jsonify({"message": "Favorite removed successfully"}), 200
