@@ -9,14 +9,14 @@ const ClientsPostsDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients-posts/${id}`)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts/${id}`)
             .then(resp => resp.json())
             .then(data => setPost(data));
     }, [id]);
 
     const handleDelete = async () => {
         if (!confirm("Delete post?")) return;
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients-posts/${id}`, {
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts/${id}`, {
             method: "DELETE"
         });
         if (!resp.ok) return;
