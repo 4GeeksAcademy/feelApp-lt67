@@ -5,11 +5,6 @@ import useGlobalReducer from "../../hooks/useGlobalReducer";
 const CLientsPostsList = () => {
     const { store, dispatch } = useGlobalReducer();
 
-    // useEffect(() => {
-    //     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients-posts`)
-    //         .then(resp => resp.json())
-    //         .then(data => dispatch({ type: "set_clients_posts", payload: data }));
-    // }, []);
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts`)

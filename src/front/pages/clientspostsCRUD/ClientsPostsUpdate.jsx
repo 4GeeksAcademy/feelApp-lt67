@@ -12,7 +12,7 @@ const ClientsPostsUpdate = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients-posts/${id}`)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts/${id}`)
             .then(resp => resp.json())
             .then(data => {
                 setTitle(data.title);
@@ -26,7 +26,7 @@ const ClientsPostsUpdate = () => {
         const body = {};
         if (title) body.title = title;
         if (text) body.text = text;
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients-posts/${id}`, {
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
@@ -34,7 +34,7 @@ const ClientsPostsUpdate = () => {
         const data = await resp.json();
         if (!resp.ok) { setError(data.error); return; }
         dispatch({
-            type: "set_admint_posts",
+            type: "set_clients_posts",
             payload: store.clients_posts.map(p => p.id === parseInt(id) ? data : p)
         });
         navigate(`/clients-posts/${id}`);
