@@ -43,6 +43,10 @@ import EntriesUpdate from "./pages/entriesCRUD/entriesUpdate";
 import ClientFavoritesList from "./pages/clientfavoritesCRD/ClientFavoritesList";
 import ClientFavoritesCreate from "./pages/clientfavoritesCRD/ClientFavoritesCreate";
 
+import ReactionEntriesList from "./pages/reactionentries/reactionentriesList";
+import ReactionEntriesCreate from "./pages/reactionentries/reactionentriesCreate";
+import ReactionEntriesDetails from "./pages/reactionentries/reactionentriesDetails";
+import ReactionEntriesUpdate from "./pages/reactionentries/reactionentriesUpdate";
 import CoachFavoritesList from "./pages/coachFavoritesCRD/ClientFavoritesList";
 import CoachFavoritesCreate from "./pages/coachFavoritesCRD/CoachFavoritesCreate";
 
@@ -90,9 +94,13 @@ export const router = createBrowserRouter(
       <Route path="/reactions/create" element={<ReactionAdmintPostsCreate />} />
       <Route path="/reactions/:id/edit" element={<ReactionAdmintPostsUpdate />} />
 
-      <Route path="/client-favorites" element={<ClientFavoritesList/>} />
+      <Route path="/client-favorites" element={<ClientFavoritesList />} />
       <Route path="/client-favorites/create" element={<ClientFavoritesCreate />} />
 
+      <Route path="/reaction-entries" element={<ReactionEntriesList />} />
+      <Route path="/reaction-entries/create" element={<ReactionEntriesCreate />} />
+      <Route path="/reaction-entries/:id" element={<ReactionEntriesDetails />} />
+      <Route path="/reaction-entries/:id/edit" element={<ReactionEntriesUpdate />} />
       <Route path="/coach-favorites" element={<CoachFavoritesList/>} />
       <Route path="/coach-favorites/create" element={<CoachFavoritesCreate />} />
 

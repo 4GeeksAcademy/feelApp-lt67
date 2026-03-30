@@ -9,6 +9,7 @@ export const initialStore = () => {
     reactions: [],
     entries: [],
     favorites: [],
+    reaction_entries: []
     coach_favorites: [],
     clients_posts: []
   };
@@ -43,6 +44,8 @@ export default function storeReducer(store, action = {}) {
     case 'set_favorites':
     return { ...store, favorites: action.payload };
 
+    case "set_reaction_entries":
+    return {...store, reaction_entries: action.payload};
     case 'set_coach_favorites':
     return { ...store, coach_favorites: action.payload };
 
