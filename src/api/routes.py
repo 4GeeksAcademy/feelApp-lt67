@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites
+from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -620,3 +620,65 @@ def delete_client_favorite(favorite_id):
     db.session.delete(favorite)
     db.session.commit()
     return jsonify({"message": "Favorite removed successfully"}), 200
+
+# Get all favorites
+@api.route('/coach-favorites', methods=['GET'])
+def get_coach_favorites():
+    favorites = CoachFavorites.query.all()
+    return jsonify([f.serialize() for f in favorites]), 200
+
+# Get favorites by coach
+@api.route('/coach-favorites/coach/<int:coach_id>', methods=['GET'])
+def get_favorites_by_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": "Coach not found"}), 404
+    favorites = CoachFavorites.query.filter_by(coach_id=coach_id).all()
+    return jsonify([f.serialize() for f in favorites]), 200
+
+# Add favorite
+@api.route('/coach-favorites', methods=['POST'])
+def create_coach_favorite():
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+    if not body.get("coach_id"):
+        return jsonify({"error": "coach_id is required"}), 400
+    if not body.get("entry_id"):
+        return jsonify({"error": "entry_id is required"}), 400
+
+    coach = Coach.query.get(body["coach_id"])
+    if coach is None:
+        return jsonify({"error": "Coach not found"}), 404
+
+    entry = Entry.query.get(body["entry_id"])
+    if entry is None:
+        return jsonify({"error": "Entry not found"}), 404
+
+    already_exists = CoachFavorites.query.filter_by(
+        coach_id=body["coach_id"],
+        entry_id=body["entry_id"]
+    ).first()
+    if already_exists:
+        return jsonify({"error": "This entry is already in favorites"}), 409
+
+    new_favorite = CoachFavorites(
+        coach_id=body["coach_id"],
+        entry_id=body["entry_id"]
+    )
+    db.session.add(new_favorite)
+    db.session.commit()
+    return jsonify(new_favorite.serialize()), 201
+
+
+# Update (unnecesary)
+
+# Delete favorite
+@api.route('/coach-favorites/<int:favorite_id>', methods=['DELETE'])
+def delete_coach_favorite(favorite_id):
+    favorite = CoachFavorites.query.get(favorite_id)
+    if favorite is None:
+        return jsonify({"error": "Favorite not found"}), 404
+    db.session.delete(favorite)
+    db.session.commit()
+    return jsonify({"message": "Favorite removed successfully"}), 200   

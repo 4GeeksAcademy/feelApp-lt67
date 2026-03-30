@@ -20,6 +20,9 @@ export const Home = () => {
 				<Link to="/client-favorites">
 				<button className="btn btn-primary">Client Fav</button>
 				</Link>
+				<Link to="/coach-favorites">
+				<button className="btn btn-primary">Coach Fav</button>
+				</Link>
 			</div>
         </div>
     );
