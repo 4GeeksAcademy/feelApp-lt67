@@ -16,6 +16,7 @@ class Client(db.Model):
     reactions = db.relationship("ReactionAdmintPost", back_populates="client")
     entries = db.relationship("Entry", back_populates="client")
     favorites = db.relationship("ClientFavorites", back_populates="client")
+    posts = db.relationship("ClientPost", back_populates="client")
 
     def serialize(self):
         return {
@@ -210,3 +211,22 @@ class CoachFavorites(db.Model):
             "entry_id": self.entry_id
         }
         
+class ClientPost(db.Model):
+    __tablename__ = "client_posts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    text: Mapped[str] = mapped_column(nullable=False)
+    date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    client = db.relationship("Client", back_populates="posts")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "title": self.title,
+            "text": self.text,
+            "date": self.date.isoformat()
+        }
