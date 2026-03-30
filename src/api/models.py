@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import String, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
 
@@ -7,17 +7,14 @@ db = SQLAlchemy()
     
 class Client(db.Model):
     __tablename__ = "clients"
-
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(60), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
     sign_up_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
-
     reactions = db.relationship("ReactionAdmintPost", back_populates="client")
     entries = db.relationship("Entry", back_populates="client")
     favorites = db.relationship("ClientFavorites", back_populates="client")
     posts = db.relationship("ClientPost", back_populates="client")
-
     def serialize(self):
         return {
             "id": self.id,
@@ -27,14 +24,11 @@ class Client(db.Model):
        
 class Admint(db.Model):
     __tablename__ = "admints"
-
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(60), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
     sign_up_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
-
     posts = db.relationship("AdmintPost", back_populates="admint")
-
     def serialize(self):
         return {
             "id": self.id,
@@ -42,17 +36,13 @@ class Admint(db.Model):
             "sign_up_date": self.sign_up_date.isoformat()
         }    
 
-
 class Coach(db.Model):
     __tablename__ = "coaches"
-
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(60), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
     sign_up_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
-
     favorites = db.relationship("CoachFavorites", back_populates="coach")
-
     def serialize(self):
         return {
             "id": self.id,
@@ -62,14 +52,11 @@ class Coach(db.Model):
 
 class Emotion(db.Model):
     __tablename__ = "emotions"
-
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
     emoji: Mapped[str] = mapped_column(nullable=False)
     color: Mapped[str] = mapped_column(nullable=False)
-
     entries = db.relationship("Entry", back_populates="emotion")
-
     def serialize(self):
         return {
             "id": self.id,
@@ -80,22 +67,14 @@ class Emotion(db.Model):
 
 class AdmintPost(db.Model):
     __tablename__ = "admint_posts"
-
     id: Mapped[int] = mapped_column(primary_key=True)
-
-    admint_id: Mapped[int] = mapped_column(
-        ForeignKey("admints.id"),
-        nullable=False
-    )
-
+    admint_id: Mapped[int] = mapped_column(ForeignKey("admints.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
     img_url: Mapped[str] = mapped_column(String(500), nullable=True)
     date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
-
     admint = db.relationship("Admint", back_populates="posts")
     reactions = db.relationship("ReactionAdmintPost", back_populates="post")
-
     def serialize(self):
         return {
             "id": self.id,
@@ -108,29 +87,15 @@ class AdmintPost(db.Model):
     
 class ReactionAdmintPost(db.Model):
     __tablename__ = "reaction_admint_posts"
-
-    # una sola reaccion per user
     __table_args__ = (
         UniqueConstraint("client_id", "admint_post_id", name="unique_client_post_reaction"),
     )
-
     id: Mapped[int] = mapped_column(primary_key=True)
-
-    client_id: Mapped[int] = mapped_column(
-        ForeignKey("clients.id"),
-        nullable=False
-    )
-
-    admint_post_id: Mapped[int] = mapped_column(
-        ForeignKey("admint_posts.id"),
-        nullable=False
-    )
-
+    client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
+    admint_post_id: Mapped[int] = mapped_column(ForeignKey("admint_posts.id"), nullable=False)
     reaction: Mapped[str] = mapped_column(String(10), nullable=False)
-
     client = db.relationship("Client", back_populates="reactions")
     post = db.relationship("AdmintPost", back_populates="reactions")
-
     def serialize(self):
         return {
             "id": self.id,
@@ -139,33 +104,19 @@ class ReactionAdmintPost(db.Model):
             "reaction": self.reaction
         }
     
-    
 class Entry(db.Model):
     __tablename__ = "entries"
-
     id: Mapped[int] = mapped_column(primary_key=True)
-
-    client_id: Mapped[int] = mapped_column(
-        ForeignKey("clients.id"),
-        nullable=False
-    )
-
+    client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
-
     description: Mapped[str] = mapped_column(String(255), nullable=False)
-
     date: Mapped[str] = mapped_column(String(20), nullable=False)
-
-    emotion_id: Mapped[int] = mapped_column(
-        ForeignKey("emotions.id"),
-        nullable=False
-    )
-
+    emotion_id: Mapped[int] = mapped_column(ForeignKey("emotions.id"), nullable=False)
     client = db.relationship("Client", back_populates="entries")
     emotion = db.relationship("Emotion", back_populates="entries")
     favorites = db.relationship("ClientFavorites", back_populates="entry")
     coach_favorites = db.relationship("CoachFavorites", back_populates="entry")
-
+    reactions = db.relationship("ReactionEntry", back_populates="entry")
     def serialize(self):
         return {
             "id": self.id,
@@ -177,16 +128,12 @@ class Entry(db.Model):
         }
     
 class ClientFavorites(db.Model):
-
     __tablename__ = "client_favorites" 
-
     id: Mapped[int] = mapped_column(primary_key=True)
     client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
     entry_id: Mapped[int] = mapped_column(ForeignKey("entries.id"), nullable=False)
-
     client = db.relationship("Client", back_populates="favorites")
     entry = db.relationship("Entry", back_populates="favorites")
-
     def serialize(self):
         return {
             "id": self.id,
@@ -194,28 +141,29 @@ class ClientFavorites(db.Model):
             "entry_id": self.entry_id
         }
 
-
 class ReactionEntry(db.Model):
     __tablename__ = "reaction_entries"
-
     id: Mapped[int] = mapped_column(primary_key=True)
     client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
     entries_id: Mapped[int] = mapped_column(ForeignKey("entries.id"), nullable=False)
     reaction: Mapped[str] = mapped_column(nullable=False)
-
     client = db.relationship("Client")
-    entry = db.relationship("Entry")
+    entry = db.relationship("Entry", back_populates="reactions")
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "entries_id": self.entries_id,
+            "reaction": self.reaction
+        }
     
 class CoachFavorites(db.Model):               
     __tablename__ = "coach_favorites"
-
     id: Mapped[int] = mapped_column(primary_key=True)
     coach_id: Mapped[int] = mapped_column(ForeignKey("coaches.id"), nullable=False)
     entry_id: Mapped[int] = mapped_column(ForeignKey("entries.id"), nullable=False)
-
     coach = db.relationship("Coach", back_populates="favorites")
     entry = db.relationship("Entry", back_populates="coach_favorites")  
-
     def serialize(self):
         return {
             "id": self.id,
@@ -225,24 +173,16 @@ class CoachFavorites(db.Model):
         
 class ClientPost(db.Model):
     __tablename__ = "client_posts"
-
     id: Mapped[int] = mapped_column(primary_key=True)
     client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
     date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
-
     client = db.relationship("Client", back_populates="posts")
-
     def serialize(self):
         return {
             "id": self.id,
             "client_id": self.client_id,
-            "entries_id": self.entries_id,
-            "reaction": self.reaction
-        }       
-    
-    
             "title": self.title,
             "text": self.text,
             "date": self.date.isoformat()

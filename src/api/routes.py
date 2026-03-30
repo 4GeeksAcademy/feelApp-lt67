@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites, ClientPost
+from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites, ClientPost, ReactionEntry
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
