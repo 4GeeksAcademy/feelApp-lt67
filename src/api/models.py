@@ -189,3 +189,25 @@ class ClientFavorites(db.Model):
             "client_id": self.client_id,
             "entry_id": self.entry_id
         }
+
+
+class ReactionEntry(db.Model):
+    __tablename__ = "reaction_entries"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
+    entries_id: Mapped[int] = mapped_column(ForeignKey("entries.id"), nullable=False)
+    reaction: Mapped[str] = mapped_column(nullable=False)
+
+    client = db.relationship("Client")
+    entry = db.relationship("Entry")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "entries_id": self.entries_id,
+            "reaction": self.reaction
+        }       
+    
+    
