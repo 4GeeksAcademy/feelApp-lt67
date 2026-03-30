@@ -43,6 +43,9 @@ import EntriesUpdate from "./pages/entriesCRUD/entriesUpdate";
 import ClientFavoritesList from "./pages/clientfavoritesCRD/ClientFavoritesList";
 import ClientFavoritesCreate from "./pages/clientfavoritesCRD/ClientFavoritesCreate";
 
+import CoachFavoritesList from "./pages/coachFavoritesCRD/ClientFavoritesList";
+import CoachFavoritesCreate from "./pages/coachFavoritesCRD/CoachFavoritesCreate";
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
@@ -84,6 +87,9 @@ export const router = createBrowserRouter(
 
       <Route path="/client-favorites" element={<ClientFavoritesList/>} />
       <Route path="/client-favorites/create" element={<ClientFavoritesCreate />} />
+
+      <Route path="/coach-favorites" element={<CoachFavoritesList/>} />
+      <Route path="/coach-favorites/create" element={<CoachFavoritesCreate />} />
 
     </Route>
   )

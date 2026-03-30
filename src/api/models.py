@@ -50,6 +50,8 @@ class Coach(db.Model):
     password: Mapped[str] = mapped_column(nullable=False)
     sign_up_date: Mapped[datetime] = mapped_column(DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
 
+    favorites = db.relationship("CoachFavorites", back_populates="coach")
+
     def serialize(self):
         return {
             "id": self.id,
@@ -161,6 +163,7 @@ class Entry(db.Model):
     client = db.relationship("Client", back_populates="entries")
     emotion = db.relationship("Emotion", back_populates="entries")
     favorites = db.relationship("ClientFavorites", back_populates="entry")
+    coach_favorites = db.relationship("CoachFavorites", back_populates="entry")
 
     def serialize(self):
         return {
@@ -189,3 +192,21 @@ class ClientFavorites(db.Model):
             "client_id": self.client_id,
             "entry_id": self.entry_id
         }
+    
+class CoachFavorites(db.Model):               
+    __tablename__ = "coach_favorites"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    coach_id: Mapped[int] = mapped_column(ForeignKey("coaches.id"), nullable=False)
+    entry_id: Mapped[int] = mapped_column(ForeignKey("entries.id"), nullable=False)
+
+    coach = db.relationship("Coach", back_populates="favorites")
+    entry = db.relationship("Entry", back_populates="coach_favorites")  
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "coach_id": self.coach_id,
+            "entry_id": self.entry_id
+        }
+        
