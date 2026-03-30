@@ -47,6 +47,13 @@ import ReactionEntriesList from "./pages/reactionentries/reactionentriesList";
 import ReactionEntriesCreate from "./pages/reactionentries/reactionentriesCreate";
 import ReactionEntriesDetails from "./pages/reactionentries/reactionentriesDetails";
 import ReactionEntriesUpdate from "./pages/reactionentries/reactionentriesUpdate";
+import CoachFavoritesList from "./pages/coachFavoritesCRD/ClientFavoritesList";
+import CoachFavoritesCreate from "./pages/coachFavoritesCRD/CoachFavoritesCreate";
+
+import CLientsPostsList from "./pages/clientspostsCRUD/ClientsPostsList";
+import ClientsPostsCreate from "./pages/clientspostsCRUD/ClientsPostsCreate";
+import ClientsPostsDetails from "./pages/clientspostsCRUD/ClientsPostsDetails";
+import ClientsPostsUpdate from "./pages/clientspostsCRUD/ClientsPostsUpdate";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -94,6 +101,13 @@ export const router = createBrowserRouter(
       <Route path="/reaction-entries/create" element={<ReactionEntriesCreate />} />
       <Route path="/reaction-entries/:id" element={<ReactionEntriesDetails />} />
       <Route path="/reaction-entries/:id/edit" element={<ReactionEntriesUpdate />} />
+      <Route path="/coach-favorites" element={<CoachFavoritesList/>} />
+      <Route path="/coach-favorites/create" element={<CoachFavoritesCreate />} />
+
+      <Route path="/clients-posts" element={<CLientsPostsList />} />
+      <Route path="/clients-posts/create" element={<ClientsPostsCreate />} />
+      <Route path="/clients-posts/:id" element={<ClientsPostsDetails />} />
+      <Route path="/clients-posts/:id/edit" element={<ClientsPostsUpdate />} />
 
     </Route>
   )
