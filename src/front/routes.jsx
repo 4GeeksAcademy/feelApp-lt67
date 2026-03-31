@@ -55,6 +55,11 @@ import ClientsPostsCreate from "./pages/clientspostsCRUD/ClientsPostsCreate";
 import ClientsPostsDetails from "./pages/clientspostsCRUD/ClientsPostsDetails";
 import ClientsPostsUpdate from "./pages/clientspostsCRUD/ClientsPostsUpdate";
 
+import { AccessCoachList } from "./pages/access_coachCRUD/AccessCoachList";
+import { AccessCoachCreate } from "./pages/access_coachCRUD/AccessCoachCreate";
+import { AccessCoachDetails } from "./pages/access_coachCRUD/AccessCoachDetails";
+import { AccessCoachUpdate } from "./pages/access_coachCRUD/AccessCoachUpdate";
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
@@ -101,13 +106,18 @@ export const router = createBrowserRouter(
       <Route path="/reaction-entries/create" element={<ReactionEntriesCreate />} />
       <Route path="/reaction-entries/:id" element={<ReactionEntriesDetails />} />
       <Route path="/reaction-entries/:id/edit" element={<ReactionEntriesUpdate />} />
-      <Route path="/coach-favorites" element={<CoachFavoritesList/>} />
+      <Route path="/coach-favorites" element={<CoachFavoritesList />} />
       <Route path="/coach-favorites/create" element={<CoachFavoritesCreate />} />
 
       <Route path="/clients-posts" element={<CLientsPostsList />} />
       <Route path="/clients-posts/create" element={<ClientsPostsCreate />} />
       <Route path="/clients-posts/:id" element={<ClientsPostsDetails />} />
       <Route path="/clients-posts/:id/edit" element={<ClientsPostsUpdate />} />
+
+      <Route path="/access-coach" element={<AccessCoachList />} />
+      <Route path="/access-coach/create" element={<AccessCoachCreate />} />
+      <Route path="/access-coach/:id" element={<AccessCoachDetails />} />
+      <Route path="/access-coach/update/:id" element={<AccessCoachUpdate />} />
 
     </Route>
   )
