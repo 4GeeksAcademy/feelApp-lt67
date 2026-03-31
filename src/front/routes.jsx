@@ -51,6 +51,12 @@ import ClientsPostsCreate from "./pages/clientspostsCRUD/ClientsPostsCreate";
 import ClientsPostsDetails from "./pages/clientspostsCRUD/ClientsPostsDetails";
 import ClientsPostsUpdate from "./pages/clientspostsCRUD/ClientsPostsUpdate";
 
+import ReactionClientPostCreate from "./pages/reactionClientPostCRUD/ReactionClientPostCreate";
+import ReactionClientPostList from "./pages/reactionClientPostCRUD/ReactionClientPostList";
+import ReactionClientPostUpdate from "./pages/reactionClientPostCRUD/ReactionClientPostUpdate";
+
+
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
@@ -100,6 +106,12 @@ export const router = createBrowserRouter(
       <Route path="/clients-posts/create" element={<ClientsPostsCreate />} />
       <Route path="/clients-posts/:id" element={<ClientsPostsDetails />} />
       <Route path="/clients-posts/:id/edit" element={<ClientsPostsUpdate />} />
+
+      <Route path="/reactions-client" element={<ReactionClientPostList />} />
+      <Route path="/reactions-client/create" element={<ReactionClientPostCreate />} />
+      <Route path="/reactions-client/:id/edit" element={<ReactionClientPostUpdate />} />
+
+
 
     </Route>
   )
