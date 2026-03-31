@@ -47,11 +47,11 @@ const ReactionClientPostList = () => {
                     ) : (
                         store.reaction_client.map(r => {
                             const client = store.clients.find(c => c.id === r.client_id);
-                            const post = store.client_posts.find(p => p.id === r.client_post_id);
+                            const post = store.clients_posts.find(p => p.id === r.client_post_id);
 
                             return (
                                 <tr key={r.id}>
-                                    <td>{r.id}</td>
+                                    <td>{r.reaction_client}</td>
                                     <td>{client?.email}</td>
                                     <td>{post?.title}</td>
                                     <td style={{ fontSize: "1.5rem" }}>{r.reaction}</td>
@@ -75,10 +75,10 @@ const ReactionClientPostList = () => {
 
                                                 if (!resp.ok) return;
 
-                                                dispatch({
-                                                    type: "set_reactions",
-                                                    payload: store.reactions.filter(x => x.id !== r.id)
-                                                });
+                                               dispatch({
+                                                type: "set_reaction_client",
+                                                payload: store.reaction_client.filter(x => x.id !== r.id)
+                                            });
                                             }}
                                             className="btn btn-sm btn-outline-danger"
                                         >
@@ -86,7 +86,7 @@ const ReactionClientPostList = () => {
                                         </button>
                                     </td>
                                 </tr>
-                            );
+                                );
                         })
                     )}
                 </tbody>

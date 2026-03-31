@@ -14,7 +14,7 @@ const ReactionClientPostUpdate = () => {
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts/${id}`)
             .then(r => r.json())
-            .then(data => setReaction_Client(data.reaction_client));
+            .then(data => setReaction(data.reaction));
     }, [id]);
 
     const handleUpdate = async (e) => {
@@ -23,7 +23,7 @@ const ReactionClientPostUpdate = () => {
         const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reaction_client })
+            body: JSON.stringify({ reaction })
         });
 
         const data = await resp.json();

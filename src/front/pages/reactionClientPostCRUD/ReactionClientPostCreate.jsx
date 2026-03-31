@@ -38,7 +38,7 @@ const ReactionClientPostCreate = () => {
             body: JSON.stringify({
                 client_id: parseInt(client_id),
                 client_post_id: parseInt(clients_post_id),
-                reaction_client
+                reaction
             })
         });
 
