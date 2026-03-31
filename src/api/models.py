@@ -237,6 +237,8 @@ class ClientPost(db.Model):
 
 class ReactionClientPost(db.Model):
 
+    __tablename__ = "reaction_client_post"
+
     id: Mapped[int] = mapped_column(primary_key=True)
 
     client_id: Mapped[int] = mapped_column(
@@ -253,6 +255,14 @@ class ReactionClientPost(db.Model):
 
     client = db.relationship("Client", back_populates="reaction_client")
     post = db.relationship("ClientPost", back_populates="reaction_client")
+
+    def serialize(self):       
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "client_post_id": self.client_post_id,
+            "reaction": self.reaction
+        }
 
 
 class AccessCoach(db.Model):
@@ -271,8 +281,6 @@ class AccessCoach(db.Model):
         return {
             "id": self.id,
             "client_id": self.client_id,
-            "client_post_id": self.client_post_id,
-            "reaction": self.reaction
             "coach_id": self.coach_id,
             "status": self.status
         }

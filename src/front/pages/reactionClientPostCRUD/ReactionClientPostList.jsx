@@ -51,7 +51,7 @@ const ReactionClientPostList = () => {
 
                             return (
                                 <tr key={r.id}>
-                                    <td>{r.reaction_client}</td>
+                                    <td>{r.id}</td>
                                     <td>{client?.email}</td>
                                     <td>{post?.title}</td>
                                     <td style={{ fontSize: "1.5rem" }}>{r.reaction}</td>

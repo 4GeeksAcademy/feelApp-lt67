@@ -12,7 +12,7 @@ export const initialStore = () => {
     reaction_entries: [],
     coach_favorites: [],
     clients_posts: [],
-    reaction_client: []
+    reaction_client: [],
     access_coach: []
   };
 };
@@ -57,6 +57,7 @@ export default function storeReducer(store, action = {}) {
 
     case "set_reaction_client":
     return { ...store, reaction_client: action.payload };
+
     case "set_access_coach":
     return { ...store, access_coach: action.payload };
   
