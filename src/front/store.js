@@ -15,6 +15,8 @@ export const initialStore = () => {
     reaction_client: [],
     access_coach: [],
     access_clients: [],
+    message: null,
+    token: sessionStorage.getItem("token") || null,
   };
 };
 
@@ -64,6 +66,14 @@ export default function storeReducer(store, action = {}) {
 
     case "set_access_clients":
     return { ...store, access_clients: action.payload };
+
+    case 'login':
+    sessionStorage.setItem("token", action.payload)
+    return { ...store, token: action.payload };
+
+    case 'logout':
+    sessionStorage.removeItem("token")
+    return { ...store, token: null };
   
     default:
       throw Error("Unknown action.");

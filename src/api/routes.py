@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites, ClientPost, ReactionEntry,AccessCoach, ReactionClientPost, AccessClient
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 api = Blueprint('api', __name__)
 
@@ -1039,3 +1040,67 @@ def delete_access_client(access_id):
     db.session.commit()
 
     return jsonify({"msg": "Deleted"}), 200
+
+
+# routes client login  
+
+@api.route("/signup", methods=["POST"])
+def signup():
+    data = request.get_json()
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"msg": "Email and password are required"}), 400
+
+    existing = Client.query.filter_by(email=email).first()
+    if existing:
+        return jsonify({"msg": "Client already exists"}), 400
+
+    new_client = Client(
+        email=email,
+        password=password 
+    )
+
+    db.session.add(new_client)
+    db.session.commit()
+
+    return jsonify({"msg": "Client created"}), 201
+
+@api.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"msg": "Email and password are required"}), 400
+
+    client = Client.query.filter_by(email=email).first()
+
+    if not client:
+        return jsonify({"msg": "Client not found"}), 404
+
+    if client.password != password:
+        return jsonify({"msg": "Bad credentials"}), 401
+
+    access_token = create_access_token(identity=client.id)
+
+    return jsonify({
+        "token": access_token,
+        "client": client.serialize()
+    }), 200
+
+@api.route("/private", methods=["GET"])
+@jwt_required()
+def private():
+    client_id = get_jwt_identity()
+
+    client = db.session.get(Client, client_id)
+
+    return jsonify({
+        "msg": "Access granted",
+        "client": client.serialize()
+    }), 200

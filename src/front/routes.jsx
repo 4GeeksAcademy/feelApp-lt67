@@ -69,6 +69,13 @@ import AccessClientUpdate from "./pages/access_clientCRUD/AccessClientUpdate";
 import AccessClientCreate from "./pages/access_clientCRUD/AccessClientCreate";
 import AccessClientList from "./pages/access_clientCRUD/AccessClientList";
 
+import { CrudList } from "./pages/CrudList";
+
+import { ClientSignup } from "./pages/login_client/ClientSignUp";
+import { ClientPrivate } from "./pages/login_client/ClientPrivate";
+import { ClientLoginLanding } from "./pages/login_client/ClientLoginLanding";
+import { ClientLogin } from "./pages/login_client/ClientLogin";
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
@@ -136,6 +143,13 @@ export const router = createBrowserRouter(
       <Route path="/access-clients/create" element={<AccessClientCreate />} />
       <Route path="/access-clients/:id" element={<AccessClientUpdate />} />
 
+      <Route path="/client-login-landing" element={<ClientLoginLanding/>} />
+      <Route path="/client-login" element={<ClientLogin />} />
+      <Route path="/client-signup" element={<ClientSignup />} />
+      <Route path="/client-private" element={<ClientPrivate />} />
+
+      <Route path="/crudlist" element={<CrudList />} />
+      
     </Route>
   )
 );
