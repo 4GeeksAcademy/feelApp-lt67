@@ -65,6 +65,10 @@ import { AccessCoachCreate } from "./pages/access_coachCRUD/AccessCoachCreate";
 import { AccessCoachDetails } from "./pages/access_coachCRUD/AccessCoachDetails";
 import { AccessCoachUpdate } from "./pages/access_coachCRUD/AccessCoachUpdate";
 
+import AccessClientUpdate from "./pages/access_clientCRUD/AccessClientUpdate";
+import AccessClientCreate from "./pages/access_clientCRUD/AccessClientCreate";
+import AccessClientList from "./pages/access_clientCRUD/AccessClientList";
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
@@ -123,11 +127,14 @@ export const router = createBrowserRouter(
       <Route path="/reactions-client/create" element={<ReactionClientPostCreate />} />
       <Route path="/reactions-client/:id/edit" element={<ReactionClientPostUpdate />} />
 
-
       <Route path="/access-coach" element={<AccessCoachList />} />
       <Route path="/access-coach/create" element={<AccessCoachCreate />} />
       <Route path="/access-coach/:id" element={<AccessCoachDetails />} />
       <Route path="/access-coach/update/:id" element={<AccessCoachUpdate />} />
+
+      <Route path="/access-clients" element={<AccessClientList />} />
+      <Route path="/access-clients/create" element={<AccessClientCreate />} />
+      <Route path="/access-clients/:id" element={<AccessClientUpdate />} />
 
     </Route>
   )

@@ -36,6 +36,9 @@ export const Home = () => {
 				<Link to="/access-coach">
 					<button className="btn btn-primary">Access Coach</button>
 				</Link>
+				<Link to="/access-clients">
+					<button className="btn btn-primary">Access Client</button>
+				</Link>
 			</div>
 		</div>
 	);
