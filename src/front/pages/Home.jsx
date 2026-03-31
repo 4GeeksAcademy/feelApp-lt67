@@ -5,40 +5,6 @@ export const Home = () => {
 		<div className="text-center mt-5">
 			<h1 className="display-4">FeelApp</h1>
 			<div className="d-flex justify-content-center gap-3 mt-4">
-				<Link to="/emotions">
-					<button className="btn btn-primary">Emotions</button>
-				</Link>
-				<Link to="/admint-posts">
-					<button className="btn btn-primary">Admins posts</button>
-				</Link>
-				<Link to="/reactions">
-					<button className="btn btn-primary">Reaction admins posts</button>
-				</Link>
-				<Link to="/entries">
-					<button className="btn btn-primary">Entries</button>
-				</Link>
-				<Link to="/client-favorites">
-					<button className="btn btn-primary">Client Fav</button>
-				</Link>
-				<Link to="/reaction-entries">
-					<button className="btn btn-primary">Reaction Entries</button>
-				</Link>
-				<Link to="/coach-favorites">
-					<button className="btn btn-primary">Coach Fav</button>
-				</Link>
-				<Link to="/clients-posts">
-					<button className="btn btn-primary">Client Posts</button>
-				</Link>
-
-				<Link to="/reactions-client">
-					<button className="btn btn-primary">Reaction Client Post</button>
-				</Link>	
-				<Link to="/access-coach">
-					<button className="btn btn-primary">Access Coach</button>
-				</Link>
-				<Link to="/access-clients">
-					<button className="btn btn-primary">Access Client</button>
-				</Link>
 			</div>
 		</div>
 	);

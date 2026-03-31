@@ -15,6 +15,10 @@ export const initialStore = () => {
     reaction_client: [],
     access_coach: [],
     access_clients: [],
+    message: null,
+    clientToken: sessionStorage.getItem("clientToken") || null,
+    coachToken: sessionStorage.getItem("coachToken") || null,
+    admintToken: sessionStorage.getItem("admintToken") || null,
   };
 };
 
@@ -64,6 +68,30 @@ export default function storeReducer(store, action = {}) {
 
     case "set_access_clients":
     return { ...store, access_clients: action.payload };
+
+    case 'login_client':
+    sessionStorage.setItem("clientToken", action.payload)
+    return { ...store, clientToken: action.payload };
+
+    case 'logout_client':
+    sessionStorage.removeItem("clientToken")
+    return { ...store, clientToken: null };
+
+    case 'login_coach':
+    sessionStorage.setItem("coachToken", action.payload)
+    return { ...store, coachToken: action.payload };
+
+    case 'logout_coach':
+    sessionStorage.removeItem("coachToken")
+    return { ...store, coachToken: null };
+
+    case 'login_admint':
+    sessionStorage.setItem("admintToken", action.payload)
+    return { ...store, admintToken: action.payload };
+
+    case 'logout_admint':
+    sessionStorage.removeItem("admintToken")
+    return { ...store, admintToken: null };
   
     default:
       throw Error("Unknown action.");

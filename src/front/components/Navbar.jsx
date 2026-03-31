@@ -1,29 +1,42 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Navbar = () => {
+  const { store, dispatch } = useGlobalReducer();
+  const navigate = useNavigate();
 
-	return (
-		<nav className="navbar navbar-light bg-light">
-			<div className="container">
-				<Link to="/">
-					<span className="navbar-brand mb-0 h1">FeelApp</span>
-				</Link>
-				<div className="ml-auto">
-					<Link to="/Clients">
-						<button className="btn btn-primary">Clients</button>
-					</Link>
-				</div>
-				<div className="ml-auto">
-					<Link to="/coachs">
-						<button className="btn btn-primary">Coaches</button>
-					</Link>
-				</div>
-				<div className="ml-auto">
-					<Link to="/admints">
-						<button className="btn btn-primary">Admins</button>
-					</Link>
-				</div>
-			</div>
-		</nav>
-	);
+  const handleLogout = () => {
+    if (store.clientToken) {
+      dispatch({ type: "logout_client" });
+      navigate("/client-login-landing");
+    } else if (store.coachToken) {
+      dispatch({ type: "logout_coach" });
+      navigate("/");
+    } else if (store.admintToken) {
+      dispatch({ type: "logout_admint" });
+      navigate("/");
+    }
+  };
+
+  const isLoggedIn = store.clientToken || store.coachToken || store.admintToken;
+
+  return (
+    <nav className="navbar navbar-light bg-light">
+      <div className="container">
+        <Link to="/"><span className="navbar-brand mb-0 h1">FeelApp</span></Link>
+        <div className="d-flex gap-2 align-items-center">
+          {!isLoggedIn ? (
+            <>
+              <Link to="/client-login-landing"><button className="btn btn-primary">Log as a Client</button></Link>
+              <Link to="/"><button className="btn btn-primary">Log as a Coach</button></Link>
+              <Link to="/"><button className="btn btn-primary">Log as an Admin</button></Link>
+            </>
+          ) : (
+            <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
+          )}
+          <Link to="/crudlist"><button className="btn btn-primary">CRUDs</button></Link>
+        </div>
+      </div>
+    </nav>
+  );
 };
