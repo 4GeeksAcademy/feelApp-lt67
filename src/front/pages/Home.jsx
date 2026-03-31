@@ -24,10 +24,13 @@ export const Home = () => {
 					<button className="btn btn-primary">Reaction Entries</button>
 				</Link>
 				<Link to="/coach-favorites">
-				<button className="btn btn-primary">Coach Fav</button>
+					<button className="btn btn-primary">Coach Fav</button>
 				</Link>
 				<Link to="/clients-posts">
-				<button className="btn btn-primary">Client Posts</button>
+					<button className="btn btn-primary">Client Posts</button>
+				</Link>
+				<Link to="/access-coach">
+					<button className="btn btn-primary">Access Coach</button>
 				</Link>
 			</div>
 		</div>

@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites, ClientPost, ReactionEntry
+from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites, ClientPost, ReactionEntry,AccessCoach
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -823,3 +823,60 @@ def delete_client_post(post_id):
     db.session.delete(post)
     db.session.commit()
     return jsonify({"message": "Post deleted successfully"}), 200
+
+# access coach GET
+# GET ALL
+@api.route('/access-coach', methods=['GET'])
+def get_access_coach():
+    data = AccessCoach.query.all()
+    return jsonify([item.serialize() for item in data]), 200
+
+
+# GET ID
+@api.route('/access-coach/<int:id>', methods=['GET'])
+def get_one_access_coach(id):
+    item = AccessCoach.query.get(id)
+    return jsonify(item.serialize()), 200
+
+
+# POST
+@api.route('/access-coach', methods=['POST'])
+def create_access_coach():
+    body = request.get_json()
+
+    new_item = AccessCoach(
+        client_id=body["client_id"],
+        coach_id=body["coach_id"],
+        status=body.get("status", "pending")
+    )
+
+    db.session.add(new_item)
+    db.session.commit()
+
+    return jsonify(new_item.serialize()), 201
+
+
+# PUT
+@api.route('/access-coach/<int:id>', methods=['PUT'])
+def update_access_coach(id):
+    item = AccessCoach.query.get(id)
+    body = request.get_json()
+
+    item.client_id = body["client_id"]
+    item.coach_id = body["coach_id"]
+    item.status = body.get("status", item.status)
+
+    db.session.commit()
+
+    return jsonify(item.serialize()), 200
+
+
+# DELETE
+@api.route('/access-coach/<int:id>', methods=['DELETE'])
+def delete_access_coach(id):
+    item = AccessCoach.query.get(id)
+
+    db.session.delete(item)
+    db.session.commit()
+
+    return jsonify({"msg": "Deleted"}), 200
