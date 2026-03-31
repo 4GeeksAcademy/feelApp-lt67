@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites, ClientPost, ReactionClientPost
+from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites, ClientPost, ReactionEntry,AccessCoach
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -621,6 +621,71 @@ def delete_client_favorite(favorite_id):
     db.session.commit()
     return jsonify({"message": "Favorite removed successfully"}), 200
 
+# GET reaction entries
+
+@api.route('/reaction-entries', methods=['GET'])
+def get_reaction_entries():
+    reactions = ReactionEntry.query.all()
+    return jsonify([r.serialize() for r in reactions]), 200    
+
+# GET por ID
+
+@api.route('/reaction-entries/<int:reaction_id>', methods=['GET'])
+def get_reaction_entry(reaction_id):
+    reaction = ReactionEntry.query.get(reaction_id)
+
+    if reaction is None:
+        return jsonify({"error": "Reaction not found"}), 404
+    return jsonify(reaction.serialize()), 200
+
+# POST 
+
+@api.route('/reaction-entries', methods=['POST'])
+def create_reaction_entry():
+    body = request.get_json()
+
+    if body is None:
+        return jsonify({"error": "Body is empty"}), 400
+
+    if not body.get("client_id") or not body.get("entries_id"):
+        return jsonify({"error": "Client_id and entries_id are required"}), 400
+
+    new_reaction = ReactionEntry(
+        client_id=body["client_id"],
+        entries_id=body["entries_id"],
+        reaction=body["reaction"]
+    )
+    db.session.add(new_reaction)
+    db.session.commit()
+
+    return jsonify(new_reaction.serialize()), 201
+
+# PUT 
+
+@api.route('/reaction-entries/<int:reaction_id>', methods=['PUT'])
+def update_reaction_entry(reaction_id):
+    reaction = ReactionEntry.query.get(reaction_id)
+
+    if reaction is None:
+        return jsonify({"error": "Reaction not found"}), 404
+
+    body = request.get_json()
+    reaction.reaction = body.get("reaction", reaction.reaction)
+    db.session.commit()
+
+    return jsonify(reaction.serialize()), 200
+
+@api.route('/reaction-entries/<int:reaction_id>', methods=['DELETE'])
+def delete_reaction_entry(reaction_id):
+    reaction = ReactionEntry.query.get(reaction_id)
+
+    if reaction is None:
+        return jsonify({"error": "Reaction not found"}), 404
+
+    db.session.delete(reaction)
+    db.session.commit()
+
+    return jsonify({"message": "Deleted"}), 200
 # Get all favorites
 @api.route('/coach-favorites', methods=['GET'])
 def get_coach_favorites():
@@ -857,3 +922,59 @@ def delete_reaction_client_post(reaction_id):
 
 
 
+# access coach GET
+# GET ALL
+@api.route('/access-coach', methods=['GET'])
+def get_access_coach():
+    data = AccessCoach.query.all()
+    return jsonify([item.serialize() for item in data]), 200
+
+
+# GET ID
+@api.route('/access-coach/<int:id>', methods=['GET'])
+def get_one_access_coach(id):
+    item = AccessCoach.query.get(id)
+    return jsonify(item.serialize()), 200
+
+
+# POST
+@api.route('/access-coach', methods=['POST'])
+def create_access_coach():
+    body = request.get_json()
+
+    new_item = AccessCoach(
+        client_id=body["client_id"],
+        coach_id=body["coach_id"],
+        status=body.get("status", "pending")
+    )
+
+    db.session.add(new_item)
+    db.session.commit()
+
+    return jsonify(new_item.serialize()), 201
+
+
+# PUT
+@api.route('/access-coach/<int:id>', methods=['PUT'])
+def update_access_coach(id):
+    item = AccessCoach.query.get(id)
+    body = request.get_json()
+
+    item.client_id = body["client_id"]
+    item.coach_id = body["coach_id"]
+    item.status = body.get("status", item.status)
+
+    db.session.commit()
+
+    return jsonify(item.serialize()), 200
+
+
+# DELETE
+@api.route('/access-coach/<int:id>', methods=['DELETE'])
+def delete_access_coach(id):
+    item = AccessCoach.query.get(id)
+
+    db.session.delete(item)
+    db.session.commit()
+
+    return jsonify({"msg": "Deleted"}), 200

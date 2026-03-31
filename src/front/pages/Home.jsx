@@ -20,6 +20,9 @@ export const Home = () => {
 				<Link to="/client-favorites">
 					<button className="btn btn-primary">Client Fav</button>
 				</Link>
+				<Link to="/reaction-entries">
+					<button className="btn btn-primary">Reaction Entries</button>
+				</Link>
 				<Link to="/coach-favorites">
 					<button className="btn btn-primary">Coach Fav</button>
 				</Link>
@@ -28,6 +31,8 @@ export const Home = () => {
 				</Link>
 				<Link to="/reactions-client">
 					<button className="btn btn-primary">Reaction Client Post</button>
+				<Link to="/access-coach">
+					<button className="btn btn-primary">Access Coach</button>
 				</Link>
 			</div>
 		</div>
