@@ -13,12 +13,23 @@ class Client(db.Model):
     password: Mapped[str] = mapped_column(nullable=False)
     sign_up_date: Mapped[datetime] = mapped_column(
         DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
+    
     reactions = db.relationship("ReactionAdmintPost", back_populates="client")
     entries = db.relationship("Entry", back_populates="client")
     favorites = db.relationship("ClientFavorites", back_populates="client")
     posts = db.relationship("ClientPost", back_populates="client")
     reaction_client = db.relationship("ReactionClientPost", back_populates="client")
     coach_requests = db.relationship("AccessCoach",back_populates="client")
+    access_given = db.relationship(
+    "AccessClient",
+    foreign_keys="AccessClient.client_id",
+    back_populates="client"
+    )
+    access_received = db.relationship(
+        "AccessClient",
+        foreign_keys="AccessClient.shared_with_id",
+        back_populates="shared_with"
+    )
 
     def serialize(self):
         return {
@@ -282,5 +293,35 @@ class AccessCoach(db.Model):
             "id": self.id,
             "client_id": self.client_id,
             "coach_id": self.coach_id,
+            "status": self.status
+        }
+    
+class AccessClient(db.Model):
+    __tablename__ = "access_clients"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
+    shared_with_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
+
+    status = db.Column(db.String(20), nullable=False, default="pending")
+
+    client = db.relationship(
+        "Client",
+        foreign_keys=[client_id],
+        back_populates="access_given"
+    )
+
+    shared_with = db.relationship(
+        "Client",
+        foreign_keys=[shared_with_id],
+        back_populates="access_received"
+    )
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "shared_with_id": self.shared_with_id,
             "status": self.status
         }

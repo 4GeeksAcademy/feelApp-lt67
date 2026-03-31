@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites, ClientPost, ReactionEntry,AccessCoach, ReactionClientPost
+from api.models import db,Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, Entry, ClientFavorites, CoachFavorites, ClientPost, ReactionEntry,AccessCoach, ReactionClientPost, AccessClient
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -975,6 +975,67 @@ def delete_access_coach(id):
     item = AccessCoach.query.get(id)
 
     db.session.delete(item)
+    db.session.commit()
+
+    return jsonify({"msg": "Deleted"}), 200
+
+
+@api.route('/access-clients', methods=['GET'])
+def get_access_clients():
+    access_list = AccessClient.query.all()
+    return jsonify([a.serialize() for a in access_list]), 200
+
+@api.route('/access-clients/<int:access_id>', methods=['GET'])
+def get_access_client(access_id):
+    access = db.session.get(AccessClient, access_id)
+
+    if not access:
+        return jsonify({"msg": "Not found"}), 404
+
+    return jsonify(access.serialize()), 200
+
+@api.route('/access-clients', methods=['POST'])
+def create_access_client():
+    data = request.get_json()
+
+    new_access = AccessClient(
+        client_id=data["client_id"],
+        shared_with_id=data["shared_with_id"],
+        status="pending"
+    )
+
+    db.session.add(new_access)
+    db.session.commit()
+
+    return jsonify(new_access.serialize()), 201
+
+@api.route('/access-clients/<int:access_id>', methods=['PUT'])
+def update_access_client(access_id):
+    access = db.session.get(AccessClient, access_id)
+
+    if not access:
+        return jsonify({"msg": "Not found"}), 404
+
+    data = request.get_json()
+
+    if "status" in data:
+        if data["status"] not in ["pending", "approved", "rejected"]:
+            return jsonify({"msg": "Invalid status"}), 400 
+
+        access.status = data["status"]
+
+    db.session.commit()
+
+    return jsonify(access.serialize()), 200
+
+@api.route('/access-clients/<int:access_id>', methods=['DELETE'])
+def delete_access_client(access_id):
+    access = db.session.get(AccessClient, access_id)
+
+    if not access:
+        return jsonify({"msg": "Not found"}), 404
+
+    db.session.delete(access)
     db.session.commit()
 
     return jsonify({"msg": "Deleted"}), 200
