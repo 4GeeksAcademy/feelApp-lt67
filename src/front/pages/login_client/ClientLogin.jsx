@@ -24,7 +24,7 @@ export const ClientLogin = () => {
     const data = await resp.json();
 
     if (resp.ok) {
-      dispatch({ type: "login", payload: data.access_token });
+      dispatch({ type: "login_client", payload: data.token });
       navigate("/client-private");
     } else {
       setError(data.msg);
