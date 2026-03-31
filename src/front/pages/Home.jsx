@@ -29,6 +29,8 @@ export const Home = () => {
 				<Link to="/clients-posts">
 					<button className="btn btn-primary">Client Posts</button>
 				</Link>
+				<Link to="/reactions-client">
+					<button className="btn btn-primary">Reaction Client Post</button>
 				<Link to="/access-coach">
 					<button className="btn btn-primary">Access Coach</button>
 				</Link>

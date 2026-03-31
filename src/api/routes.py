@@ -824,6 +824,104 @@ def delete_client_post(post_id):
     db.session.commit()
     return jsonify({"message": "Post deleted successfully"}), 200
 
+
+# Reaction-Client-Post CRUD:
+
+# GET (Mostrar todas las reactions-clients)
+@api.route('/reaction-client-posts', methods=['GET'])
+def get_reaction_client_posts():
+    reactions = ReactionClientPost.query.all()
+    return jsonify([r.serialize() for r in reactions]), 200
+
+
+# GET (Mostrar una unica reaction-client):
+@api.route('/reaction-client-posts/<int:reaction_id>', methods=['GET'])
+def get_reaction_client_post(reaction_id):
+    reaction = ReactionClientPost.query.get(reaction_id)
+    if reaction is None:
+        return jsonify({"error": "Reaction not found"}), 404
+    return jsonify(reaction.serialize()), 200
+
+
+# POST (Crear nueva reaction-client):
+@api.route('/reaction-client-posts', methods=['POST'])
+def create_reaction_client_post():
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+
+    if not body.get("client_id"):
+        return jsonify({"error": "client_id is required"}), 400
+    if not body.get("client_post_id"):
+        return jsonify({"error": "client_post_id is required"}), 400
+    if not body.get("reaction"):
+        return jsonify({"error": "reaction is required"}), 400
+
+    client = Client.query.get(body["client_id"])
+    if client is None:
+        return jsonify({"error": "Client not found"}), 404
+
+    post = ClientPost.query.get(body["client_post_id"])
+    if post is None:
+        return jsonify({"error": "Post not found"}), 404
+    
+    existing = ReactionClientPost.query.filter_by(
+        client_id=body["client_id"],
+        client_post_id=body["client_post_id"]
+    ).first()
+
+    if existing:
+        existing.reaction = body["reaction"]
+        db.session.commit()
+        return jsonify(existing.serialize()), 200
+
+    new_reaction = ReactionClientPost(
+        client_id=body["client_id"],
+        client_post_id=body["client_post_id"],
+        reaction=body["reaction"]
+    )
+
+    db.session.add(new_reaction)
+    db.session.commit()
+
+    return jsonify(new_reaction.serialize()), 201
+
+
+# PUT (Actualizar reaction-client-post):
+@api.route('/reaction-client-posts/<int:reaction_id>', methods=['PUT'])
+def update_reaction_client_post(reaction_id):
+    reaction = ReactionClientPost.query.get(reaction_id)
+    if reaction is None:
+        return jsonify({"error": "Reaction not found"}), 404
+
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+
+    if "reaction" in body:
+        reaction.reaction = body["reaction"]
+
+    db.session.commit()
+    return jsonify(reaction.serialize()), 200
+
+
+# DELETE (Borrar reaction-client-post):
+@api.route('/reaction-client-posts/<int:reaction_id>', methods=['DELETE'])
+def delete_reaction_client_post(reaction_id):
+    reaction = ReactionClientPost.query.get(reaction_id)
+    if reaction is None:
+        return jsonify({"error": "Reaction not found"}), 404
+
+    db.session.delete(reaction)
+    db.session.commit()
+
+    return jsonify({"message": "Reaction deleted successfully"}), 200
+
+
+
+
+
+
 # access coach GET
 # GET ALL
 @api.route('/access-coach', methods=['GET'])

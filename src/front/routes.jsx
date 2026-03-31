@@ -55,6 +55,11 @@ import ClientsPostsCreate from "./pages/clientspostsCRUD/ClientsPostsCreate";
 import ClientsPostsDetails from "./pages/clientspostsCRUD/ClientsPostsDetails";
 import ClientsPostsUpdate from "./pages/clientspostsCRUD/ClientsPostsUpdate";
 
+import ReactionClientPostCreate from "./pages/reactionClientPostCRUD/ReactionClientPostCreate";
+import ReactionClientPostList from "./pages/reactionClientPostCRUD/ReactionClientPostList";
+import ReactionClientPostUpdate from "./pages/reactionClientPostCRUD/ReactionClientPostUpdate";
+
+
 import { AccessCoachList } from "./pages/access_coachCRUD/AccessCoachList";
 import { AccessCoachCreate } from "./pages/access_coachCRUD/AccessCoachCreate";
 import { AccessCoachDetails } from "./pages/access_coachCRUD/AccessCoachDetails";
@@ -113,6 +118,11 @@ export const router = createBrowserRouter(
       <Route path="/clients-posts/create" element={<ClientsPostsCreate />} />
       <Route path="/clients-posts/:id" element={<ClientsPostsDetails />} />
       <Route path="/clients-posts/:id/edit" element={<ClientsPostsUpdate />} />
+
+      <Route path="/reactions-client" element={<ReactionClientPostList />} />
+      <Route path="/reactions-client/create" element={<ReactionClientPostCreate />} />
+      <Route path="/reactions-client/:id/edit" element={<ReactionClientPostUpdate />} />
+
 
       <Route path="/access-coach" element={<AccessCoachList />} />
       <Route path="/access-coach/create" element={<AccessCoachCreate />} />

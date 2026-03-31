@@ -17,6 +17,7 @@ class Client(db.Model):
     entries = db.relationship("Entry", back_populates="client")
     favorites = db.relationship("ClientFavorites", back_populates="client")
     posts = db.relationship("ClientPost", back_populates="client")
+    reaction_client = db.relationship("ReactionClientPost", back_populates="client")
     coach_requests = db.relationship("AccessCoach",back_populates="client")
 
     def serialize(self):
@@ -220,6 +221,7 @@ class ClientPost(db.Model):
     date: Mapped[datetime] = mapped_column(
         DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
     client = db.relationship("Client", back_populates="posts")
+    reaction_client = db.relationship("ReactionClientPost", back_populates="post")
 
     def serialize(self):
         return {
@@ -229,6 +231,28 @@ class ClientPost(db.Model):
             "text": self.text,
             "date": self.date.isoformat()
         }
+    
+
+# Modelado de datos: Reaction-Client-Post:
+
+class ReactionClientPost(db.Model):
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    client_id: Mapped[int] = mapped_column(
+        ForeignKey("clients.id"),
+        nullable=False
+    )
+
+    client_post_id: Mapped[int] = mapped_column(
+        ForeignKey("client_posts.id"),
+        nullable=False
+    )
+
+    reaction: Mapped[str] = mapped_column(String(10), nullable=False)
+
+    client = db.relationship("Client", back_populates="reaction_client")
+    post = db.relationship("ClientPost", back_populates="reaction_client")
 
 
 class AccessCoach(db.Model):
@@ -247,6 +271,8 @@ class AccessCoach(db.Model):
         return {
             "id": self.id,
             "client_id": self.client_id,
+            "client_post_id": self.client_post_id,
+            "reaction": self.reaction
             "coach_id": self.coach_id,
             "status": self.status
         }
