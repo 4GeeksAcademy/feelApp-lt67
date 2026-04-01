@@ -1160,3 +1160,69 @@ def admint_private():
     }), 200
 
 
+# SIGNUP coach
+
+@api.route("/coach/signup", methods=["POST"])
+def coach_signup():
+    data = request.get_json()
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"msg": "Email and password are required"}), 400
+
+    existing = Coach.query.filter_by(email=email).first()
+    if existing:
+        return jsonify({"msg": "Coach already exists"}), 400
+
+    new_coach = Coach(
+        email=email,
+        password=password
+    )
+
+    db.session.add(new_coach)
+    db.session.commit()
+
+    return jsonify({"msg": "Coach created"}), 201
+
+# LOGIN coach
+
+@api.route("/coach/login", methods=["POST"])
+def coach_login():
+    data = request.get_json()
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"msg": "Email and password are required"}), 400
+
+    coach = Coach.query.filter_by(email=email).first()
+
+    if not coach:
+        return jsonify({"msg": "Coach not found"}), 404
+
+    if coach.password != password:
+        return jsonify({"msg": "Bad credentials"}), 401
+
+    access_token = create_access_token(identity=coach.id)
+
+    return jsonify({
+        "token": access_token,
+        "coach": coach.serialize()
+    }), 200
+
+# PRIVATE coach
+
+@api.route("/coach/private", methods=["GET"])
+@jwt_required()
+def coach_private():
+    coach_id = get_jwt_identity()
+
+    coach = db.session.get(Coach, coach_id)
+
+    return jsonify({
+        "msg": "Access granted",
+        "coach": coach.serialize()
+    }), 200
