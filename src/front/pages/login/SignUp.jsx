@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const ClientSignup = () => {
+export const Signup= ({ apiEndpoint, loginPath, title }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -10,17 +10,14 @@ export const ClientSignup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-
-    const resp = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/signup", {
+    const resp = await fetch(import.meta.env.VITE_BACKEND_URL + apiEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
     });
-
     const data = await resp.json();
-
     if (resp.ok) {
-    navigate("/client-login", { state: { message: "Account created! Please log in." } });
+      navigate(loginPath, { state: { message: "Account created! Please log in." } });
     } else {
       setError(data.msg);
     }
@@ -28,7 +25,7 @@ export const ClientSignup = () => {
 
   return (
     <div className="container mt-5" style={{ maxWidth: "400px" }}>
-      <h2>Sign Up</h2>
+      <h2>{title}</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">

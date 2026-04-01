@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
+import useGlobalReducer from "../../hooks/useGlobalReducer"
 
-export const ClientLogin = () => {
+export const Login = ({ apiEndpoint, dispatchType, redirectPath, title }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -14,18 +14,15 @@ export const ClientLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-
-    const resp = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/login", {
+    const resp = await fetch(import.meta.env.VITE_BACKEND_URL + apiEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
     });
-
     const data = await resp.json();
-
     if (resp.ok) {
-      dispatch({ type: "login_client", payload: data.token });
-      navigate("/client-private");
+      dispatch({ type: dispatchType, payload: data.token });
+      navigate(redirectPath);
     } else {
       setError(data.msg);
     }
@@ -33,7 +30,7 @@ export const ClientLogin = () => {
 
   return (
     <div className="container mt-5" style={{ maxWidth: "400px" }}>
-      <h2>Login</h2>
+      <h2>{title}</h2>
       {successMessage && <div className="alert alert-success">{successMessage}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>

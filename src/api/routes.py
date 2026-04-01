@@ -1142,8 +1142,11 @@ def admint_login():
     if password != admint.password:
         return jsonify({"msg": "Admint o contraseña incorrectos"})
 
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token)
+    access_token = create_access_token(identity=admint.id)
+    return jsonify({
+        "token": access_token,
+        "client": admint.serialize()
+    }), 200
 
 
 
@@ -1162,7 +1165,7 @@ def admint_private():
 
 # SIGNUP coach
 
-@api.route("/coach/signup", methods=["POST"])
+@api.route("/coach-signup", methods=["POST"])
 def coach_signup():
     data = request.get_json()
 
@@ -1188,7 +1191,7 @@ def coach_signup():
 
 # LOGIN coach
 
-@api.route("/coach/login", methods=["POST"])
+@api.route("/coach-login", methods=["POST"])
 def coach_login():
     data = request.get_json()
 
