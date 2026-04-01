@@ -1104,3 +1104,59 @@ def private():
         "msg": "Access granted",
         "client": client.serialize()
     }), 200
+
+
+# Routes login-Admin:
+
+# POST (Signup):
+@api.route("/admint-signup", methods=["POST"])
+def admint_signup():
+    body = request.get_json()
+    admint = Admint.query.filter_by(email=body["email"]).first()
+
+    if admint:
+        return jsonify({"msg": "Ya se encuentra registrado un Admint con ese correo"}), 401
+
+    new_admint = Admint(email=body["email"], password=body["password"])
+
+    db.session.add(new_admint)
+    db.session.commit()
+    response_body = {
+        "msg": "Admint creado exitosamente!!"
+    }
+    return jsonify(response_body), 200
+
+
+
+# POST (Login):
+@api.route("/admint-login", methods=["POST"])
+def admint_login():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    print(email)
+    print(password)
+    admint = Admint.query.filter_by(email=email).first()
+    if admint is None:
+        return jsonify({"msg": "El usuario no esta registrado"}), 401
+    print(admint)
+    if password != admint.password:
+        return jsonify({"msg": "Admint o contraseña incorrectos"})
+
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token)
+
+
+
+@api.route("/admint-private", methods=["GET"])
+@jwt_required()
+def admint_private():
+    admint_id = get_jwt_identity()
+
+    admint = db.session.get(Admint, admint_id)
+
+    return jsonify({
+        "msg": "Access granted",
+        "admint": admint.serialize()
+    }), 200
+
+
