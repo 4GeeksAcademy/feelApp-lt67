@@ -11,10 +11,10 @@ export const Navbar = () => {
       navigate("/client-login-landing");
     } else if (store.coachToken) {
       dispatch({ type: "logout_coach" });
-      navigate("/");
+      navigate("/coach-login-landing");
     } else if (store.admintToken) {
       dispatch({ type: "logout_admint" });
-      navigate("/");
+      navigate("/admint-login-landing");
     }
   };
 
@@ -28,8 +28,8 @@ export const Navbar = () => {
           {!isLoggedIn ? (
             <>
               <Link to="/client-login-landing"><button className="btn btn-primary">Log as a Client</button></Link>
-              <Link to="/"><button className="btn btn-primary">Log as a Coach</button></Link>
-              <Link to="/"><button className="btn btn-primary">Log as an Admin</button></Link>
+              <Link to="/coach-login-landing"><button className="btn btn-primary">Log as a Coach</button></Link>
+              <Link to="/admint-login-landing"><button className="btn btn-primary">Log as an Admin</button></Link>
             </>
           ) : (
             <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>

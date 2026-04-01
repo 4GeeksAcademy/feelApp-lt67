@@ -71,10 +71,12 @@ import AccessClientList from "./pages/access_clientCRUD/AccessClientList";
 
 import { CrudList } from "./pages/CrudList";
 
-import { ClientSignup } from "./pages/login_client/ClientSignUp";
-import { ClientPrivate } from "./pages/login_client/ClientPrivate";
-import { ClientLoginLanding } from "./pages/login_client/ClientLoginLanding";
-import { ClientLogin } from "./pages/login_client/ClientLogin";
+import { Signup } from "./pages/login/SignUp";
+import { Login } from "./pages/login/Login";
+import { LoginLanding } from "./pages/login/LoginLanding";
+import { ClientPrivate } from "./pages/login/ClientPrivate";
+import { CoachPrivate } from "./pages/login/CoachPrivate";
+import { AdminPrivate } from "./pages/login/AdminPrivate";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -143,13 +145,28 @@ export const router = createBrowserRouter(
       <Route path="/access-clients/create" element={<AccessClientCreate />} />
       <Route path="/access-clients/:id" element={<AccessClientUpdate />} />
 
-      <Route path="/client-login-landing" element={<ClientLoginLanding/>} />
-      <Route path="/client-login" element={<ClientLogin />} />
-      <Route path="/client-signup" element={<ClientSignup />} />
+      <Route path="/client-login-landing" element={<LoginLanding title="Log in as a Client" tokenKey="clientToken" loginPath="/client-login" signupPath="/client-signup" privatePath="/client-private" />} />
+      <Route path="/client-login" element={<Login title="Client Login" apiEndpoint="/api/login" dispatchType="login_client" redirectPath="/client-private" />} />
+      <Route path="/client-signup" element={<Signup title="Client Sign Up" apiEndpoint="/api/signup" loginPath="/client-login" />} />
+
+      <Route path="/coach-login-landing" element={<LoginLanding title="Log in as a Coach" tokenKey="coachToken" loginPath="/coach-login" signupPath="/coach-signup" privatePath="/coach-private" />} />
+      <Route path="/coach-login" element={<Login title="Coach Login" apiEndpoint="/api/coach-login" dispatchType="login_coach" redirectPath="/coach-private" />} />
+      <Route path="/coach-signup" element={<Signup title="Coach Sign Up" apiEndpoint="/api/coach-signup" loginPath="/coach-login" />} />
+
+      <Route path="/admint-login-landing" element={<LoginLanding title="Log in as an Admin" tokenKey="admintToken" loginPath="/admint-login" signupPath="/admint-signup" privatePath="/admint-private" />} />
+      <Route path="/admint-login" element={<Login title="Admin Login" apiEndpoint="/api/admint-login" dispatchType="login_admint" redirectPath="/admint-private" />} />
+      <Route path="/admint-signup" element={<Signup title="Admin Sign Up" apiEndpoint="/api/admint-signup" loginPath="/admint-login" />} />
+      
       <Route path="/client-private" element={<ClientPrivate />} />
+      <Route path="/coach-private" element={<CoachPrivate />} />
+      <Route path="/admint-private" element={<AdminPrivate />} />
 
       <Route path="/crudlist" element={<CrudList />} />
       
     </Route>
   )
 );
+
+
+
+

@@ -15,7 +15,6 @@ export const initialStore = () => {
     reaction_client: [],
     access_coach: [],
     access_clients: [],
-    message: null,
     clientToken: sessionStorage.getItem("clientToken") || null,
     coachToken: sessionStorage.getItem("coachToken") || null,
     admintToken: sessionStorage.getItem("admintToken") || null,
