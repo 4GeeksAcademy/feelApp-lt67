@@ -21,7 +21,7 @@ export const Navbar = () => {
   const isLoggedIn = store.clientToken || store.coachToken || store.admintToken;
 
   return (
-    <nav className="navbar custom-navbar">
+    <nav className="navbar custom-navbar p-2">
       <div className="container">
       {!isLoggedIn ? (  
         <Link to="/"><span className="navbar-brand mb-0 h1">FeelApp</span></Link>

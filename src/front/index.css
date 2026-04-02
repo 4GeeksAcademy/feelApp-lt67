@@ -2,11 +2,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #ffffff;
-  background-image: 
-    radial-gradient(at 10% 15%, rgba(103, 232, 249, 0.5) 0px, transparent 45%),
-    radial-gradient(at 90% 10%, rgba(110, 231, 183, 0.45) 0px, transparent 40%),
-    radial-gradient(at 85% 85%, rgba(165, 180, 252, 0.4) 0px, transparent 45%),
-    radial-gradient(at 15% 95%, rgba(134, 239, 172, 0.35) 0px, transparent 40%);
+  background-image: url("/workspaces/feelApp-lt67/src/front/assets/img/feelAppbg.jpg");
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
@@ -66,3 +62,9 @@ h1 {
   transition: all 0.3s ease;
 }
 
+.navbar-brand{
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}

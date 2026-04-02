@@ -3,90 +3,72 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
 const EntriesUpdate = () => {
+  const { id } = useParams();
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
-  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [emotionId, setEmotionId] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!store.clientToken) navigate("/");
-    if (store.emotions.length === 0) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
-        .then(resp => resp.json())
-        .then(data => dispatch({ type: "set_emotions", payload: data }));
+    if (!store.clientToken) { navigate("/"); return; }
+    
+    const entryToEdit = store.entries.find(e => e.id === parseInt(id));
+    if (entryToEdit) {
+      setTitle(entryToEdit.title);
+      setDescription(entryToEdit.description);
+      setEmotionId(entryToEdit.emotion_id.toString());
     }
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`)
-      .then(resp => resp.json())
-      .then(data => {
-        setTitle(data.title);
-        setDescription(data.description);
-        setEmotionId(data.emotion_id);
-      });
-  }, [id]);
-
-  const selectedEmotion = store.emotions.find(em => em.id === parseInt(emotionId));
+  }, [id, store.entries, store.clientToken, navigate]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     setError("");
     const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title,
-        description,
-        emotion_id: parseInt(emotionId)
-      })
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${store.clientToken}`
+      },
+      body: JSON.stringify({ title, description, emotion_id: parseInt(emotionId) })
     });
+    
     const data = await resp.json();
     if (!resp.ok) { setError(data.error); return; }
+    
+    const updatedEntries = store.entries.map(e => e.id === parseInt(id) ? data : e);
+    dispatch({ type: "set_entries", payload: updatedEntries });
     navigate("/entries");
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "550px" }}>
-      <h2 className="text-center fw-semibold mb-4">Edit Entry</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <form onSubmit={handleUpdate}>
-        <div className="mb-3">
-          <label className="form-label">Title</label>
-          <input className="form-control" value={title} onChange={e => setTitle(e.target.value)} required />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">How are you feeling?</label>
-          <select
-            className="form-select"
-            value={emotionId}
-            onChange={e => setEmotionId(e.target.value)}
-            required
-          >
-            <option value="">Select emotion</option>
-            {store.emotions.map(em => (
-              <option key={em.id} value={em.id}>{em.emoji} {em.name}</option>
-            ))}
-          </select>
-        </div>
-        <div
-          className="mb-3 p-3 rounded-3"
-          style={{ backgroundColor: "#f8f9fa" }}
-        >
-          <textarea
-            className="form-control border-0"
-            rows="6"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            style={{ background: "transparent", resize: "none" }}
-            required
-          />
-        </div>
-        <div className="d-flex gap-2">
-          <button className="btn btn-primary w-100">Update Entry</button>
-          <Link to="/entries" className="btn btn-outline-secondary">Cancel</Link>
-        </div>
-      </form>
+    <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "85vh", padding: "20px" }}>
+      <div style={{ background: "#ffffff", borderRadius: "24px", padding: "40px", width: "100%", maxWidth: "550px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)", border: "1px solid #edf2f7" }}>
+        <h2 className="text-center fw-bold mb-4">Edit Entry</h2>
+        <form onSubmit={handleUpdate}>
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Title</label>
+            <input className="form-control border-0 p-3" style={{ backgroundColor: "#f9fafb", borderRadius: "12px" }} value={title} onChange={e => setTitle(e.target.value)} required />
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Emotion</label>
+            <select className="form-select border-0 p-3" style={{ backgroundColor: "#f9fafb", borderRadius: "12px" }} value={emotionId} onChange={e => setEmotionId(e.target.value)} required>
+              {store.emotions.map(em => (
+                <option key={em.id} value={em.id}>{em.emoji} {em.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="form-label fw-semibold">Description</label>
+            <textarea className="form-control border-0 p-3" rows="5" value={description} onChange={e => setDescription(e.target.value)} style={{ backgroundColor: "#f9fafb", borderRadius: "15px", resize: "none" }} required />
+          </div>
+          <div className="d-flex gap-2">
+            <button className="btn w-100 py-3 fw-bold" style={{ backgroundColor: "#6366f1", color: "white", borderRadius: "12px" }}>Update Entry</button>
+            <Link to="/entries" className="btn btn-light py-3 px-4 fw-semibold" style={{ borderRadius: "12px" }}>Cancel</Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

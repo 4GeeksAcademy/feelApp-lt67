@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
 import { Link, useNavigate } from "react-router-dom";
+import useGlobalReducer from "../../hooks/useGlobalReducer";
 
 const EntriesList = () => {
   const { store, dispatch } = useGlobalReducer();
@@ -10,7 +10,7 @@ const EntriesList = () => {
 
   useEffect(() => {
     if (!store.clientToken) navigate("/");
-  }, [store.clientToken]);
+  }, [store.clientToken, navigate]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries`)
@@ -26,7 +26,7 @@ const EntriesList = () => {
     })
       .then(resp => resp.json())
       .then(data => setFavorites(data.map(f => f.entry_id)));
-  }, []);
+  }, [dispatch, store.clientToken]);
 
   const toggleFavorite = async (entryId) => {
     const isFav = favorites.includes(entryId);
@@ -39,10 +39,7 @@ const EntriesList = () => {
     } else {
       await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${store.clientToken}`
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${store.clientToken}` },
         body: JSON.stringify({ entry_id: entryId })
       });
       setFavorites([...favorites, entryId]);
@@ -50,87 +47,73 @@ const EntriesList = () => {
   };
 
   const handleDelete = async (id) => {
-    await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, {
-      method: "DELETE"
-    });
-    dispatch({
-      type: "set_entries",
-      payload: store.entries.filter(e => e.id !== id)
-    });
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, { method: "DELETE" });
+    dispatch({ type: "set_entries", payload: store.entries.filter(e => e.id !== id) });
     setDeleteModal(null);
   };
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <h2 className="fw-semibold">Entries</h2>
-        <Link to="/entries/create" className="btn btn-outline-primary btn-sm">
-          <i className="bi bi-plus-lg me-1"></i>New Entry
+    <div className="container" style={{ paddingTop: "30px", paddingBottom: "50px" }}>
+        <div className="text-center" >
+        <h1 style={{ fontWeight: "700", color: "#111827", margin: 0}}>Entries</h1>
+        <p className="text-muted">Keep tracking your progress...</p>
+        </div>
+      <div className="d-flex justify-content-end mb-5">
+        <Link to="/entries/create" style={{
+          backgroundColor: "#6366f1", color: "white", padding: "10px 20px",
+          borderRadius: "12px", textDecoration: "none", fontWeight: "600",
+          boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
+        }}>
+          <i className="bi bi-plus-lg me-2"></i>New Entry
         </Link>
       </div>
-      <p className="text-muted mb-4" style={{ fontSize: "0.9rem" }}>
-        {store.entries.length === 0 ? "Start tracking your emotions" : "Keep tracking your emotions"}
-      </p>
 
       {store.entries.length === 0 ? (
-        <p className="text-center text-muted mt-5">No entries yet</p>
+        <div className="text-center py-5">
+          <p className="text-muted">No entries yet.</p>
+        </div>
       ) : (
-        <div className="d-flex flex-column gap-3">
+        <div className="row g-4">
           {store.entries.map(entry => {
             const emotion = store.emotions.find(em => em.id === entry.emotion_id);
             const isFav = favorites.includes(entry.id);
             return (
-              <div
-                key={entry.id}
-                className="rounded-3 p-3 d-flex justify-content-between align-items-center"
-                style={{ backgroundColor: emotion?.color || "#f8f9fa" }}
-              >
-                <div style={{ flex: 1 }}>
-                  <div className="d-flex align-items-center gap-2 mb-1">
-                    <span style={{ fontSize: "1.3rem" }}>{emotion?.emoji}</span>
-                    <span className="fw-semibold">{entry.title}</span>
-                  </div>
-                  <p className="mb-1 text-muted" style={{ fontSize: "0.85rem" }}>{entry.description}</p>
-                  <small className="text-muted">{entry.date}</small>
-                </div>
-
-                <div className="d-flex align-items-center gap-2">
-                  <button
-                    className="btn btn-sm"
-                    style={{ background: "transparent", border: "none" }}
-                    onClick={() => toggleFavorite(entry.id)}
-                  >
-                    <i className={`bi ${isFav ? "bi-heart-fill text-danger" : "bi-heart"}`} style={{ fontSize: "1.2rem" }}></i>
-                  </button>
-
-                  <div className="dropdown">
-                    <button
-                      className="btn btn-sm btn-light"
-                      data-bs-toggle="dropdown"
-                    >
-                      <i className="bi bi-three-dots-vertical"></i>
+              <div key={entry.id} className="col-12 col-md-4 col-lg-3">
+                <div style={{
+                  background: "#ffffff", borderRadius: "20px", padding: "20px",
+                  height: "200px", border: "1px solid #edf2f7", position: "relative",
+                  display: "flex", flexDirection: "column", justifyContent: "space-between",
+                  boxShadow: "0 2px 10px rgba(0,0,0,0.03)"
+                }}>
+                  <div className="d-flex justify-content-between align-items-start">
+                    <button onClick={() => toggleFavorite(entry.id)} style={{ background: "none", border: "none", padding: 0 }}>
+                      <i className={`bi ${isFav ? "bi-heart-fill text-danger" : "bi-heart text-muted"}`} style={{ fontSize: "1.2rem" }}></i>
                     </button>
-                    <ul className="dropdown-menu dropdown-menu-end">
-                      <li>
-                        <Link className="dropdown-item" to={`/entries/${entry.id}`}>
-                          <i className="bi bi-eye me-2"></i>Details
-                        </Link>
-                      </li>
-                      <li>
-                        <Link className="dropdown-item" to={`/entries/${entry.id}/edit`}>
-                          <i className="bi bi-pencil me-2"></i>Edit
-                        </Link>
-                      </li>
-                      <li><hr className="dropdown-divider" /></li>
-                      <li>
-                        <button
-                          className="dropdown-item text-danger"
-                          onClick={() => setDeleteModal(entry.id)}
-                        >
-                          <i className="bi bi-trash me-2"></i>Delete
-                        </button>
-                      </li>
-                    </ul>
+                    
+                    <div className="dropdown">
+                      <button className="btn btn-link text-muted p-0" data-bs-toggle="dropdown">
+                        <i className="bi bi-three-dots-vertical" style={{ fontSize: "1.2rem" }}></i>
+                      </button>
+                      <ul className="dropdown-menu dropdown-menu-end border-0 shadow-sm">
+                        <li><Link className="dropdown-item" to={`/entries/${entry.id}`}><i className="bi bi-eye me-2"></i>Details</Link></li>
+                        <li><Link className="dropdown-item" to={`/entries/${entry.id}/edit`}><i className="bi bi-pencil me-2"></i>Edit</Link></li>
+                        <li><hr className="dropdown-divider" /></li>
+                        <li><button className="dropdown-item text-danger" onClick={() => setDeleteModal(entry.id)}><i className="bi bi-trash me-2"></i>Delete</button></li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <div style={{ fontSize: "2.5rem", marginBottom: "5px" }}>{emotion?.emoji}</div>
+                    <h6 style={{ fontWeight: "700", color: "#1f2937", margin: 0, textTransform: "capitalize" }}>
+                      {entry.title}
+                    </h6>
+                  </div>
+
+                  <div className="text-center">
+                    <small style={{ color: "#9ca3af", fontWeight: "500", fontSize: "0.75rem" }}>
+                      {entry.date}
+                    </small>
                   </div>
                 </div>
               </div>
@@ -138,21 +121,17 @@ const EntriesList = () => {
           })}
         </div>
       )}
-
       {deleteModal && (
-        <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+        <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Delete Entry</h5>
-                <button className="btn-close" onClick={() => setDeleteModal(null)}></button>
-              </div>
-              <div className="modal-body">
-                Are you sure you want to delete this entry?
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setDeleteModal(null)}>Cancel</button>
-                <button className="btn btn-danger" onClick={() => handleDelete(deleteModal)}>Delete</button>
+            <div className="modal-content border-0" style={{ borderRadius: "20px", padding: "10px" }}>
+              <div className="modal-body text-center">
+                <h5 className="fw-bold mb-3">Delete Entry?</h5>
+                <p className="text-muted">This action cannot be undone.</p>
+                <div className="d-flex gap-2 justify-content-center mt-4">
+                  <button className="btn btn-light px-4" style={{ borderRadius: "10px" }} onClick={() => setDeleteModal(null)}>Cancel</button>
+                  <button className="btn btn-danger px-4" style={{ borderRadius: "10px" }} onClick={() => handleDelete(deleteModal)}>Delete</button>
+                </div>
               </div>
             </div>
           </div>
@@ -161,4 +140,5 @@ const EntriesList = () => {
     </div>
   );
 };
+
 export default EntriesList;

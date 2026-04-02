@@ -14,8 +14,8 @@ export const ClientPrivate = () => {
     <div style={{ height: "calc(90vh - 56px)", display: "flex", flexDirection: "column", justifyContent: "space-between", overflow: "hidden" }}>
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", padding: "0 1rem" }}>
-        <h1 style={{ fontWeight: 500, fontSize: "2rem", marginBottom: "0.5rem" }}>How do you feel today?</h1>
-        <p style={{ color: "#aaa", letterSpacing: "0.02em", margin: 0 }}>Start tracking your emotions</p>
+        <h1 style={{ fontWeight: 500, marginBottom: "1rem" }}>How do you feel today?</h1>
+        <p style={{ letterSpacing: "0.02em", margin: 0 }}>Start tracking your emotions</p>
       </div>
 
       <div className="d-flex justify-content-around align-items-center py-3" style={{ borderTop: "1px solid #eee" }}>
