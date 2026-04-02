@@ -69,7 +69,7 @@ export default function storeReducer(store, action = {}) {
     return { ...store, access_clients: action.payload };
 
     case 'login_client':
-    sessionStorage.setItem("clientToken", action.payload)
+    sessionStorage.setItem("clientToken", action.payload);
     return { ...store, clientToken: action.payload };
 
     case 'logout_client':

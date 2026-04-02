@@ -469,39 +469,33 @@ def get_entry(entry_id):
 
     return jsonify(entry.serialize()), 200
 
-# POST entires
+# POST entries
+
 @api.route('/entries', methods=['POST'])
+@jwt_required()  
 def create_entry():
+    current_client_id = get_jwt_identity() 
     body = request.get_json()
 
     if body is None:
         return jsonify({"error": "Body cannot be empty"}), 400
-
-    if not body.get("client_id"):
-        return jsonify({"error": "client_id is required"}), 400
-
     if not body.get("title"):
         return jsonify({"error": "title is required"}), 400
-
     if not body.get("description"):
         return jsonify({"error": "description is required"}), 400
-
     if not body.get("date"):
         return jsonify({"error": "date is required"}), 400
-
     if not body.get("emotion_id"):
         return jsonify({"error": "emotion_id is required"}), 400
-
-    client = Client.query.get(body["client_id"])
+    client = Client.query.get(current_client_id)
     if client is None:
-        return jsonify({"error": "Client not found"}), 404
-
+        return jsonify({"error": "Client not found in database"}), 404
     emotion = Emotion.query.get(body["emotion_id"])
     if emotion is None:
         return jsonify({"error": "Emotion not found"}), 404
-
+    
     new_entry = Entry(
-        client_id=body["client_id"],
+        client_id=current_client_id,
         title=body["title"],
         description=body["description"],
         date=body["date"],
@@ -512,6 +506,7 @@ def create_entry():
     db.session.commit()
 
     return jsonify(new_entry.serialize()), 201
+
 
 # PUT entries
 @api.route('/entries/<int:entry_id>', methods=['PUT'])
@@ -1086,7 +1081,7 @@ def login():
     if client.password != password:
         return jsonify({"msg": "Bad credentials"}), 401
 
-    access_token = create_access_token(identity=client.id)
+    access_token = create_access_token (identity=str(client.id))
 
     return jsonify({
         "token": access_token,
@@ -1142,7 +1137,8 @@ def admint_login():
     if password != admint.password:
         return jsonify({"msg": "Admint o contraseña incorrectos"})
 
-    access_token = create_access_token(identity=admint.id)
+    access_token = create_access_token(identity=str(admint.id))
+
     return jsonify({
         "token": access_token,
         "client": admint.serialize()
@@ -1209,7 +1205,7 @@ def coach_login():
     if coach.password != password:
         return jsonify({"msg": "Bad credentials"}), 401
 
-    access_token = create_access_token(identity=coach.id)
+    access_token = create_access_token(identity=str(coach.id))
 
     return jsonify({
         "token": access_token,

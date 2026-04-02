@@ -23,7 +23,20 @@ export const Navbar = () => {
   return (
     <nav className="navbar navbar-light bg-light">
       <div className="container">
+      {!isLoggedIn ? (  
         <Link to="/"><span className="navbar-brand mb-0 h1">FeelApp</span></Link>
+       ) : (
+          <Link 
+            to={
+              store.clientToken ? "/client-private" :
+              store.coachToken  ? "/coach-private" :
+              store.admintToken ? "/admint-private" : 
+              "/"
+            }
+          >
+          <span className="navbar-brand mb-0 h1">FeelApp</span>
+        </Link>
+       )}
         <div className="d-flex gap-2 align-items-center">
           {!isLoggedIn ? (
             <>

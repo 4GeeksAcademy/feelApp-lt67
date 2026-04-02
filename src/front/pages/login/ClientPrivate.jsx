@@ -20,7 +20,7 @@ export const ClientPrivate = () => {
 
       <div className="d-flex justify-content-around align-items-center py-3" style={{ borderTop: "1px solid #eee" }}>
         {[
-          { to: "/entries/create", icon: "✏️", label: "New Entry" },
+          { to: "/entries", icon: "✏️", label: "New Entry" },
           { to: "/clients-posts/create", icon: "💬", label: "New Post" },
           { to: "/client-private", icon: "👥", label: "Friends" },
           { to: "/client-private", icon: "📊", label: "Stats" },
