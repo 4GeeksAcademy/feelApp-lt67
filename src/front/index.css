@@ -1,1 +1,68 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  background-image: 
+    radial-gradient(at 10% 15%, rgba(103, 232, 249, 0.5) 0px, transparent 45%),
+    radial-gradient(at 90% 10%, rgba(110, 231, 183, 0.45) 0px, transparent 40%),
+    radial-gradient(at 85% 85%, rgba(165, 180, 252, 0.4) 0px, transparent 45%),
+    radial-gradient(at 15% 95%, rgba(134, 239, 172, 0.35) 0px, transparent 40%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: 'Inter', sans-serif; 
+}
+
+h1 {
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Home */
+
+.brand-badge {
+  background-color: #6366f1; 
+  color: white;
+  padding: 4px 16px;
+  border-radius: 12px;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.subtitle-text {
+  max-width: 800px; 
+  font-size: 1.2rem;
+  color: #4b5563;
+  padding-top: 4px;
+  
+}
+
+.btn-get-started {
+  background-color: #10b981;
+  color: white;
+  padding: 14px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-block;
+  border: none;
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+}
+
+.btn-get-started:hover {
+  transform: translateY(-2px);
+  background-color: #059669;
+  color: white;
+  box-shadow: 0 12px 25px rgba(16, 185, 129, 0.3);
+}
+
+/* Navbar */
+
+.custom-navbar {
+  backdrop-filter: blur(10px);   
+  transition: all 0.3s ease;
+}
 
