@@ -553,6 +553,22 @@ def delete_entry(entry_id):
 
     return jsonify({"message": "Entry deleted successfully"}), 200
 
+# Added to delete a fav on entrie
+
+@api.route('/client-favorites/entry/<int:entry_id>', methods=['DELETE'])
+@jwt_required()
+def delete_client_favorite_by_entry(entry_id):
+    current_client_id = get_jwt_identity()
+    favorite = ClientFavorites.query.filter_by(
+        client_id=current_client_id,
+        entry_id=entry_id
+    ).first()
+    if favorite is None:
+        return jsonify({"error": "Favorite not found"}), 404
+    db.session.delete(favorite)
+    db.session.commit()
+    return jsonify({"message": "Removed from favorites"}), 200
+
 
 
 # Get all favorites
@@ -572,16 +588,15 @@ def get_favorites_by_client(client_id):
 
 # Add favorite
 @api.route('/client-favorites', methods=['POST'])
+@jwt_required()
 def create_client_favorite():
+    current_client_id = get_jwt_identity()
     body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Body cannot be empty"}), 400
-    if not body.get("client_id"):
-        return jsonify({"error": "client_id is required"}), 400
+    
     if not body.get("entry_id"):
         return jsonify({"error": "entry_id is required"}), 400
 
-    client = Client.query.get(body["client_id"])
+    client = Client.query.get(current_client_id)
     if client is None:
         return jsonify({"error": "Client not found"}), 404
 
@@ -590,14 +605,14 @@ def create_client_favorite():
         return jsonify({"error": "Entry not found"}), 404
 
     already_exists = ClientFavorites.query.filter_by(
-        client_id=body["client_id"],
+        client_id=current_client_id,
         entry_id=body["entry_id"]
     ).first()
     if already_exists:
-        return jsonify({"error": "This entry is already in favorites"}), 409
+        return jsonify({"error": "Already in favorites"}), 409
 
     new_favorite = ClientFavorites(
-        client_id=body["client_id"],
+        client_id=current_client_id,
         entry_id=body["entry_id"]
     )
     db.session.add(new_favorite)
@@ -1225,3 +1240,4 @@ def coach_private():
         "msg": "Access granted",
         "coach": coach.serialize()
     }), 200
+

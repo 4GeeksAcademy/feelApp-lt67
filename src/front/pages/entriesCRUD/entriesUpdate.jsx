@@ -1,68 +1,91 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
 const EntriesUpdate = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
   const { store, dispatch } = useGlobalReducer();
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    date: "",
-    emotion_id: ""
-  });
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [emotionId, setEmotionId] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!store.clientToken) navigate("/");
-  }, [store.clientToken]);
-
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`)
-      .then(resp => resp.json())
-      .then(data => setForm(data));
     if (store.emotions.length === 0) {
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
         .then(resp => resp.json())
         .then(data => dispatch({ type: "set_emotions", payload: data }));
     }
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`)
+      .then(resp => resp.json())
+      .then(data => {
+        setTitle(data.title);
+        setDescription(data.description);
+        setEmotionId(data.emotion_id);
+      });
   }, [id]);
+
+  const selectedEmotion = store.emotions.find(em => em.id === parseInt(emotionId));
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, {
+    setError("");
+    const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
+      body: JSON.stringify({
+        title,
+        description,
+        emotion_id: parseInt(emotionId)
+      })
     });
+    const data = await resp.json();
+    if (!resp.ok) { setError(data.error); return; }
     navigate("/entries");
   };
 
-  const selectedEmotion = store.emotions.find(em => em.id === parseInt(form.emotion_id));
-
   return (
-    <div className="container mt-4 p-4 rounded" style={{ backgroundColor: selectedEmotion?.color || "transparent" }}>
-      <h2>Update Entry</h2>
+    <div className="container mt-5" style={{ maxWidth: "550px" }}>
+      <h2 className="text-center fw-semibold mb-4">Edit Entry</h2>
+      {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleUpdate}>
         <div className="mb-3">
-          <label>Title</label>
-          <input className="form-control" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
+          <label className="form-label">Title</label>
+          <input className="form-control" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
         <div className="mb-3">
-          <label>Description</label>
-          <textarea className="form-control" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
-        </div>
-        <div className="mb-3">
-          <label>Emotion</label>
-          <select className="form-select" value={form.emotion_id} onChange={e => setForm({ ...form, emotion_id: e.target.value })}>
+          <label className="form-label">How are you feeling?</label>
+          <select
+            className="form-select"
+            value={emotionId}
+            onChange={e => setEmotionId(e.target.value)}
+            required
+          >
             <option value="">Select emotion</option>
             {store.emotions.map(em => (
               <option key={em.id} value={em.id}>{em.emoji} {em.name}</option>
             ))}
           </select>
         </div>
-        <button className="btn btn-primary">Update</button>
-        <Link to="/entries" className="btn btn-secondary ms-2">Back</Link>
+        <div
+          className="mb-3 p-3 rounded-3"
+          style={{ backgroundColor: "#f8f9fa" }}
+        >
+          <textarea
+            className="form-control border-0"
+            rows="6"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            style={{ background: "transparent", resize: "none" }}
+            required
+          />
+        </div>
+        <div className="d-flex gap-2">
+          <button className="btn btn-primary w-100">Update Entry</button>
+          <Link to="/entries" className="btn btn-outline-secondary">Cancel</Link>
+        </div>
       </form>
     </div>
   );
