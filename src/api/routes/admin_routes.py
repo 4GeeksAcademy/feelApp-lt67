@@ -35,6 +35,11 @@ def admint_private():
 
 # CLIENTS - Read and Delete
 
+@admin_bp.route('/clients', methods=['GET'])
+def get_clients():
+    clients = Client.query.all()
+    return jsonify([c.serialize() for c in clients]), 200
+
 @admin_bp.route('/clients/<int:client_id>', methods=['DELETE'])
 @jwt_required()
 def delete_client(client_id):

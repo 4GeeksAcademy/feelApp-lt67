@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from api.models import db, Emotion, Entry, AdmintPost, Client
+from api.models import db, Emotion, Entry, AdmintPost
 
 shared_bp = Blueprint('shared_routes', __name__)
 
@@ -36,8 +36,5 @@ def get_admint_post(post_id):
         return jsonify({"error": "Post not found"}), 404
     return jsonify(post.serialize()), 200
 
-@shared_bp.route('/clients', methods=['GET'])
-def get_clients():
-    clients = Client.query.all()
-    return jsonify([c.serialize() for c in clients]), 200
+
     
