@@ -8,20 +8,20 @@ export const Navbar = () => {
   const handleLogout = () => {
     if (store.clientToken) {
       dispatch({ type: "logout_client" });
-      navigate("/client-login-landing");
+      navigate("/");
     } else if (store.coachToken) {
       dispatch({ type: "logout_coach" });
-      navigate("/coach-login-landing");
+      navigate("/");
     } else if (store.admintToken) {
       dispatch({ type: "logout_admint" });
-      navigate("/admint-login-landing");
+      navigate("/");
     }
   };
 
   const isLoggedIn = store.clientToken || store.coachToken || store.admintToken;
 
   return (
-    <nav className="navbar custom-navbar">
+    <nav className="navbar custom-navbar p-2">
       <div className="container">
       {!isLoggedIn ? (  
         <Link to="/"><span className="navbar-brand mb-0 h1">FeelApp</span></Link>
@@ -34,7 +34,7 @@ export const Navbar = () => {
               "/"
             }
           >
-          <span className="navbar-brand mb-0 h1">FeelApp</span>
+          <span className="navbar-brand mb-0">FeelApp</span>
         </Link>
        )}
         <div className="d-flex gap-2 align-items-center">
