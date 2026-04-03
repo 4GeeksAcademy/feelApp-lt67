@@ -1,6 +1,3 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
@@ -8,9 +5,9 @@ from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db
 from api import models
-from api.routes import api
 from api.admin import setup_admin
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 # from models import Person
 
@@ -19,6 +16,7 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+CORS(app)
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
@@ -39,10 +37,15 @@ jwt = JWTManager(app)
 setup_admin(app)
 
 # Add all endpoints form the API with a "api" prefix
-app.register_blueprint(api, url_prefix='/api')
+
+from api.routes import client_bp, coach_bp, admin_bp, shared_bp
+
+app.register_blueprint(client_bp, url_prefix='/api')
+app.register_blueprint(coach_bp, url_prefix='/api')
+app.register_blueprint(admin_bp, url_prefix='/api')
+app.register_blueprint(shared_bp, url_prefix='/api')
 
 # Handle/serialize errors like a JSON object
-
 
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
@@ -71,3 +74,4 @@ def serve_any_other_file(path):
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
     app.run(host='0.0.0.0', port=PORT, debug=True)
+
