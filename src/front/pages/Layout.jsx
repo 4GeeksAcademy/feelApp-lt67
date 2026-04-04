@@ -7,16 +7,9 @@ export const Layout = () => {
   return (
     <ScrollToTop>
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-        
         <Navbar />
 
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column"
-          }}
-        >
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", paddingTop: "25px", overflow: "hidden"  }}>
           <Outlet />
         </div>
 

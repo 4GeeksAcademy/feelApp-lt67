@@ -98,7 +98,6 @@ def delete_coach(coach_id):
 
 # EMOTIONS CRUD
 @admin_bp.route('/emotions', methods=['POST'])
-@jwt_required()
 def create_emotion():
     body = request.get_json()
     if not body.get("name"):

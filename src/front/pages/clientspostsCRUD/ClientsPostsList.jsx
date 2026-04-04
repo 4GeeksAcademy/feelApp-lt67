@@ -3,60 +3,63 @@ import { Link } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
 const CLientsPostsList = () => {
-    const { store, dispatch } = useGlobalReducer();
+  const { store, dispatch } = useGlobalReducer();
 
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts`);
+      const data = await resp.json();
+      if (resp.ok) {
+        dispatch({ 
+          type: "set_clients_posts", 
+          payload: Array.isArray(data) ? data : [] 
+        });
+      }
+    };
+    fetchPosts();
+  }, [dispatch]);
 
-    useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts`)
-            .then(resp => resp.json())
-            .then(data => dispatch({ type: "set_clients_posts", payload: data }));
-    }, []);
+  const posts = Array.isArray(store.clients_posts) ? store.clients_posts : [];
 
-
-    return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h2 style={{ fontWeight: "600" }}>Clients Posts</h2>
-                <Link to="/clients-posts/create" className="btn btn-primary">Create Post</Link>
-            </div>
-            <div style={{ background: "#fff", borderRadius: "10px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", padding: "15px" }}>
-                <table className="table table-hover align-middle mb-0">
-                    <thead className="table-light">
-                        <tr>
-                            <th style={{ width: "60px" }}>ID</th>
-                            <th style={{ width: "80px" }}>Client ID</th>
-                            <th>Title</th>
-                            <th>Text</th>
-                            <th style={{ width: "120px" }}>Date</th>
-                            <th style={{ width: "100px" }}></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {store.clients_posts.length === 0 ? (
-                            <tr>
-                                <td colSpan="7" className="text-center text-muted py-4">No posts yet</td>
-                            </tr>
-                        ) : (
-                            store.clients_posts.map(post => (
-                                <tr key={post.id}>
-                                    <td style={{ fontWeight: "500" }}>{post.id}</td>
-                                    <td>{post.client_id}</td>
-                                    <td>{post.title}</td>
-                                    <td>{post.text}</td>
-                                    <td>{new Date(post.date).toLocaleDateString()}</td>
-                                    <td>
-                                        <Link to={`/clients-posts/${post.id}`} className="btn btn-outline-secondary btn-sm">
-                                            Details
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+  return (
+    <div className="container mt-5">
+      <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
+        <h2>Clients Posts</h2>
+        <Link to="/clients-posts/create" className="btn btn-primary">New Post</Link>
+      </div>
+      
+      <table className="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {posts.length === 0 ? (
+            <tr><td colSpan="5" className="text-center">No entries found</td></tr>
+          ) : (
+            posts.map(post => (
+              <tr key={post.id}>
+                <td>{post.id}</td>
+                <td>{post.client_id}</td>
+                <td>{post.title}</td>
+                <td>{post.date}</td>
+                <td>
+                  <Link to={`/clients-posts/${post.id}`} className="btn btn-sm btn-outline-dark">
+                    View ID: {post.id}
+                  </Link>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default CLientsPostsList;
