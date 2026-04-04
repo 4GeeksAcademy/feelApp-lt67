@@ -15,8 +15,14 @@ export const initialStore = () => {
     access_coach: [],
     access_clients: [],
     clientToken: sessionStorage.getItem("clientToken") || null,
+    clientId: sessionStorage.getItem("clientId") || null,
+    clientEmail: sessionStorage.getItem("clientEmail") || null,
     coachToken: sessionStorage.getItem("coachToken") || null,
+    coachId: sessionStorage.getItem("coachtId") || null,
+    coachEmail: sessionStorage.getItem("coachEmail") || null,
     admintToken: sessionStorage.getItem("admintToken") || null,
+    admintId: sessionStorage.getItem("admintId") || null,
+    admintEmail: sessionStorage.getItem("admintEmail") || null,
   };
 };
 
@@ -65,24 +71,45 @@ export default function storeReducer(store, action = {}) {
     return { ...store, access_clients: action.payload };
 
     case 'login_client':
-    sessionStorage.setItem("clientToken", action.payload);
-    return { ...store, clientToken: action.payload };
+    sessionStorage.setItem("clientToken", action.payload.token);
+    sessionStorage.setItem("clientEmail", action.payload.client?.email || "");
+    sessionStorage.setItem("clientId", action.payload.client?.id || "");
+    return { 
+      ...store, 
+      clientToken: action.payload.token,
+      clientEmail: action.payload.client?.email || null,
+      clientId: action.payload.client?.id || null
+    };
+
+    case 'login_coach':
+    sessionStorage.setItem("coachToken", action.payload.token);
+    sessionStorage.setItem("coachEmail", action.payload.coach?.email || "");
+    sessionStorage.setItem("coachId", action.payload.coach?.id || "");
+    return { 
+      ...store, 
+      coachToken: action.payload.token,
+      coachEmail: action.payload.coach?.email || null,
+      coachId: action.payload.coach?.id || null
+    };
+
+    case 'login_admint':
+    sessionStorage.setItem("admintToken", action.payload.token);
+    sessionStorage.setItem("admintEmail", action.payload.admint?.email || "");
+    sessionStorage.setItem("admintId", action.payload.admint?.id || "");
+    return { 
+      ...store, 
+      admintToken: action.payload.token,
+      admintEmail: action.payload.admint?.email || null,
+      admintId: action.payload.admint?.id || null
+    };
 
     case 'logout_client':
     sessionStorage.removeItem("clientToken")
     return { ...store, clientToken: null };
 
-    case 'login_coach':
-    sessionStorage.setItem("coachToken", action.payload)
-    return { ...store, coachToken: action.payload };
-
     case 'logout_coach':
     sessionStorage.removeItem("coachToken")
     return { ...store, coachToken: null };
-
-    case 'login_admint':
-    sessionStorage.setItem("admintToken", action.payload)
-    return { ...store, admintToken: action.payload };
 
     case 'logout_admint':
     sessionStorage.removeItem("admintToken")

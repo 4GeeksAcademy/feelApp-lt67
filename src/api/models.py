@@ -220,9 +220,6 @@ class ClientPost(db.Model):
             "text": self.text,
             "date": self.date.isoformat()
         }
-    
-
-# Modelado de datos: Reaction-Client-Post:
 
 class ReactionClientPost(db.Model):
 
@@ -265,14 +262,16 @@ class AccessCoach(db.Model):
     coach = db.relationship("Coach", back_populates="coach_requests")
     client = db.relationship("Client", back_populates="coach_requests")
     
-
     def serialize(self):
-        return {
-            "id": self.id,
-            "client_id": self.client_id,
-            "coach_id": self.coach_id,
-            "status": self.status
-        }
+         return {
+        "id": self.id,
+        "client_id": self.client_id,
+        "client_email": self.client.email,
+        "coach_id": self.coach_id,
+        "coach_email": self.coach.email,
+        "status": self.status
+    }
+
     
 class AccessClient(db.Model):
     __tablename__ = "access_clients"
@@ -300,6 +299,10 @@ class AccessClient(db.Model):
         return {
             "id": self.id,
             "client_id": self.client_id,
+            "client_email": self.client.email,
             "shared_with_id": self.shared_with_id,
+            "shared_with_email": self.shared_with.email,
             "status": self.status
-        }
+    }
+
+

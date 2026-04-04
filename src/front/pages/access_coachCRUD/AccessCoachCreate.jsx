@@ -46,7 +46,6 @@ export const AccessCoachCreate = () => {
 
             <form onSubmit={handleSubmit}>
 
-                {/* CLIENT */}
                 <select
                     className="form-control mb-2"
                     value={clientId}
@@ -61,7 +60,6 @@ export const AccessCoachCreate = () => {
                     ))}
                 </select>
 
-                {/* COACH */}
                 <select
                     className="form-control mb-2"
                     value={coachId}
@@ -76,7 +74,6 @@ export const AccessCoachCreate = () => {
                     ))}
                 </select>
 
-                {/* STATUS */}
                 <select
                     className="form-control mb-3"
                     value={status}
@@ -87,7 +84,6 @@ export const AccessCoachCreate = () => {
                     <option value="rejected">rejected</option>
                 </select>
 
-                {/* BOTONES */}
                 <button className="btn btn-primary me-2">
                     Create
                 </button>

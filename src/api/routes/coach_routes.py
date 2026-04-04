@@ -75,7 +75,7 @@ def delete_coach_favorite(entry_id):
     db.session.commit()
     return jsonify({"message": "Removed from favorites"}), 200
 
-# ACCESS COACH (CRD, no update)
+# ACCESS COACH 
 @coach_bp.route('/access-coach', methods=['GET'])
 @jwt_required()
 def get_access_coach():
@@ -87,6 +87,23 @@ def get_one_access_coach(id):
     item = AccessCoach.query.get(id)
     if item is None:
         return jsonify({"error": "Not found"}), 404
+    return jsonify(item.serialize()), 200
+
+@coach_bp.route('/access-coach/<int:id>', methods=['PUT'])
+@jwt_required()
+def update_access_coach_status(id):
+    current_coach_id = get_jwt_identity()
+    item = AccessCoach.query.get(id)
+    if item is None:
+        return jsonify({"error": "Not found"}), 404
+    if str(item.coach_id) != str(current_coach_id):
+        return jsonify({"error": "Only the coach can update this"}), 403
+    data = request.get_json()
+    if "status" in data:
+        if data["status"] not in ["pending", "approved", "rejected"]:
+            return jsonify({"msg": "Invalid status"}), 400
+        item.status = data["status"]
+    db.session.commit()
     return jsonify(item.serialize()), 200
 
 @coach_bp.route('/access-coach/<int:id>', methods=['DELETE'])

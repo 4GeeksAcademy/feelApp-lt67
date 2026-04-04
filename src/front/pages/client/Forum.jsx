@@ -23,9 +23,7 @@ const Forum = () => {
   const isClient = !!store.clientToken;
   const activeToken = store.clientToken || store.admintToken || store.coachToken;
 
-  const myId = store.clientToken
-    ? JSON.parse(atob(store.clientToken.split(".")[1])).sub
-    : null;
+  const myId = store.clientId;
 
   useEffect(() => {
     if (!activeToken) navigate("/");
