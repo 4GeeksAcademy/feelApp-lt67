@@ -18,7 +18,7 @@ export const ClientPrivate = () => {
         <p style={{ letterSpacing: "0.02em", margin: 0 }}>Start tracking your emotions</p>
       </div>
 
-      <div className="d-flex justify-content-around align-items-center py-3" style={{ borderTop: "1px solid #eee" }}>
+      <div className="d-flex justify-content-around align-items-center pt-3" style={{ borderTop: "1px solid #eee" }}>
         {[
           { to: "/entries", icon: "✏️", label: "New Entry" },
           { to: "/clients-posts/create", icon: "💬", label: "New Post" },

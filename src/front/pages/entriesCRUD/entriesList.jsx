@@ -53,7 +53,7 @@ const EntriesList = () => {
   };
 
   return (
-    <div className="container" style={{ paddingTop: "30px", paddingBottom: "50px" }}>
+    <div className="container" style={{ paddingTop: "70px" }}>
         <div className="text-center" >
         <h1 style={{ fontWeight: "700", color: "#111827", margin: 0}}>Entries</h1>
         <p className="text-muted">Keep tracking your progress...</p>

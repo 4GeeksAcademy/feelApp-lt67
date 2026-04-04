@@ -43,7 +43,7 @@ const EntriesUpdate = () => {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "85vh", padding: "20px" }}>
+    <div className="container d-flex justify-content-center align-items-center" style={{ paddingTop: "70px" }}>
       <div style={{ background: "#ffffff", borderRadius: "24px", padding: "40px", width: "100%", maxWidth: "550px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)", border: "1px solid #edf2f7" }}>
         <h2 className="text-center fw-bold mb-4">Edit Entry</h2>
         <form onSubmit={handleUpdate}>

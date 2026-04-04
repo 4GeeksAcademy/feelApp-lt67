@@ -11,13 +11,19 @@ export const LoginLanding = ({ tokenKey, loginPath, signupPath, privatePath, tit
   }, [store[tokenKey]]);
 
   return (
-    <div className="container mt-5 text-center">
-      <h1>{title}</h1>
-      <p className="lead">Please log in to continue</p>
-      <Link to={loginPath}>
-        <button className="btn btn-primary me-2">Go to Login</button>
-      </Link>
-      <p className="mt-3">Don't have an account? <Link to={signupPath}>Sign Up</Link></p>
+    <div className="auth-wrapper d-flex flex-column justify-content-center align-items-center mt-5 text-center" style={{ height: "calc(85vh - 56px)", overflow: "hidden" }}>
+      <div className="custom-container text-center">
+        <h1 className="mb-4 fw-normal">{title}</h1>
+        <p className="text-muted mb-4">Please log in to continue to your dashboard</p>
+        
+        <Link to={loginPath} className="text-decoration-none">
+          <button className="btn btn-custom w-45 py-2 mb-3">Go to Login</button>
+        </Link>
+        
+        <p className="mt-3 mb-0">
+          Don't have an account? <Link to={signupPath} className="fw-bold">Sign Up</Link>
+        </p>
+      </div>
     </div>
   );
 };
