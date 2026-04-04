@@ -69,9 +69,10 @@ import { CrudList } from "./pages/CrudList";
 
 import { SignUp } from "./pages/login/SignUp";
 import { Login } from "./pages/login/Login";
-import { ClientPrivate } from "./pages/login/ClientPrivate";
+import { ClientPrivate } from "./pages/client/ClientPrivate";
 import { CoachPrivate } from "./pages/login/CoachPrivate";
 import { AdminPrivate } from "./pages/login/AdminPrivate";
+import Forum from "./pages/client/Forum";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -150,6 +151,10 @@ export const router = createBrowserRouter(
       <Route path="/admint-private" element={<AdminPrivate />} />
 
       <Route path="/crudlist" element={<CrudList />} />
+
+      import Forum from "./pages/forum/Forum";
+
+      <Route path="/forum" element={<Forum />} />
       
     </Route>
   )

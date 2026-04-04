@@ -16,6 +16,13 @@ h1 {
   font-style: normal;
 }
 
+h2, h3 {
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
 /* Home */
 
 .brand-badge {
@@ -120,6 +127,12 @@ h1 {
   border-radius: 50px;
 }
 
+.btn-logout:hover {
+  background-color: #fcdde0;
+  border: 1px solid #ef9a9a;
+  color: #c62828;
+}
+
 .btn-cruds {
   background-color: #f5f5f5;
   border: 1px solid #ddd;
@@ -162,4 +175,76 @@ h1 {
 .btn-custom:hover {
   transform: translateY(-2px);
   opacity: 0.9;
+}
+
+/* Forum */
+
+.btn-custom2 {
+  background: linear-gradient(135deg, #b3e5fc 0%, #f8bbd0 100%);
+  border: black;
+  color: #444;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+
+.btn-custom2:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.btn-forum-switch {
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  background-color: white;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-forum-switch.active {
+  background: linear-gradient(135deg, #b3e5fc 0%, #f8bbd0 100%);
+  color: #444;
+  border-color: transparent;
+}
+
+.forum-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.forum-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.forum-input {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.forum-input:focus {
+  border-color: #b3e5fc;
+  box-shadow: 0 0 0 3px rgba(179, 229, 252, 0.3);
+}
+
+.btn-custom {
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.reaction-badge {
+  background-color: #f9fafb;
+  border: 1px solid #f3f4f6;
+  border-radius: 20px;
+  padding: 4px 10px;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.reaction-badge:hover {
+  background-color: #fff9c4;
+  border-color: #fde68a;
 }
