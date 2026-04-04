@@ -73,6 +73,7 @@ import { ClientPrivate } from "./pages/client/ClientPrivate";
 import { CoachPrivate } from "./pages/login/CoachPrivate";
 import { AdminPrivate } from "./pages/login/AdminPrivate";
 import Forum from "./pages/client/Forum";
+import AccessPage from "./pages/client/AccessPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -155,6 +156,7 @@ export const router = createBrowserRouter(
       import Forum from "./pages/forum/Forum";
 
       <Route path="/forum" element={<Forum />} />
+      <Route path="/access" element={<AccessPage />} />
       
     </Route>
   )

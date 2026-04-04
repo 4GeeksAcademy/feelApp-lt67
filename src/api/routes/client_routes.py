@@ -283,6 +283,23 @@ def get_one_access_coach(id):
         return jsonify({"error": "Not found"}), 404
     return jsonify(item.serialize()), 200
 
+@client_bp.route('/access-coach/<int:id>', methods=['PUT'])
+@jwt_required()
+def update_access_coach_status(id):
+    current_client_id = get_jwt_identity()
+    item = AccessCoach.query.get(id)
+    if item is None:
+        return jsonify({"error": "Not found"}), 404
+    if str(item.client_id) != str(current_client_id):
+        return jsonify({"error": "Only the client can approve this"}), 403
+    data = request.get_json()
+    if "status" in data:
+        if data["status"] not in ["pending", "approved", "rejected"]:
+            return jsonify({"msg": "Invalid status"}), 400
+        item.status = data["status"]
+    db.session.commit()
+    return jsonify(item.serialize()), 200
+
 @client_bp.route('/access-coach/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_access_coach(id):

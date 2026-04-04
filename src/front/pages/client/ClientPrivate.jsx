@@ -22,7 +22,7 @@ export const ClientPrivate = () => {
         {[
           { to: "/entries", icon: "✏️", label: "New Entry" },
           { to: "/forum", icon: "💬", label: "Forum" }, 
-          { to: "/client-private", icon: "👥", label: "Friends" },
+          { to: "/access", icon: "🔑", label: "Access" },
           { to: "/client-private", icon: "📊", label: "Stats" },
         ].map((item) => (
           <Link key={item.to} to={item.to} className="text-decoration-none text-dark d-flex flex-column align-items-center gap-1" style={{ fontSize: 12 }}>

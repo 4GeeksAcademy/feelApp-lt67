@@ -32,7 +32,7 @@ export const Login = ({ apiEndpoint, dispatchType, redirectPath, signupPath, tok
       const data = await resp.json();
       
       if (resp.ok) {
-        dispatch({ type: dispatchType, payload: data.token });
+        dispatch({ type: dispatchType, payload: data });
       } else {
         setError(data.msg || "Login failed. Please check your credentials.");
       }
@@ -47,11 +47,9 @@ export const Login = ({ apiEndpoint, dispatchType, redirectPath, signupPath, tok
         <h1 className="text-center mb-2 fw-normal">{title}</h1>
         <p className="text-center text-muted mb-4">Enter your credentials to access</p>
 
-        {/* Mensajes de feedback */}
         {successMessage && <div className="alert alert-success p-2 text-center small">{successMessage}</div>}
         {error && <div className="alert alert-danger p-2 text-center small">{error}</div>}
 
-        {/* Formulario directo */}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label small fw-bold">Email</label>
