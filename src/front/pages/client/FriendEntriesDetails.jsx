@@ -14,8 +14,8 @@ const FriendEntriesDetails = () => {
   }, [store.clientToken, navigate]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${entryId}`, {
-      headers: { Authorization: `Bearer ${store.clientToken}` }
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, {
+    headers: { Authorization: `Bearer ${store.clientToken}` }
     })
       .then(r => r.json())
       .then(data => setEntry(data));

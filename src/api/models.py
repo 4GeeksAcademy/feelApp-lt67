@@ -158,6 +158,7 @@ class Entry(db.Model):
         return {
             "id": self.id,
             "client_id": self.client_id,
+            "client_email": self.client.email,
             "title": self.title,
             "description": self.description,
             "date": self.date,
@@ -216,6 +217,7 @@ class ClientPost(db.Model):
         return {
             "id": self.id,
             "client_id": self.client_id,
+            "client_email": self.client.email,
             "title": self.title,
             "text": self.text,
             "date": self.date.isoformat()

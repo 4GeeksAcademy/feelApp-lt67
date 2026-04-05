@@ -26,50 +26,49 @@ const Forum = () => {
   const myId = store.clientId;
 
   useEffect(() => {
-    if (!activeToken) navigate("/");
-  }, [activeToken]);
-
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts`, {
-      headers: { Authorization: `Bearer ${activeToken}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) dispatch({ type: "set_clients_posts", payload: data });
-      });
-
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts`)
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) dispatch({ type: "set_admint_posts", payload: data });
-      });
-
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts`, {
-      headers: { Authorization: `Bearer ${activeToken}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (!Array.isArray(data)) return;
-        const map = {};
-        data.forEach(r => {
-          if (String(r.client_id) === String(myId)) map[r.client_post_id] = r.reaction;
+      if (!activeToken) return; 
+      
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts`, {
+        headers: { Authorization: `Bearer ${activeToken}` }
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data)) dispatch({ type: "set_clients_posts", payload: data });
         });
-        setClientReactions(map);
-      });
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-admint-posts`, {
-      headers: { Authorization: `Bearer ${activeToken}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (!Array.isArray(data)) return;
-        const map = {};
-        data.forEach(r => {
-          if (String(r.client_id) === String(myId)) map[r.admint_post_id] = r.reaction;
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts`)
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data)) dispatch({ type: "set_admint_posts", payload: data });
         });
-        setAdmintReactions(map);
-      });
-  }, []);
+
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts`, {
+        headers: { Authorization: `Bearer ${activeToken}` }
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (!Array.isArray(data)) return;
+          const map = {};
+          data.forEach(r => {
+            if (String(r.client_id) === String(myId)) map[r.client_post_id] = r.reaction;
+          });
+          setClientReactions(map);
+        });
+
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-admint-posts`, {
+        headers: { Authorization: `Bearer ${activeToken}` }
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (!Array.isArray(data)) return;
+          const map = {};
+          data.forEach(r => {
+            if (String(r.client_id) === String(myId)) map[r.admint_post_id] = r.reaction;
+          });
+          setAdmintReactions(map);
+        });
+
+    }, [activeToken]);
 
   const handleReactClient = async (postId, reaction) => {
     const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts`, {
@@ -204,7 +203,7 @@ const Forum = () => {
                   <div>
                     <h6 className="fw-semibold mb-0">{post.title}</h6>
                     <small className="text-muted">
-                      {isOwn ? "You" : `Client #${post.client_id}`}
+                      {isOwn ? "You" : `${post.client_email}`}
                     </small>
                   </div>
                   {(canDelete || canEdit) && (
@@ -277,7 +276,7 @@ const Forum = () => {
                 <div className="p-3">
                   <div className="d-flex align-items-center gap-2 mb-1">
                     <span className="brand-badge" style={{ fontSize: "0.7rem", padding: "2px 10px" }}>Admin</span>
-                    <small className="text-muted">#{post.admint_id}</small>
+                    <small className="text-muted">{post.admint_mail}</small>
                   </div>
                   <h6 className="fw-semibold mt-2 mb-1">{post.title}</h6>
                   <p className="mb-3" style={{ color: "#374151", lineHeight: "1.6" }}>{post.text}</p>

@@ -8,6 +8,7 @@ const FriendEntriesList = () => {
   const { clientId } = useParams();
   const [entries, setEntries] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [friendEmail, setFriendEmail] = useState("");
 
   useEffect(() => {
     if (!store.clientToken) navigate("/");
@@ -29,6 +30,17 @@ const FriendEntriesList = () => {
     })
       .then(resp => resp.json())
       .then(data => { if (Array.isArray(data)) setFavorites(data.map(f => f.entry_id)); });
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
+      headers: { Authorization: `Bearer ${store.clientToken}` }
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const friend = data.find(c => String(c.id) === String(clientId));
+          if (friend) setFriendEmail(friend.email);
+        }
+      });
   }, [clientId]);
 
   const toggleFavorite = async (entryId) => {
@@ -53,7 +65,7 @@ const FriendEntriesList = () => {
     <div className="container mt-5" style={{ maxWidth: "680px" }}>
       <div className="text-start mt-5">
         <h2 style={{ margin: 0 }}>Entries</h2>
-        <p className="text-muted">Client #{clientId}</p>
+        <p className="text-muted">{friendEmail || `Client #${clientId}`}</p>
       </div>
       <div className="d-flex justify-content-end mb-5">
         <button className="btn btn-forum-switch rounded-pill px-4" onClick={() => navigate("/shared")}>
