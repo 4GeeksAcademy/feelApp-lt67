@@ -74,6 +74,9 @@ import { CoachPrivate } from "./pages/login/CoachPrivate";
 import { AdminPrivate } from "./pages/login/AdminPrivate";
 import Forum from "./pages/client/Forum";
 import AccessPage from "./pages/client/AccessPage";
+import Shared from "./pages/client/Shared";
+import FriendEntriesList from "./pages/client/FriendEntriesList";
+import FriendEntriesDetails from "./pages/client/FriendEntriesDetails";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -157,6 +160,9 @@ export const router = createBrowserRouter(
 
       <Route path="/forum" element={<Forum />} />
       <Route path="/access" element={<AccessPage />} />
+      <Route path="/shared" element={<Shared />} />
+      <Route path="/entries/friend/:clientId" element={<FriendEntriesList/>} />
+      <Route path="/entries/friend/:clientId/:entryId" element={<FriendEntriesDetails />} />
       
     </Route>
   )

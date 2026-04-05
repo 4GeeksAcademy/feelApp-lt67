@@ -1,4 +1,16 @@
+
+import { useNavigate } from "react-router-dom";
+import useGlobalReducer from "../hooks/useGlobalReducer";
+
 export const Home = () => {
+	const { store, dispatch } = useGlobalReducer();
+    const navigate = useNavigate();
+
+	const getHomePath = () => {
+    if (store.clientToken) return "/client-private";
+    return "/";
+  };
+
 	return (
 		<div className="d-flex flex-column justify-content-center align-items-center mt-5" style={{ height: "calc(85vh - 56px)", overflow: "hidden" }}>
 			<div className="content-wrapper text-center mt-5">
@@ -13,7 +25,7 @@ export const Home = () => {
 				</div>
 
 				<div className="mt-5">
-					<button className="btn-get-started">
+					<button className="btn-get-started" to="/client-login">
 					Get Started
 					</button>
 				</div>

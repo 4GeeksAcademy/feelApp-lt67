@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
 const REACTIONS = ["👍", "🎉", "💪", "❤️", "💡"];
@@ -132,8 +132,13 @@ const Forum = () => {
     }
   };
 
+  const [searchParams] = useSearchParams();
+  const filterClientId = searchParams.get("client");
+
   const visibleClientPosts = Array.isArray(store.clients_posts)
-    ? myPosts
+    ? filterClientId
+    ? store.clients_posts.filter(p => String(p.client_id) === String(filterClientId))
+    : myPosts
       ? store.clients_posts.filter(p => String(p.client_id) === String(myId))
       : store.clients_posts
     : [];
