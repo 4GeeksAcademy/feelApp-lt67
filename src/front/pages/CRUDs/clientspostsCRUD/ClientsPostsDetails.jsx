@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
+import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 const ClientsPostsDetails = () => {
     const { id } = useParams();

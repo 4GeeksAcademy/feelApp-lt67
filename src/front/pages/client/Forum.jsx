@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
 const REACTIONS = ["👍", "🎉", "💪", "❤️", "💡"];
@@ -26,50 +26,49 @@ const Forum = () => {
   const myId = store.clientId;
 
   useEffect(() => {
-    if (!activeToken) navigate("/");
-  }, [activeToken]);
-
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts`, {
-      headers: { Authorization: `Bearer ${activeToken}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) dispatch({ type: "set_clients_posts", payload: data });
-      });
-
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts`)
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) dispatch({ type: "set_admint_posts", payload: data });
-      });
-
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts`, {
-      headers: { Authorization: `Bearer ${activeToken}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (!Array.isArray(data)) return;
-        const map = {};
-        data.forEach(r => {
-          if (String(r.client_id) === String(myId)) map[r.client_post_id] = r.reaction;
+      if (!activeToken) return; 
+      
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts`, {
+        headers: { Authorization: `Bearer ${activeToken}` }
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data)) dispatch({ type: "set_clients_posts", payload: data });
         });
-        setClientReactions(map);
-      });
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-admint-posts`, {
-      headers: { Authorization: `Bearer ${activeToken}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (!Array.isArray(data)) return;
-        const map = {};
-        data.forEach(r => {
-          if (String(r.client_id) === String(myId)) map[r.admint_post_id] = r.reaction;
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts`)
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data)) dispatch({ type: "set_admint_posts", payload: data });
         });
-        setAdmintReactions(map);
-      });
-  }, []);
+
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts`, {
+        headers: { Authorization: `Bearer ${activeToken}` }
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (!Array.isArray(data)) return;
+          const map = {};
+          data.forEach(r => {
+            if (String(r.client_id) === String(myId)) map[r.client_post_id] = r.reaction;
+          });
+          setClientReactions(map);
+        });
+
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-admint-posts`, {
+        headers: { Authorization: `Bearer ${activeToken}` }
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (!Array.isArray(data)) return;
+          const map = {};
+          data.forEach(r => {
+            if (String(r.client_id) === String(myId)) map[r.admint_post_id] = r.reaction;
+          });
+          setAdmintReactions(map);
+        });
+
+    }, [activeToken]);
 
   const handleReactClient = async (postId, reaction) => {
     const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts`, {
@@ -132,8 +131,13 @@ const Forum = () => {
     }
   };
 
+  const [searchParams] = useSearchParams();
+  const filterClientId = searchParams.get("client");
+
   const visibleClientPosts = Array.isArray(store.clients_posts)
-    ? myPosts
+    ? filterClientId
+    ? store.clients_posts.filter(p => String(p.client_id) === String(filterClientId))
+    : myPosts
       ? store.clients_posts.filter(p => String(p.client_id) === String(myId))
       : store.clients_posts
     : [];
@@ -199,7 +203,7 @@ const Forum = () => {
                   <div>
                     <h6 className="fw-semibold mb-0">{post.title}</h6>
                     <small className="text-muted">
-                      {isOwn ? "You" : `Client #${post.client_id}`}
+                      {isOwn ? "You" : `${post.client_email}`}
                     </small>
                   </div>
                   {(canDelete || canEdit) && (
@@ -214,7 +218,7 @@ const Forum = () => {
                               className="dropdown-item"
                               onClick={() => { setEditPost(post.id); setEditForm({ title: post.title, text: post.text }); }}
                             >
-                              <i className="bi bi-pencil me-2"></i>Edit
+                            Edit
                             </button>
                           </li>
                         )}
@@ -222,7 +226,7 @@ const Forum = () => {
                         {canDelete && (
                           <li>
                             <button className="dropdown-item text-danger" onClick={() => setDeleteModal(post.id)}>
-                              <i className="bi bi-trash me-2"></i>Delete
+                              Delete
                             </button>
                           </li>
                         )}
@@ -230,7 +234,10 @@ const Forum = () => {
                     </div>
                   )}
                 </div>
+
+                
                 <p className="mb-3" style={{ color: "#374151", lineHeight: "1.6" }}>{post.text}</p>
+                {!isOwn && (
                 <div className="position-relative d-inline-block">
                   <button
                     className="btn btn-sm reaction-badge"
@@ -247,6 +254,7 @@ const Forum = () => {
                     </div>
                   )}
                 </div>
+                )}
               </div>
             );
           })}
@@ -268,7 +276,7 @@ const Forum = () => {
                 <div className="p-3">
                   <div className="d-flex align-items-center gap-2 mb-1">
                     <span className="brand-badge" style={{ fontSize: "0.7rem", padding: "2px 10px" }}>Admin</span>
-                    <small className="text-muted">#{post.admint_id}</small>
+                    <small className="text-muted">{post.admint_mail}</small>
                   </div>
                   <h6 className="fw-semibold mt-2 mb-1">{post.title}</h6>
                   <p className="mb-3" style={{ color: "#374151", lineHeight: "1.6" }}>{post.text}</p>

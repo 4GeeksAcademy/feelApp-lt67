@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
+import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 const AccessClientList = () => {
   const { store, dispatch } = useGlobalReducer();

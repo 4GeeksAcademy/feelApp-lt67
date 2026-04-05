@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
+import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 const AccessClientUpdate = () => {
   const { id } = useParams();

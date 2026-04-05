@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
+import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 const EntriesList = () => {
   const { store, dispatch } = useGlobalReducer();
@@ -13,9 +13,13 @@ const EntriesList = () => {
   }, [store.clientToken, navigate]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries`)
-      .then(resp => resp.json())
-      .then(data => dispatch({ type: "set_entries", payload: data }));
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries`, {
+  headers: { Authorization: `Bearer ${store.clientToken}` }
+  })
+  .then(resp => resp.json())
+  .then(data => {
+    if (Array.isArray(data)) dispatch({ type: "set_entries", payload: data });
+  });
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
       .then(resp => resp.json())
@@ -47,24 +51,23 @@ const EntriesList = () => {
   };
 
   const handleDelete = async (id) => {
-    await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, { method: "DELETE" });
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${store.clientToken}` }
+    });
     dispatch({ type: "set_entries", payload: store.entries.filter(e => e.id !== id) });
     setDeleteModal(null);
   };
-
+  
   return (
-    <div className="container" style={{ paddingTop: "70px" }}>
-        <div className="text-center" >
-        <h1 style={{ fontWeight: "700", color: "#111827", margin: 0}}>Entries</h1>
-        <p className="text-muted">Keep tracking your progress...</p>
+    <div className="container mt-5" style={{ maxWidth: "680px" }}>
+        <div className="text-start mt-5" >
+        <h2 style={{ margin: 0}}>Entries</h2>
+        <p className="text-muted">Record your thoughts and feelings</p>
         </div>
       <div className="d-flex justify-content-end mb-5">
-        <Link to="/entries/create" style={{
-          backgroundColor: "#6366f1", color: "white", padding: "10px 20px",
-          borderRadius: "12px", textDecoration: "none", fontWeight: "600",
-          boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
-        }}>
-          <i className="bi bi-plus-lg me-2"></i>New Entry
+        <Link to="/entries/create" className="btn btn-custom rounded-pill px-4">
+          <i className="bi bi-plus-lg me-2"></i> New Entry
         </Link>
       </div>
 
@@ -78,7 +81,7 @@ const EntriesList = () => {
             const emotion = store.emotions.find(em => em.id === entry.emotion_id);
             const isFav = favorites.includes(entry.id);
             return (
-              <div key={entry.id} className="col-12 col-md-4 col-lg-3">
+              <div key={entry.id} className="col-12 col-md-3 col-lg-4">
                 <div style={{
                   background: "#ffffff", borderRadius: "20px", padding: "20px",
                   height: "200px", border: "1px solid #edf2f7", position: "relative",
@@ -94,11 +97,11 @@ const EntriesList = () => {
                       <button className="btn btn-link text-muted p-0" data-bs-toggle="dropdown">
                         <i className="bi bi-three-dots-vertical" style={{ fontSize: "1.2rem" }}></i>
                       </button>
-                      <ul className="dropdown-menu dropdown-menu-end border-0 shadow-sm">
-                        <li><Link className="dropdown-item" to={`/entries/${entry.id}`}><i className="bi bi-eye me-2"></i>Details</Link></li>
-                        <li><Link className="dropdown-item" to={`/entries/${entry.id}/edit`}><i className="bi bi-pencil me-2"></i>Edit</Link></li>
+                      <ul className="dropdown-menu dropdown-menu-end border-0 shadow-sm text-center">
+                        <li><Link className="dropdown-item" to={`/entries/${entry.id}`}>Details</Link></li>
+                        <li><Link className="dropdown-item" to={`/entries/${entry.id}/edit`}>Edit</Link></li>
                         <li><hr className="dropdown-divider" /></li>
-                        <li><button className="dropdown-item text-danger" onClick={() => setDeleteModal(entry.id)}><i className="bi bi-trash me-2"></i>Delete</button></li>
+                        <li><button className="dropdown-item text-danger" onClick={() => setDeleteModal(entry.id)}>Delete</button></li>
                       </ul>
                     </div>
                   </div>

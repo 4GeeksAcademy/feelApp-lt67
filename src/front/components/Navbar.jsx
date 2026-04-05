@@ -24,7 +24,7 @@ export const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg fixed-top custom-navbar">
       <div className="container-fluid container">
-        <Link className="navbar-brand logo-feelapp" to={getHomePath()}>
+        <Link className="navbar-brand logo-feelapp" to="/">
           FeelApp
         </Link>
 
@@ -43,10 +43,10 @@ export const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mx-auto text-center">
             <li className="nav-item">
-              <Link className="nav-link" to="/about">About</Link>
+              <Link className="nav-link fw-bold" to={getHomePath()}>Home</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/services">Services</Link>
+              <Link className="nav-link" to="/about">About</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/contact">Contact</Link>

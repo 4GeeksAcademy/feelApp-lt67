@@ -1,4 +1,5 @@
 export const Home = () => {
+
 	return (
 		<div className="d-flex flex-column justify-content-center align-items-center mt-5" style={{ height: "calc(85vh - 56px)", overflow: "hidden" }}>
 			<div className="content-wrapper text-center mt-5">
