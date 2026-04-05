@@ -14,17 +14,6 @@ def get_emotion(emotion_id):
         return jsonify({"error": "Emotion not found"}), 404
     return jsonify(emotion.serialize()), 200
 
-@shared_bp.route('/entries', methods=['GET'])
-def get_entries():
-    return jsonify([e.serialize() for e in Entry.query.all()]), 200
-
-@shared_bp.route('/entries/<int:entry_id>', methods=['GET'])
-def get_entry(entry_id):
-    entry = Entry.query.get(entry_id)
-    if entry is None:
-        return jsonify({"error": "Entry not found"}), 404
-    return jsonify(entry.serialize()), 200
-
 @shared_bp.route('/admint-posts', methods=['GET'])
 def get_admint_posts():
     return jsonify([p.serialize() for p in AdmintPost.query.all()]), 200

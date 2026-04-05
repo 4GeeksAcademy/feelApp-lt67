@@ -26,44 +26,36 @@ import AdminsPostsCreate from "./pages/adminpostsCRUD/AdminPostsCreate";
 import AdminsPostsDetails from "./pages/adminpostsCRUD/AdminPostsDetails";
 import AdminsPostsUpdate from "./pages/adminpostsCRUD/AdminPostsUpdate";
 
+import ReactionAdmintPostsCreate from "./pages/CRUDs/reactionAdminPostCRUD/ReactionAdmintPostsCreate";
+import ReactionAdmintPostsUpdate from "./pages/CRUDs/reactionAdminPostCRUD/ReactionAdmintPostsUpdate";
+import ReactionAdmintPostsList from "./pages/CRUDs/reactionAdminPostCRUD/ReactionAdmintPostsList";
+
 import CoachsList from "./pages/coachesCRUD/coachsList";
 import CoachsCreate from "./pages/coachesCRUD/coachsCreate";
 import CoachsDetails from "./pages/coachesCRUD/coachsDetails";
 import CoachsUpdate from "./pages/coachesCRUD/coachsUpdate";
 
-import ReactionAdmintPostsList from "./pages/reactionAdminPostCRUD/ReactionAdmintPostsList";
-import ReactionAdmintPostsCreate from "./pages/reactionAdminPostCRUD/ReactionAdmintPostsCreate";
-import ReactionAdmintPostsUpdate from "./pages/reactionAdminPostCRUD/ReactionAdmintPostsUpdate";
-
-import EntriesList from "./pages/entriesCRUD/entriesList";
-import EntriesCreate from "./pages/entriesCRUD/entriesCreate";
-import EntriesDetails from "./pages/entriesCRUD/entriesDetails";
-import EntriesUpdate from "./pages/entriesCRUD/entriesUpdate";
-
-import ClientFavoritesList from "./pages/clientfavoritesCRD/ClientFavoritesList";
-import ClientFavoritesCreate from "./pages/clientfavoritesCRD/ClientFavoritesCreate";
+import EntriesList from "./pages/client/entriesCRUD/entriesList";
+import EntriesCreate from "./pages/client/entriesCRUD/entriesCreate";
+import EntriesDetails from "./pages/client/entriesCRUD/entriesDetails";
+import EntriesUpdate from "./pages/client/entriesCRUD/entriesUpdate";
 
 import CoachFavoritesList from "./pages/coachFavoritesCRD/ClientFavoritesList";
 import CoachFavoritesCreate from "./pages/coachFavoritesCRD/CoachFavoritesCreate";
 
-import CLientsPostsList from "./pages/clientspostsCRUD/ClientsPostsList";
-import ClientsPostsCreate from "./pages/clientspostsCRUD/ClientsPostsCreate";
-import ClientsPostsDetails from "./pages/clientspostsCRUD/ClientsPostsDetails";
-import ClientsPostsUpdate from "./pages/clientspostsCRUD/ClientsPostsUpdate";
-
-import ReactionClientPostCreate from "./pages/reactionClientPostCRUD/ReactionClientPostCreate";
-import ReactionClientPostList from "./pages/reactionClientPostCRUD/ReactionClientPostList";
-import ReactionClientPostUpdate from "./pages/reactionClientPostCRUD/ReactionClientPostUpdate";
-
+import CLientsPostsList from "./pages/CRUDs/clientspostsCRUD/ClientsPostsList";
+import ClientsPostsCreate from "./pages/CRUDs/clientspostsCRUD/ClientsPostsCreate";
+import ClientsPostsDetails from "./pages/CRUDs/clientspostsCRUD/ClientsPostsDetails";
+import ClientsPostsUpdate from "./pages/CRUDs/clientspostsCRUD/ClientsPostsUpdate";
 
 import { AccessCoachList } from "./pages/access_coachCRUD/AccessCoachList";
 import { AccessCoachCreate } from "./pages/access_coachCRUD/AccessCoachCreate";
 import { AccessCoachDetails } from "./pages/access_coachCRUD/AccessCoachDetails";
 import { AccessCoachUpdate } from "./pages/access_coachCRUD/AccessCoachUpdate";
 
-import AccessClientUpdate from "./pages/access_clientCRUD/AccessClientUpdate";
-import AccessClientCreate from "./pages/access_clientCRUD/AccessClientCreate";
-import AccessClientList from "./pages/access_clientCRUD/AccessClientList";
+import AccessClientUpdate from "./pages/CRUDs/access_clientCRUD/AccessClientUpdate";
+import AccessClientCreate from "./pages/CRUDs/access_clientCRUD/AccessClientCreate";
+import AccessClientList from "./pages/CRUDs/access_clientCRUD/AccessClientList";
 
 import { CrudList } from "./pages/CrudList";
 
@@ -72,11 +64,18 @@ import { Login } from "./pages/login/Login";
 import { ClientPrivate } from "./pages/client/ClientPrivate";
 import { CoachPrivate } from "./pages/login/CoachPrivate";
 import { AdminPrivate } from "./pages/login/AdminPrivate";
+
 import Forum from "./pages/client/Forum";
 import AccessPage from "./pages/client/AccessPage";
 import Shared from "./pages/client/Shared";
 import FriendEntriesList from "./pages/client/FriendEntriesList";
 import FriendEntriesDetails from "./pages/client/FriendEntriesDetails";
+
+import ReactionClientPostList from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostList";
+import ReactionClientPostCreate from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostCreate";
+import ReactionClientPostUpdate from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostUpdate";
+import ClientFavoritesList from "./pages/CRUDs/clientfavoritesCRD/ClientFavoritesList";
+import ClientFavoritesCreate from "./pages/CRUDs/clientfavoritesCRD/ClientFavoritesCreate";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -115,7 +114,7 @@ export const router = createBrowserRouter(
 
       <Route path="/reactions" element={<ReactionAdmintPostsList />} />
       <Route path="/reactions/create" element={<ReactionAdmintPostsCreate />} />
-      <Route path="/reactions/:id/edit" element={<ReactionAdmintPostsUpdate />} />
+      <Route path="/reactions/:id/edit" element={<ReactionAdmintPostsUpdate/>} />
 
       <Route path="/client-favorites" element={<ClientFavoritesList />} />
       <Route path="/client-favorites/create" element={<ClientFavoritesCreate />} />
@@ -149,7 +148,7 @@ export const router = createBrowserRouter(
 
       <Route path="/admint-login" element={<Login title="Admin Access" apiEndpoint="/api/admint-login" dispatchType="login_admint" tokenKey="admintToken" redirectPath="/admint-private" signupPath="/admint-signup" />} />
       <Route path="/admint-signup" element={<SignUp title="Admin Sign Up" apiEndpoint="/api/admint-signup" loginPath="/admint-login" />} />
-            
+
       <Route path="/client-private" element={<ClientPrivate />} />
       <Route path="/coach-private" element={<CoachPrivate />} />
       <Route path="/admint-private" element={<AdminPrivate />} />
@@ -161,9 +160,9 @@ export const router = createBrowserRouter(
       <Route path="/forum" element={<Forum />} />
       <Route path="/access" element={<AccessPage />} />
       <Route path="/shared" element={<Shared />} />
-      <Route path="/entries/friend/:clientId" element={<FriendEntriesList/>} />
+      <Route path="/entries/friend/:clientId" element={<FriendEntriesList />} />
       <Route path="/entries/friend/:clientId/:entryId" element={<FriendEntriesDetails />} />
-      
+
     </Route>
   )
 );

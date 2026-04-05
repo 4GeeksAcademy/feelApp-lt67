@@ -11,10 +11,12 @@ const FriendEntriesDetails = () => {
 
   useEffect(() => {
     if (!store.clientToken) navigate("/");
-  }, [store.clientToken]);
+  }, [store.clientToken, navigate]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${entryId}`)
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${entryId}`, {
+      headers: { Authorization: `Bearer ${store.clientToken}` }
+    })
       .then(r => r.json())
       .then(data => setEntry(data));
 
@@ -31,7 +33,7 @@ const FriendEntriesDetails = () => {
       .then(data => {
         if (Array.isArray(data)) setIsFav(data.some(f => f.entry_id === parseInt(entryId)));
       });
-  }, [entryId]);
+  }, [entryId, store.emotions.length, dispatch]);
 
   const toggleFavorite = async () => {
     if (isFav) {
@@ -50,41 +52,70 @@ const FriendEntriesDetails = () => {
     }
   };
 
-  if (!entry) return <p className="text-center mt-5">Loading...</p>;
+  if (!entry) return (
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
+      <div className="spinner-border text-primary" role="status"></div>
+    </div>
+  );
 
   const emotion = store.emotions.find(em => em.id === entry.emotion_id);
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "600px" }}>
-      <button
-        className="btn btn-sm btn-forum-switch rounded-pill px-3 mb-4"
-        onClick={() => navigate(`/entries/friend/${clientId}`)}
-      >
-        <i className="bi bi-arrow-left me-1"></i>Back
-      </button>
+    <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "85vh", padding: "20px" }}>
+      <div style={{
+        background: "#ffffff", borderRadius: "20px", padding: "40px",
+        width: "100%", maxWidth: "550px",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+        textAlign: "center", border: "1px solid #edf2f7"
+      }}>
+        <div style={{ marginBottom: "20px" }}>
+          <span style={{
+            backgroundColor: "#f3f4f6", color: "#6b7280",
+            padding: "5px 15px", borderRadius: "12px",
+            fontSize: "0.85rem", fontWeight: "500"
+          }}>
+            {entry.date}
+          </span>
+        </div>
 
-      <div className="d-flex justify-content-between align-items-start mb-1">
-        <h2 className="text-center fw-semibold mb-0" style={{ flex: 1 }}>Entry {entry.id}</h2>
-        <button
-          className="btn btn-sm"
-          style={{ background: "transparent", border: "none" }}
-          onClick={toggleFavorite}
-        >
-          <i className={`bi ${isFav ? "bi-heart-fill text-danger" : "bi-heart"}`} style={{ fontSize: "1.4rem" }}></i>
-        </button>
+        <div style={{ marginBottom: "30px" }}>
+          <div style={{ fontSize: "4.5rem", marginBottom: "10px" }}>
+            {emotion?.emoji || "😶"}
+          </div>
+          <h2 style={{ color: "#111827", fontWeight: "700", letterSpacing: "-0.5px", textTransform: "capitalize" }}>
+            Feeling {emotion?.name}
+          </h2>
+        </div>
+
+        <div style={{
+          backgroundColor: "#f9fafb", padding: "25px",
+          borderRadius: "15px", textAlign: "left", minHeight: "100px"
+        }}>
+          <p style={{ fontSize: "1.1rem", lineHeight: "1.7", color: "#374151", margin: 0 }}>
+            {entry.description}
+          </p>
+        </div>
+
+        <div className="d-flex justify-content-between align-items-center mt-4">
+          <button
+            onClick={() => navigate(`/entries/friend/${clientId}`)}
+            style={{
+              textDecoration: "none", color: "#6366f1",
+              fontSize: "1rem", fontWeight: "600",
+              background: "none", border: "none",
+              display: "inline-flex", alignItems: "center", gap: "8px"
+            }}
+          >
+            ← Back
+          </button>
+          <button
+            style={{ background: "transparent", border: "none" }}
+            onClick={toggleFavorite}
+          >
+            <i className={`bi ${isFav ? "bi-heart-fill text-danger" : "bi-heart text-muted"}`} style={{ fontSize: "1.5rem" }}></i>
+          </button>
+        </div>
       </div>
-
-      <p className="text-center mb-4" style={{ fontSize: "1.2rem" }}>
-        {emotion?.emoji} {emotion?.name}
-      </p>
-
-      <p style={{ fontSize: "1.05rem", lineHeight: "1.8", color: "#333" }}>
-        {entry.description}
-      </p>
-
-      <p className="text-center mt-4" style={{ color: "#999", fontSize: "0.85rem" }}>
-        {entry.date}
-      </p>
     </div>
   );
 };

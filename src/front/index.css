@@ -179,19 +179,6 @@ h2, h3 {
 
 /* Forum */
 
-.btn-custom2 {
-  background: linear-gradient(135deg, #b3e5fc 0%, #f8bbd0 100%);
-  border: black;
-  color: #444;
-  font-weight: 600;
-  transition: transform 0.2s;
-}
-
-.btn-custom2:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
-}
-
 .btn-forum-switch {
   border: 1px solid #e5e7eb;
   color: #6b7280;
@@ -248,3 +235,7 @@ h2, h3 {
   background-color: #fff9c4;
   border-color: #fde68a;
 }
+
+
+
+

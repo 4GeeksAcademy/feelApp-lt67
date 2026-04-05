@@ -219,7 +219,7 @@ const Forum = () => {
                               className="dropdown-item"
                               onClick={() => { setEditPost(post.id); setEditForm({ title: post.title, text: post.text }); }}
                             >
-                              <i className="bi bi-pencil me-2"></i>Edit
+                            Edit
                             </button>
                           </li>
                         )}
@@ -227,7 +227,7 @@ const Forum = () => {
                         {canDelete && (
                           <li>
                             <button className="dropdown-item text-danger" onClick={() => setDeleteModal(post.id)}>
-                              <i className="bi bi-trash me-2"></i>Delete
+                              Delete
                             </button>
                           </li>
                         )}
@@ -235,7 +235,10 @@ const Forum = () => {
                     </div>
                   )}
                 </div>
+
+                
                 <p className="mb-3" style={{ color: "#374151", lineHeight: "1.6" }}>{post.text}</p>
+                {!isOwn && (
                 <div className="position-relative d-inline-block">
                   <button
                     className="btn btn-sm reaction-badge"
@@ -252,6 +255,7 @@ const Forum = () => {
                     </div>
                   )}
                 </div>
+                )}
               </div>
             );
           })}

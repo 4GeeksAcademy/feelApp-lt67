@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
+import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 const EntriesDetails = () => {
   const { id } = useParams();
@@ -16,7 +16,7 @@ const EntriesDetails = () => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`)
       .then(resp => resp.json())
       .then(data => setEntry(data));
-    
+
     if (store.emotions.length === 0) {
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
         .then(resp => resp.json())
@@ -45,11 +45,11 @@ const EntriesDetails = () => {
         border: "1px solid #edf2f7"
       }}>
         <div style={{ marginBottom: "20px" }}>
-          <span style={{ 
-            backgroundColor: "#f3f4f6", 
-            color: "#6b7280", 
-            padding: "5px 15px", 
-            borderRadius: "12px", 
+          <span style={{
+            backgroundColor: "#f3f4f6",
+            color: "#6b7280",
+            padding: "5px 15px",
+            borderRadius: "12px",
             fontSize: "0.85rem",
             fontWeight: "500"
           }}>
@@ -61,28 +61,28 @@ const EntriesDetails = () => {
           <div style={{ fontSize: "4.5rem", marginBottom: "10px" }}>
             {emotion?.emoji || "😶"}
           </div>
-          <h2 style={{ 
-            color: "#111827", 
-            fontWeight: "700", 
+          <h2 style={{
+            color: "#111827",
+            fontWeight: "700",
             letterSpacing: "-0.5px",
-            textTransform: "capitalize" 
+            textTransform: "capitalize"
           }}>
             Feeling {emotion?.name}
           </h2>
         </div>
 
-        <div style={{ 
-          backgroundColor: "#f9fafb", 
-          padding: "25px", 
-          borderRadius: "15px", 
+        <div style={{
+          backgroundColor: "#f9fafb",
+          padding: "25px",
+          borderRadius: "15px",
           textAlign: "left",
           minHeight: "100px"
         }}>
-          <p style={{ 
-            fontSize: "1.1rem", 
-            lineHeight: "1.7", 
-            color: "#374151", 
-            margin: 0 
+          <p style={{
+            fontSize: "1.1rem",
+            lineHeight: "1.7",
+            color: "#374151",
+            margin: 0
           }}>
             {entry.description}
           </p>
@@ -98,7 +98,7 @@ const EntriesDetails = () => {
             alignItems: "center",
             gap: "8px"
           }}>
-            ← Back 
+            ← Back
           </Link>
         </div>
       </div>

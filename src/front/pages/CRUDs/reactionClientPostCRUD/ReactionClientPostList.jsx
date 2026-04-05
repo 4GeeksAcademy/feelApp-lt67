@@ -1,29 +1,29 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
+import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
-const ReactionAdmintPostsList = () => {
+const ReactionClientPostList = () => {
     const { store, dispatch } = useGlobalReducer();
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-admint-posts`)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts`)
             .then(r => r.json())
-            .then(data => dispatch({ type: "set_reactions", payload: data }));
+            .then(data => dispatch({ type: "set_reaction_client", payload: data }));
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`)
             .then(r => r.json())
             .then(data => dispatch({ type: "set_clients", payload: data }));
 
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts`)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-posts`)
             .then(r => r.json())
-            .then(data => dispatch({ type: "set_admint_posts", payload: data }));
+            .then(data => dispatch({ type: "set_clients_posts", payload: data }));
     }, []);
 
     return (
         <div className="container mt-4">
             <div className="d-flex justify-content-between mb-3">
                 <h2>Reactions</h2>
-                <Link to="/reactions/create" className="btn btn-primary mb-2">
+                <Link to="/reactions-client/create" className="btn btn-primary mb-2">
                     Create Reaction
                 </Link>
             </div>
@@ -40,14 +40,14 @@ const ReactionAdmintPostsList = () => {
                 </thead>
 
                 <tbody>
-                    {store.reactions.length === 0 ? (
+                    {store.reaction_client.length === 0 ? (
                         <tr>
                             <td colSpan="5" className="text-center">No reactions yet</td>
                         </tr>
                     ) : (
-                        store.reactions.map(r => {
+                        store.reaction_client.map(r => {
                             const client = store.clients.find(c => c.id === r.client_id);
-                            const post = store.admint_posts.find(p => p.id === r.admint_post_id);
+                            const post = store.clients_posts.find(p => p.id === r.client_post_id);
 
                             return (
                                 <tr key={r.id}>
@@ -58,7 +58,7 @@ const ReactionAdmintPostsList = () => {
 
                                     <td>
                                         <Link 
-                                            to={`/reactions/${r.id}/edit`} 
+                                            to={`/reactions-client/${r.id}/edit`} 
                                             className="btn btn-sm btn-outline-primary me-2"
                                         >
                                             Edit
@@ -69,16 +69,16 @@ const ReactionAdmintPostsList = () => {
                                                 if (!confirm("Delete reaction?")) return;
 
                                                 const resp = await fetch(
-                                                    `${import.meta.env.VITE_BACKEND_URL}/api/reaction-admint-posts/${r.id}`,
+                                                    `${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts/${r.id}`,
                                                     { method: "DELETE" }
                                                 );
 
                                                 if (!resp.ok) return;
 
-                                                dispatch({
-                                                    type: "set_reactions",
-                                                    payload: store.reactions.filter(x => x.id !== r.id)
-                                                });
+                                               dispatch({
+                                                type: "set_reaction_client",
+                                                payload: store.reaction_client.filter(x => x.id !== r.id)
+                                            });
                                             }}
                                             className="btn btn-sm btn-outline-danger"
                                         >
@@ -86,7 +86,7 @@ const ReactionAdmintPostsList = () => {
                                         </button>
                                     </td>
                                 </tr>
-                            );
+                                );
                         })
                     )}
                 </tbody>
@@ -95,4 +95,4 @@ const ReactionAdmintPostsList = () => {
     );
 };
 
-export default ReactionAdmintPostsList;
+export default ReactionClientPostList;
