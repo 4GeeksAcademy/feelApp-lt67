@@ -166,12 +166,6 @@ const AccessPage = () => {
         >
           <i className="bi bi-person-badge me-2"></i>Coaches
         </button>
-        <button
-        className={`btn btn-forum-switch rounded-pill px-4 ${view === "shared" ? "active" : ""}`}
-        onClick={() => navigate("/shared")}
-      >
-        <i className="bi bi-heart me-2"></i>Shared
-      </button>
       </div>
 
       {view === "clients" && (
