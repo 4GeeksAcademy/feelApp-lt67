@@ -12,9 +12,9 @@ const ClientsList = () => {
     }, []);
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-5">
 
-            <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
                 <h2 style={{ fontWeight: "600" }}>Clients</h2>
                 <Link to="/clients/create" className="btn btn-primary">
                     Create Client

@@ -53,10 +53,6 @@ import { AccessCoachCreate } from "./pages/access_coachCRUD/AccessCoachCreate";
 import { AccessCoachDetails } from "./pages/access_coachCRUD/AccessCoachDetails";
 import { AccessCoachUpdate } from "./pages/access_coachCRUD/AccessCoachUpdate";
 
-import AccessClientUpdate from "./pages/CRUDs/access_clientCRUD/AccessClientUpdate";
-import AccessClientCreate from "./pages/CRUDs/access_clientCRUD/AccessClientCreate";
-import AccessClientList from "./pages/CRUDs/access_clientCRUD/AccessClientList";
-
 import { CrudList } from "./pages/CrudList";
 
 import { SignUp } from "./pages/login/SignUp";
@@ -76,6 +72,7 @@ import ReactionClientPostCreate from "./pages/CRUDs/reactionClientPostCRUD/React
 import ReactionClientPostUpdate from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostUpdate";
 import ClientFavoritesList from "./pages/CRUDs/clientfavoritesCRD/ClientFavoritesList";
 import ClientFavoritesCreate from "./pages/CRUDs/clientfavoritesCRD/ClientFavoritesCreate";
+import AccessClientList from "./pages/CRUDs/access_clientCRUD/AccessClientList";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -136,9 +133,7 @@ export const router = createBrowserRouter(
       <Route path="/access-coach/:id" element={<AccessCoachDetails />} />
       <Route path="/access-coach/update/:id" element={<AccessCoachUpdate />} />
 
-      <Route path="/access-clients" element={<AccessClientList />} />
-      <Route path="/access-clients/create" element={<AccessClientCreate />} />
-      <Route path="/access-clients/:id" element={<AccessClientUpdate />} />
+      <Route path="/access-clients" element={<AccessClientList/>} />
 
       <Route path="/client-login" element={<Login title="Client Access" apiEndpoint="/api/login" dispatchType="login_client" tokenKey="clientToken" redirectPath="/client-private" signupPath="/client-signup" />} />
       <Route path="/client-signup" element={<SignUp title="Client Sign Up" apiEndpoint="/api/signup" loginPath="/client-login" />} />
