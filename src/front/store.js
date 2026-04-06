@@ -17,12 +17,15 @@ export const initialStore = () => {
     clientToken: sessionStorage.getItem("clientToken") || null,
     clientId: sessionStorage.getItem("clientId") || null,
     clientEmail: sessionStorage.getItem("clientEmail") || null,
+    clientSignupDate: sessionStorage.getItem("clientSignupDate") || null,
     coachToken: sessionStorage.getItem("coachToken") || null,
     coachId: sessionStorage.getItem("coachtId") || null,
     coachEmail: sessionStorage.getItem("coachEmail") || null,
+    coachSignupDate: sessionStorage.getItem("coachSignupDate") || null,
     admintToken: sessionStorage.getItem("admintToken") || null,
     admintId: sessionStorage.getItem("admintId") || null,
     admintEmail: sessionStorage.getItem("admintEmail") || null,
+    admintSignupDate: sessionStorage.getItem("admintSignupDate") || null,
   };
 };
 
@@ -74,33 +77,39 @@ export default function storeReducer(store, action = {}) {
     sessionStorage.setItem("clientToken", action.payload.token);
     sessionStorage.setItem("clientEmail", action.payload.client?.email || "");
     sessionStorage.setItem("clientId", action.payload.client?.id || "");
-    return { 
-      ...store, 
+    sessionStorage.setItem("clientSignupDate", action.payload.client?.sign_up_date || "");
+    return {
+      ...store,
       clientToken: action.payload.token,
       clientEmail: action.payload.client?.email || null,
-      clientId: action.payload.client?.id || null
+      clientId: action.payload.client?.id || null,
+      clientSignupDate: action.payload.client?.sign_up_date || null,
     };
 
     case 'login_coach':
     sessionStorage.setItem("coachToken", action.payload.token);
     sessionStorage.setItem("coachEmail", action.payload.coach?.email || "");
     sessionStorage.setItem("coachId", action.payload.coach?.id || "");
-    return { 
-      ...store, 
+    sessionStorage.setItem("coachSignupDate", action.payload.coach?.sign_up_date || "");
+    return {
+      ...store,
       coachToken: action.payload.token,
       coachEmail: action.payload.coach?.email || null,
-      coachId: action.payload.coach?.id || null
+      coachId: action.payload.coach?.id || null,
+      coachSignupDate: action.payload.coach?.sign_up_date || null,
     };
 
     case 'login_admint':
     sessionStorage.setItem("admintToken", action.payload.token);
     sessionStorage.setItem("admintEmail", action.payload.admint?.email || "");
     sessionStorage.setItem("admintId", action.payload.admint?.id || "");
-    return { 
-      ...store, 
+    sessionStorage.setItem("admintSignupDate", action.payload.admint?.sign_up_date || "");
+    return {
+      ...store,
       admintToken: action.payload.token,
       admintEmail: action.payload.admint?.email || null,
-      admintId: action.payload.admint?.id || null
+      admintId: action.payload.admint?.id || null,
+      admintSignupDate: action.payload.admint?.sign_up_date || null,
     };
 
     case 'logout_client':
