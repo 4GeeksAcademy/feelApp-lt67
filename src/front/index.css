@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #ffffff;
-  background-image: url("/workspaces/feelApp-lt67/src/front/assets/img/feelAppbg.jpg");
+  background-image: url("/workspaces/feelApp-lt67/src/front/assets/img/feelAppbg2.jpg");
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
@@ -26,7 +26,7 @@ h2, h3 {
 /* Home */
 
 .brand-badge {
-  background-color: #6366f1; 
+  background-color: #1c9cb3; 
   color: white;
   padding: 4px 16px;
   border-radius: 12px;
@@ -34,31 +34,30 @@ h2, h3 {
   box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
+/* glass morphin style */
+.brand-badge {
+  background: rgba(255, 255, 255, 0.1); 
+  color: #2c323b;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px 16px;
+  border-radius: 12px;
+  display: inline-block;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+.brand-badge:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
 .subtitle-text {
   max-width: 800px; 
   font-size: 1.2rem;
-  color: #4b5563;
+  color: #2c323b;
   padding-top: 4px;
-}
-
-.btn-get-started {
-  background-color: #10b981;
-  color: white;
-  padding: 14px 32px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: inline-block;
-  border: none;
-  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
-}
-
-.btn-get-started:hover {
-  transform: translateY(-2px);
-  background-color: #059669;
-  color: white;
-  box-shadow: 0 12px 25px rgba(16, 185, 129, 0.3);
 }
 
 /* Navbar */
@@ -227,4 +226,22 @@ h2, h3 {
   border-color: #fde68a;
 }
 
+/* private bubble */
+.glass-sphere {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px; 
+  height: 300px;
+  border-radius: 50%;
+  z-index: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 
+            inset 0 0 15px rgba(255, 255, 255, 0.2);
+
+}
 
