@@ -35,8 +35,8 @@ const ClientsCreate = () => {
     };
 
     return (
-        <div className="clients-page container mt-4">
-            <h2>Create Client</h2>
+        <div className="clients-page container mt-5">
+            <h2 className="mt-5">Create Client</h2>
 
             {error && <div className="alert alert-danger">{error}</div>}
 
