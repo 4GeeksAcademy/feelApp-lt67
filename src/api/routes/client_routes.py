@@ -259,12 +259,6 @@ def delete_reaction_admint_post(reaction_id):
     db.session.commit()
     return jsonify({"message": "Reaction deleted successfully"}), 200
 
-# ACCESS COACH
-@client_bp.route('/access-coach', methods=['GET'])
-@jwt_required()
-def get_access_coach():
-    return jsonify([a.serialize() for a in AccessCoach.query.all()]), 200
-
 @client_bp.route('/access-coach', methods=['POST'])
 @jwt_required()
 def create_access_coach():
@@ -274,14 +268,6 @@ def create_access_coach():
     db.session.add(new_item)
     db.session.commit()
     return jsonify(new_item.serialize()), 201
-
-@client_bp.route('/access-coach/<int:id>', methods=['GET'])
-@jwt_required()
-def get_one_access_coach(id):
-    item = AccessCoach.query.get(id)
-    if item is None:
-        return jsonify({"error": "Not found"}), 404
-    return jsonify(item.serialize()), 200
 
 @client_bp.route('/access-coach/<int:id>', methods=['PUT'])
 @jwt_required()
@@ -310,12 +296,6 @@ def delete_access_coach(id):
     db.session.commit()
     return jsonify({"msg": "Deleted"}), 200
 
-# ACCESS CLIENTS
-@client_bp.route('/access-clients', methods=['GET'])
-@jwt_required()
-def get_access_clients():
-    return jsonify([a.serialize() for a in AccessClient.query.all()]), 200
-
 @client_bp.route('/access-clients', methods=['POST'])
 @jwt_required()
 def create_access_client():
@@ -325,14 +305,6 @@ def create_access_client():
     db.session.add(new_access)
     db.session.commit()
     return jsonify(new_access.serialize()), 201
-
-@client_bp.route('/access-clients/<int:access_id>', methods=['GET'])
-@jwt_required()
-def get_access_client(access_id):
-    access = db.session.get(AccessClient, access_id)
-    if not access:
-        return jsonify({"msg": "Not found"}), 404
-    return jsonify(access.serialize()), 200
 
 @client_bp.route('/access-clients/<int:access_id>', methods=['PUT'])
 @jwt_required()

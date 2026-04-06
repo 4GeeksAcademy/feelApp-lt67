@@ -33,12 +33,60 @@ def admint_private():
     admint = db.session.get(Admint, get_jwt_identity())
     return jsonify({"msg": "Access granted", "admint": admint.serialize()}), 200
 
-# CLIENTS - Read and Delete
+
+# CLIENTS - CRUD
 
 @admin_bp.route('/clients', methods=['GET'])
 def get_clients():
     clients = Client.query.all()
     return jsonify([c.serialize() for c in clients]), 200
+
+@admin_bp.route('/clients/<int:client_id>', methods=['GET'])
+def get_client(client_id):
+    client = Client.query.get(client_id)
+    if client is None:
+        return jsonify({"error": "Client not found"}), 404
+    return jsonify(client.serialize()), 200
+
+@admin_bp.route('/clients', methods=['POST'])
+def create_client():
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+    if not body.get("email"):
+        return jsonify({"error": "An Email is required"}), 400
+    if not body.get("password"):
+        return jsonify({"error": "A password is required"}), 400
+
+    client_exists = Client.query.filter_by(email=body["email"]).first()
+    if client_exists:
+        return jsonify({"error": "There is already an account with this Email"}), 400
+
+    new_client = Client(
+        email=body["email"],
+        password=body["password"]
+    )
+    db.session.add(new_client)
+    db.session.commit()
+    return jsonify(new_client.serialize()), 201
+
+@admin_bp.route('/clients/<int:client_id>', methods=['PUT'])
+def update_client(client_id):
+    client = Client.query.get(client_id)
+    if client is None:
+        return jsonify({"error": "Client not found"}), 404
+
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+
+    if "email" in body:
+        client.email = body["email"]
+    if "password" in body:
+        client.password = body["password"]
+
+    db.session.commit()
+    return jsonify(client.serialize()), 200
 
 @admin_bp.route('/clients/<int:client_id>', methods=['DELETE'])
 @jwt_required()
@@ -50,7 +98,7 @@ def delete_client(client_id):
     db.session.commit()
     return jsonify({"message": "Client deleted successfully"}), 200
 
-# ADMINTS - Read and Delete
+# ADMINTS - CRUD
 @admin_bp.route('/admints', methods=['GET'])
 def get_admints():
     return jsonify([a.serialize() for a in Admint.query.all()]), 200
@@ -63,6 +111,46 @@ def get_admint(admint_id):
         return jsonify({"error": "Admin not found"}), 404
     return jsonify(admint.serialize()), 200
 
+@admin_bp.route('/admints', methods=['POST'])
+def create_admint():
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+    if not body.get("email"):
+        return jsonify({"error": "An Email is required"}), 400
+    if not body.get("password"):
+        return jsonify({"error": "A password is required"}), 400
+
+    admint_exists = Admint.query.filter_by(email=body["email"]).first()
+    if admint_exists:
+        return jsonify({"error": "There is already an account with this Email"}), 400
+
+    new_admint = Admint(
+        email=body["email"],
+        password=body["password"]
+    )
+    db.session.add(new_admint)
+    db.session.commit()
+    return jsonify(new_admint.serialize()), 201
+
+@admin_bp.route('/admints/<int:admint_id>', methods=['PUT'])
+def update_admint(admint_id):
+    admint = Admint.query.get(admint_id)
+    if admint is None:
+        return jsonify({"error": "admint not found"}), 404
+
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+
+    if "email" in body:
+        admint.email = body["email"]
+    if "password" in body:
+        admint.password = body["password"]
+
+    db.session.commit()
+    return jsonify(admint.serialize()), 200
+
 @admin_bp.route('/admints/<int:admint_id>', methods=['DELETE'])
 @jwt_required()
 def delete_admint(admint_id):
@@ -73,7 +161,9 @@ def delete_admint(admint_id):
     db.session.commit()
     return jsonify({"message": "Admin deleted successfully"}), 200
 
-# COACHS - Read and Delete
+
+
+# COACHS - CRUD
 @admin_bp.route('/coachs', methods=['GET'])
 def get_coachs():
     return jsonify([c.serialize() for c in Coach.query.all()]), 200
@@ -86,6 +176,47 @@ def get_coach(coach_id):
         return jsonify({"error": "Coach not found"}), 404
     return jsonify(coach.serialize()), 200
 
+@admin_bp.route('/coachs', methods=['POST'])
+def create_coach():
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+    if not body.get("email"):
+        return jsonify({"error": "An Email is required"}), 400
+    if not body.get("password"):
+        return jsonify({"error": "A password is required"}), 400
+
+    coach_exists = Coach.query.filter_by(email=body["email"]).first()
+    if coach_exists:
+        return jsonify({"error": "There is already an account with this Email"}), 400
+
+    new_coach = Coach(
+        email=body["email"],
+        password=body["password"]
+    )
+    db.session.add(new_coach)
+    db.session.commit()
+    return jsonify(new_coach.serialize()), 201
+
+# PUT update coach
+@admin_bp.route('/coachs/<int:coach_id>', methods=['PUT'])
+def update_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": "Coach not found"}), 404
+
+    body = request.get_json()
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+
+    if "email" in body:
+        coach.email = body["email"]
+    if "password" in body:
+        coach.password = body["password"]
+
+    db.session.commit()
+    return jsonify(coach.serialize()), 200
+
 @admin_bp.route('/coachs/<int:coach_id>', methods=['DELETE'])
 @jwt_required()
 def delete_coach(coach_id):
@@ -95,6 +226,8 @@ def delete_coach(coach_id):
     db.session.delete(coach)
     db.session.commit()
     return jsonify({"message": "Coach deleted successfully"}), 200
+
+
 
 # EMOTIONS CRUD
 @admin_bp.route('/emotions', methods=['POST'])
@@ -205,125 +338,12 @@ def delete_reaction_client_post(reaction_id):
     db.session.commit()
     return jsonify({"message": "Reaction deleted successfully"}), 200
 
-# POST create client
-@admin_bp.route('/clients', methods=['POST'])
-def create_client():
-    body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Body cannot be empty"}), 400
-    if not body.get("email"):
-        return jsonify({"error": "An Email is required"}), 400
-    if not body.get("password"):
-        return jsonify({"error": "A password is required"}), 400
 
-    client_exists = Client.query.filter_by(email=body["email"]).first()
-    if client_exists:
-        return jsonify({"error": "There is already an account with this Email"}), 400
 
-    new_client = Client(
-        email=body["email"],
-        password=body["password"]
-    )
-    db.session.add(new_client)
-    db.session.commit()
-    return jsonify(new_client.serialize()), 201
 
-@admin_bp.route('/admints', methods=['POST'])
-def create_admint():
-    body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Body cannot be empty"}), 400
-    if not body.get("email"):
-        return jsonify({"error": "An Email is required"}), 400
-    if not body.get("password"):
-        return jsonify({"error": "A password is required"}), 400
 
-    admint_exists = Admint.query.filter_by(email=body["email"]).first()
-    if admint_exists:
-        return jsonify({"error": "There is already an account with this Email"}), 400
 
-    new_admint = Admint(
-        email=body["email"],
-        password=body["password"]
-    )
-    db.session.add(new_admint)
-    db.session.commit()
-    return jsonify(new_admint.serialize()), 201
 
-@admin_bp.route('/coachs', methods=['POST'])
-def create_coach():
-    body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Body cannot be empty"}), 400
-    if not body.get("email"):
-        return jsonify({"error": "An Email is required"}), 400
-    if not body.get("password"):
-        return jsonify({"error": "A password is required"}), 400
 
-    coach_exists = Coach.query.filter_by(email=body["email"]).first()
-    if coach_exists:
-        return jsonify({"error": "There is already an account with this Email"}), 400
 
-    new_coach = Coach(
-        email=body["email"],
-        password=body["password"]
-    )
-    db.session.add(new_coach)
-    db.session.commit()
-    return jsonify(new_coach.serialize()), 201
 
-# PUT update coach
-@admin_bp.route('/coachs/<int:coach_id>', methods=['PUT'])
-def update_coach(coach_id):
-    coach = Coach.query.get(coach_id)
-    if coach is None:
-        return jsonify({"error": "Coach not found"}), 404
-
-    body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Body cannot be empty"}), 400
-
-    if "email" in body:
-        coach.email = body["email"]
-    if "password" in body:
-        coach.password = body["password"]
-
-    db.session.commit()
-    return jsonify(coach.serialize()), 200
-
-# PUT update client
-@admin_bp.route('/clients/<int:client_id>', methods=['PUT'])
-def update_client(client_id):
-    client = Client.query.get(client_id)
-    if client is None:
-        return jsonify({"error": "Client not found"}), 404
-
-    body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Body cannot be empty"}), 400
-
-    if "email" in body:
-        client.email = body["email"]
-    if "password" in body:
-        client.password = body["password"]
-
-    db.session.commit()
-    return jsonify(client.serialize()), 200
-
-@admin_bp.route('/admints/<int:admint_id>', methods=['PUT'])
-def update_admint(admint_id):
-    admint = Admint.query.get(admint_id)
-    if admint is None:
-        return jsonify({"error": "admint not found"}), 404
-
-    body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Body cannot be empty"}), 400
-
-    if "email" in body:
-        admint.email = body["email"]
-    if "password" in body:
-        admint.password = body["password"]
-
-    db.session.commit()
-    return jsonify(admint.serialize()), 200
