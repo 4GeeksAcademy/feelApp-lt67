@@ -12,10 +12,12 @@ export const ClientPrivate = () => {
 
   return (
     <div style={{ height: "calc(90vh - 56px)", display: "flex", flexDirection: "column", justifyContent: "space-between", overflow: "hidden" }}>
+ 
+      <div className="glass-sphere"></div> 
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", padding: "0 1rem" }}>
-        <h1 style={{ fontWeight: 500, marginBottom: "1rem" }}>How do you feel today?</h1>
-        <p style={{ letterSpacing: "0.02em", margin: 0 }}>Start tracking your emotions</p>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", zIndex: 1 }}>
+        <h1 style={{ fontWeight: 600, color: "#1a1a1a" }}>How do you feel today?</h1>
+        <p style={{ color: "#555" }}>Start tracking your emotions</p>
       </div>
 
       <div className="d-flex justify-content-around align-items-center pt-3" style={{ borderTop: "1px solid #eee" }}>
