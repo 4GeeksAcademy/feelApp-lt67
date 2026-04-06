@@ -184,10 +184,6 @@ def delete_client_post(post_id):
     return jsonify({"message": "Post deleted successfully"}), 200
 
 # REACTION CLIENT POSTS
-@client_bp.route('/reaction-client-posts', methods=['GET'])
-@jwt_required()
-def get_reaction_client_posts():
-    return jsonify([r.serialize() for r in ReactionClientPost.query.all()]), 200
 
 @client_bp.route('/reaction-client-posts', methods=['POST'])
 @jwt_required()
@@ -222,10 +218,6 @@ def delete_reaction_client_post(reaction_id):
     return jsonify({"message": "Reaction deleted successfully"}), 200
 
 # REACTION ADMINT POSTS
-@client_bp.route('/reaction-admint-posts', methods=['GET'])
-@jwt_required()
-def get_reaction_admint_posts():
-    return jsonify([r.serialize() for r in ReactionAdmintPost.query.all()]), 200
 
 @client_bp.route('/reaction-admint-posts', methods=['POST'])
 @jwt_required()

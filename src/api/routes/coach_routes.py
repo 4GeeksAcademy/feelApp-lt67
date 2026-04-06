@@ -76,18 +76,6 @@ def delete_coach_favorite(entry_id):
     return jsonify({"message": "Removed from favorites"}), 200
 
 # ACCESS COACH 
-@coach_bp.route('/access-coach', methods=['GET'])
-@jwt_required()
-def get_access_coach():
-    return jsonify([a.serialize() for a in AccessCoach.query.all()]), 200
-
-@coach_bp.route('/access-coach/<int:id>', methods=['GET'])
-@jwt_required()
-def get_one_access_coach(id):
-    item = AccessCoach.query.get(id)
-    if item is None:
-        return jsonify({"error": "Not found"}), 404
-    return jsonify(item.serialize()), 200
 
 @coach_bp.route('/access-coach/<int:id>', methods=['PUT'])
 @jwt_required()

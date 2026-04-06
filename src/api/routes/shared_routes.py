@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient
+from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost
 
 shared_bp = Blueprint('shared_routes', __name__)
 
@@ -48,3 +48,14 @@ def get_access_client(access_id):
         return jsonify({"msg": "Not found"}), 404
     return jsonify(access.serialize()), 200
     
+# REACTIONS GET
+
+@shared_bp.route('/reaction-client-posts', methods=['GET'])
+def get_reaction_client_posts():
+    return jsonify([r.serialize() for r in ReactionClientPost.query.all()]), 200
+
+@shared_bp.route('/reaction-admint-posts', methods=['GET'])
+def get_reaction_admint_posts():
+    return jsonify([r.serialize() for r in ReactionAdmintPost.query.all()]), 200
+
+
