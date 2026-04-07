@@ -28,17 +28,21 @@ const ReactionClientPostUpdate = () => {
 
         const data = await resp.json();
 
+        if (!resp.ok) return;
+
+        const reactions = Array.isArray(store.reaction_client) ? store.reaction_client : [];
+
         dispatch({
             type: "set_reaction_client",
-            payload: store.reaction_client.map(r => r.id === parseInt(id) ? data : r)
+            payload: reactions.map(r => r.id === parseInt(id) ? data : r)
         });
 
         navigate("/reactions-client");
     };
 
     return (
-        <div className="container mt-4">
-            <h2>Edit Reaction</h2>
+        <div className="container mt-5">
+            <h2 className="mt-5">Edit Reaction</h2>
 
             <form onSubmit={handleUpdate}>
                 <label>Reaction</label>

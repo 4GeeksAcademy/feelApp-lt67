@@ -229,7 +229,7 @@ h2, h3 {
 /* private bubble */
 .glass-sphere {
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 300px; 

@@ -16,11 +16,11 @@ const ReactionAdmintPostsCreate = () => {
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`)
             .then(r => r.json())
-            .then(data => dispatch({ type: "set_clients", payload: data }));
+            .then(data => dispatch({ type: "set_clients", payload: Array.isArray(data) ? data : [] }));
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts`)
             .then(r => r.json())
-            .then(data => dispatch({ type: "set_admint_posts", payload: data }));
+            .then(data => dispatch({ type: "set_admint_posts", payload: Array.isArray(data) ? data : [] }));
     }, []);
 
     const handleCreate = async (e) => {
@@ -51,24 +51,26 @@ const ReactionAdmintPostsCreate = () => {
 
         dispatch({
             type: "set_reactions",
-            payload: [...store.reactions, data]
+            payload: [...(Array.isArray(store.reactions) ? store.reactions : []), data]
         });
 
         navigate("/reactions");
     };
 
+    const clients = Array.isArray(store.clients)      ? store.clients      : [];
+    const posts   = Array.isArray(store.admint_posts) ? store.admint_posts : [];
+
     return (
-        <div className="container mt-4">
-            <h2>Create Reaction</h2>
+        <div className="container mt-5">
+            <h2 className="mt-5">Create Reaction</h2>
 
             {error && <div className="alert alert-danger">{error}</div>}
 
             <form onSubmit={handleCreate}>
-
                 <label>Client</label>
                 <select className="form-select mb-3" value={client_id} onChange={e => setClientId(e.target.value)} required>
                     <option value="">Select client</option>
-                    {store.clients.map(c => (
+                    {clients.map(c => (
                         <option key={c.id} value={c.id}>{c.email}</option>
                     ))}
                 </select>
@@ -76,7 +78,7 @@ const ReactionAdmintPostsCreate = () => {
                 <label>Post</label>
                 <select className="form-select mb-3" value={admint_post_id} onChange={e => setPostId(e.target.value)} required>
                     <option value="">Select post</option>
-                    {store.admint_posts.map(p => (
+                    {posts.map(p => (
                         <option key={p.id} value={p.id}>{p.title}</option>
                     ))}
                 </select>

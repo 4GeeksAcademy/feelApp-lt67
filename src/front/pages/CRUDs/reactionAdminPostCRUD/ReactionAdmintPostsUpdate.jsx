@@ -28,17 +28,21 @@ const ReactionAdmintPostsUpdate = () => {
 
         const data = await resp.json();
 
+        if (!resp.ok) return;
+
+        const reactions = Array.isArray(store.reactions) ? store.reactions : [];
+
         dispatch({
             type: "set_reactions",
-            payload: store.reactions.map(r => r.id === parseInt(id) ? data : r)
+            payload: reactions.map(r => r.id === parseInt(id) ? data : r)
         });
 
         navigate("/reactions");
     };
 
     return (
-        <div className="container mt-4">
-            <h2>Edit Reaction</h2>
+        <div className="container mt-5">
+            <h2 className="mt-5">Edit Reaction</h2>
 
             <form onSubmit={handleUpdate}>
                 <label>Reaction</label>
