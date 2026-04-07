@@ -7,13 +7,13 @@ export const AccessCoachList = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!store.clientToken) {
+        if (!store.coachToken) {
             navigate("/");
             return;
         }
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach`, {
-            headers: { Authorization: `Bearer ${store.clientToken}` }
+            headers: { Authorization: `Bearer ${store.coachToken}` } 
         })
             .then(res => res.json())
             .then(data => {
@@ -21,7 +21,7 @@ export const AccessCoachList = () => {
                     dispatch({ type: "set_access_coach", payload: data });
                 }
             });
-    }, [store.clientToken, dispatch, navigate]);
+    }, [store.coachToken, dispatch, navigate]); 
 
     const handleDelete = async (id) => {
         if (!confirm("Delete?")) return;
@@ -29,7 +29,7 @@ export const AccessCoachList = () => {
         try {
             const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach/${id}`, {
                 method: "DELETE",
-                headers: { Authorization: `Bearer ${store.clientToken}` }
+                headers: { Authorization: `Bearer ${store.coachToken}` }
             });
 
             if (resp.ok) {

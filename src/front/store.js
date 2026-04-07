@@ -79,15 +79,33 @@ export default function storeReducer(store, action = {}) {
 
       case "logout_client":
         sessionStorage.removeItem("clientToken");
-        return { ...store, clientToken: null };
+        return { 
+          ...store, 
+          clientToken: null, 
+          clientEmail: null, 
+          clientId: null, 
+          clientSignupDate: null 
+        };
 
       case "logout_coach":
         sessionStorage.removeItem("coachToken");
-        return { ...store, coachToken: null };
+        return { 
+          ...store, 
+          coachToken: null, 
+          coachEmail: null, 
+          coachId: null, 
+          coachSignupDate: null 
+        };
 
       case "logout_admint":
         sessionStorage.removeItem("admintToken");
-        return { ...store, admintToken: null };
+        return { 
+          ...store, 
+          admintToken: null, 
+          admintEmail: null, 
+          admintId: null, 
+          admintSignupDate: null 
+        };
 
         // USERS
 

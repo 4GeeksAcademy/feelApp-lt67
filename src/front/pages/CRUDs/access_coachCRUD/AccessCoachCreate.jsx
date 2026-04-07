@@ -10,18 +10,18 @@ export const AccessCoachCreate = () => {
     const [status] = useState("pending");
 
     useEffect(() => {
-        if (!store.clientToken) {
+        if (!store.coachToken) {
             navigate("/");
             return;
         }
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
-            headers: { Authorization: `Bearer ${store.clientToken}` }
+            headers: { Authorization: `Bearer ${store.coachToken}` } 
         })
             .then(res => res.json())
             .then(data => dispatch({ type: "set_clients", payload: data }));
 
-    }, [store.clientToken, dispatch, navigate]);
+    }, [store.coachToken, dispatch, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,7 +31,7 @@ export const AccessCoachCreate = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${store.clientToken}`
+                    Authorization: `Bearer ${store.coachToken}` 
                 },
                 body: JSON.stringify({
                     client_id: parseInt(clientId),

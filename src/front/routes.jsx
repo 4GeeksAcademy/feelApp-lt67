@@ -23,10 +23,7 @@ import EntriesUpdate from "./pages/client/entriesCRUD/entriesUpdate";
 import CoachFavoritesList from "./pages/CRUDs/coachFavoritesCRD/CoachFavoritesList";
 import CoachFavoritesCreate from "./pages/CRUDs/coachFavoritesCRD/CoachFavoritesCreate";
 
-import CLientsPostsList from "./pages/CRUDs/clientspostsCRUD/ClientsPostsList";
-import ClientsPostsCreate from "./pages/CRUDs/clientspostsCRUD/ClientsPostsCreate";
-import ClientsPostsDetails from "./pages/CRUDs/clientspostsCRUD/ClientsPostsDetails";
-import ClientsPostsUpdate from "./pages/CRUDs/clientspostsCRUD/ClientsPostsUpdate";
+import CLientsPostsList from "./pages/CRUDs/ClientsPostsList";
 
 import { AccessCoachList } from "./pages/CRUDs/access_coachCRUD/AccessCoachList";
 import { AccessCoachCreate } from "./pages/CRUDs/access_coachCRUD/AccessCoachCreate";
@@ -105,6 +102,8 @@ export const router = createBrowserRouter(
       <Route path="/entries/:id" element={<EntriesDetails />} />
       <Route path="/entries/:id/edit" element={<EntriesUpdate />} />
 
+      <Route path="/entries/client/:client_id" element={<EntriesList />} />
+
       <Route path="/reactions" element={<ReactionAdmintPostsList />} />
       <Route path="/reactions/create" element={<ReactionAdmintPostsCreate />} />
       <Route path="/reactions/:id/edit" element={<ReactionAdmintPostsUpdate />} />
@@ -116,9 +115,6 @@ export const router = createBrowserRouter(
       <Route path="/coach-favorites/create" element={<CoachFavoritesCreate />} />
 
       <Route path="/clients-posts" element={<CLientsPostsList />} />
-      <Route path="/clients-posts/create" element={<ClientsPostsCreate />} />
-      <Route path="/clients-posts/:id" element={<ClientsPostsDetails />} />
-      <Route path="/clients-posts/:id/edit" element={<ClientsPostsUpdate />} />
 
       <Route path="/reactions-client" element={<ReactionClientPostList />} />
       <Route path="/reactions-client/create" element={<ReactionClientPostCreate />} />
@@ -153,6 +149,9 @@ export const router = createBrowserRouter(
     </Route>
   )
 );
+
+
+
 
 
 
