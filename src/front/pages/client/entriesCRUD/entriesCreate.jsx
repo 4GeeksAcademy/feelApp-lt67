@@ -41,10 +41,16 @@ const EntriesCreate = () => {
           emotion_id: parseInt(emotionId)
         })
       });
+
       const data = await resp.json();
-      if (!resp.ok) { setError(data.error || "Error creating entry"); return; }
       
-      dispatch({ type: "set_entries", payload: [...store.entries, data] });
+      if (!resp.ok) { 
+        setError(data.error || "Error creating entry"); 
+        return; 
+      }
+    
+      dispatch({ type: "add_entry", payload: data });
+      
       navigate("/entries");
     } catch (err) {
       setError("Server connection failed");
@@ -104,4 +110,3 @@ const EntriesCreate = () => {
 };
 
 export default EntriesCreate;
-

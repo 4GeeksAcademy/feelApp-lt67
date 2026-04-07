@@ -14,66 +14,108 @@ const FriendEntriesDetails = () => {
   }, [store.clientToken, navigate]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, {
-    headers: { Authorization: `Bearer ${store.clientToken}` }
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${entryId}`, {
+      headers: { Authorization: `Bearer ${store.clientToken}` },
     })
-      .then(r => r.json())
-      .then(data => setEntry(data));
+      .then((r) => r.json())
+      .then((data) => setEntry(data));
 
     if (store.emotions.length === 0) {
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
-        .then(r => r.json())
-        .then(data => dispatch({ type: "set_emotions", payload: data }));
+        .then((r) => r.json())
+        .then((data) => dispatch({ type: "set_emotions", payload: data }));
     }
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
-      headers: { Authorization: `Bearer ${store.clientToken}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) setIsFav(data.some(f => f.entry_id === parseInt(entryId)));
-      });
-  }, [entryId, store.emotions.length, dispatch]);
+    const alreadyInStore = store.favorites.some(
+      (f) => f.entry_id === parseInt(entryId)
+    );
+    if (alreadyInStore) {
+      setIsFav(true);
+    } else {
+      if (store.favorites.length === 0) {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
+          headers: { Authorization: `Bearer ${store.clientToken}` },
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (Array.isArray(data)) {
+              dispatch({ type: "set_favorites", payload: data });
+              setIsFav(data.some((f) => f.entry_id === parseInt(entryId)));
+            }
+          });
+      }
+    }
+  }, [entryId]);
 
   const toggleFavorite = async () => {
     if (isFav) {
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites/entry/${entryId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${store.clientToken}` }
-      });
-      setIsFav(false);
+      const resp = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/client-favorites/entry/${entryId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${store.clientToken}` },
+        }
+      );
+      if (resp.ok) {
+        const fav = store.favorites.find(
+          (f) => f.entry_id === parseInt(entryId)
+        );
+        if (fav) dispatch({ type: "remove_favorite", payload: fav.id });
+        setIsFav(false);
+      }
     } else {
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${store.clientToken}` },
-        body: JSON.stringify({ entry_id: parseInt(entryId) })
-      });
-      setIsFav(true);
+      const resp = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${store.clientToken}`,
+          },
+          body: JSON.stringify({ entry_id: parseInt(entryId) }),
+        }
+      );
+      if (resp.ok) {
+        const data = await resp.json();
+        dispatch({ type: "add_favorite", payload: data });
+        setIsFav(true);
+      }
     }
   };
 
-  if (!entry) return (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
-      <div className="spinner-border text-primary" role="status"></div>
-    </div>
-  );
+  if (!entry)
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "80vh" }}
+      >
+        <div className="spinner-border text-primary" role="status"></div>
+      </div>
+    );
 
-  const emotion = store.emotions.find(em => em.id === entry.emotion_id);
+  const emotion = store.emotions.find((em) => em.id === entry.emotion_id);
 
   return (
-    <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "85vh", padding: "20px" }}>
-      <div style={{
-        background: "#ffffff", borderRadius: "20px", padding: "40px",
-        width: "100%", maxWidth: "550px",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-        textAlign: "center", border: "1px solid #edf2f7"
-      }}>
+    <div
+      className="container d-flex justify-content-center align-items-center"
+      style={{ minHeight: "85vh", padding: "20px" }}
+    >
+      <div
+        style={{
+          background: "#ffffff", borderRadius: "20px", padding: "40px",
+          width: "100%", maxWidth: "550px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+          textAlign: "center", border: "1px solid #edf2f7",
+        }}
+      >
         <div style={{ marginBottom: "20px" }}>
-          <span style={{
-            backgroundColor: "#f3f4f6", color: "#6b7280",
-            padding: "5px 15px", borderRadius: "12px",
-            fontSize: "0.85rem", fontWeight: "500"
-          }}>
+          <span
+            style={{
+              backgroundColor: "#f3f4f6", color: "#6b7280",
+              padding: "5px 15px", borderRadius: "12px",
+              fontSize: "0.85rem", fontWeight: "500",
+            }}
+          >
             {entry.date}
           </span>
         </div>
@@ -87,10 +129,12 @@ const FriendEntriesDetails = () => {
           </h2>
         </div>
 
-        <div style={{
-          backgroundColor: "#f9fafb", padding: "25px",
-          borderRadius: "15px", textAlign: "left", minHeight: "100px"
-        }}>
+        <div
+          style={{
+            backgroundColor: "#f9fafb", padding: "25px",
+            borderRadius: "15px", textAlign: "left", minHeight: "100px",
+          }}
+        >
           <p style={{ fontSize: "1.1rem", lineHeight: "1.7", color: "#374151", margin: 0 }}>
             {entry.description}
           </p>
@@ -103,7 +147,7 @@ const FriendEntriesDetails = () => {
               textDecoration: "none", color: "#6366f1",
               fontSize: "1rem", fontWeight: "600",
               background: "none", border: "none",
-              display: "inline-flex", alignItems: "center", gap: "8px"
+              display: "inline-flex", alignItems: "center", gap: "8px",
             }}
           >
             ← Back
@@ -112,7 +156,10 @@ const FriendEntriesDetails = () => {
             style={{ background: "transparent", border: "none" }}
             onClick={toggleFavorite}
           >
-            <i className={`bi ${isFav ? "bi-heart-fill text-danger" : "bi-heart text-muted"}`} style={{ fontSize: "1.5rem" }}></i>
+            <i
+              className={`bi ${isFav ? "bi-heart-fill text-danger" : "bi-heart text-muted"}`}
+              style={{ fontSize: "1.5rem" }}
+            ></i>
           </button>
         </div>
       </div>

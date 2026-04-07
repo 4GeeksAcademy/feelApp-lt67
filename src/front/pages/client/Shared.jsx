@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
 const Shared = () => {
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
   const [view, setView] = useState("friends");
-  const [friends, setFriends] = useState([]);
-  const [coachFavorites, setCoachFavorites] = useState([]);
-  const [allEntries, setAllEntries] = useState([]);
-  const [allEmotions, setAllEmotions] = useState([]);
-  const [myFavorites, setMyFavorites] = useState([]);
 
   const myId = store.clientId;
 
@@ -20,83 +16,125 @@ const Shared = () => {
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-clients`, {
-      headers: { Authorization: `Bearer ${store.clientToken}` }
+      headers: { Authorization: `Bearer ${store.clientToken}` },
     })
-      .then(r => r.json())
-      .then(data => {
-        if (!Array.isArray(data)) return;
-        const approved = data.filter(
-          a => String(a.shared_with_id) === String(myId) && a.status === "approved"
-        );
-        setFriends(approved);
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data))
+          dispatch({ type: "set_access_clients", payload: data });
       });
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/coach-favorites`, {
-      headers: { Authorization: `Bearer ${store.clientToken}` }
-    })
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setCoachFavorites(data); });
+    if (store.coach_favorites.length === 0) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/coach-favorites`, {
+        headers: { Authorization: `Bearer ${store.clientToken}` },
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data))
+            dispatch({ type: "set_coach_favorites", payload: data });
+        });
+    }
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries`)
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setAllEntries(data); });
+    if (store.entries.length === 0) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data))
+            dispatch({ type: "set_entries", payload: data });
+        });
+    }
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setAllEmotions(data); });
+    if (store.emotions.length === 0) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data))
+            dispatch({ type: "set_emotions", payload: data });
+        });
+    }
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
-      headers: { Authorization: `Bearer ${store.clientToken}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) setMyFavorites(data.map(f => f.entry_id));
-      });
+    if (store.favorites.length === 0) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
+        headers: { Authorization: `Bearer ${store.clientToken}` },
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data))
+            dispatch({ type: "set_favorites", payload: data });
+        });
+    }
   }, []);
 
   const toggleFavorite = async (entryId) => {
-    const isFav = myFavorites.includes(entryId);
+    const favoriteEntryIds = new Set(store.favorites.map((f) => f.entry_id));
+    const isFav = favoriteEntryIds.has(entryId);
+
     if (isFav) {
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites/entry/${entryId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${store.clientToken}` }
-      });
-      setMyFavorites(myFavorites.filter(id => id !== entryId));
+      const resp = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/client-favorites/entry/${entryId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${store.clientToken}` },
+        }
+      );
+      if (resp.ok) {
+        const fav = store.favorites.find((f) => f.entry_id === entryId);
+        if (fav) dispatch({ type: "remove_favorite", payload: fav.id });
+      }
     } else {
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${store.clientToken}` },
-        body: JSON.stringify({ entry_id: entryId })
-      });
-      setMyFavorites([...myFavorites, entryId]);
+      const resp = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${store.clientToken}`,
+          },
+          body: JSON.stringify({ entry_id: entryId }),
+        }
+      );
+      if (resp.ok) {
+        const data = await resp.json();
+        dispatch({ type: "add_favorite", payload: data });
+      }
     }
   };
 
+  const friends = store.access_clients.filter(
+    (a) => String(a.shared_with_id) === String(myId) && a.status === "approved"
+  );
+
+  const coachFavMap = {};
+  store.coach_favorites.forEach((fav) => {
+    if (!coachFavMap[fav.coach_id]) coachFavMap[fav.coach_id] = [];
+    coachFavMap[fav.coach_id].push(fav.entry_id);
+  });
+
+  const getEmotion = (emotionId) =>
+    store.emotions.find((e) => e.id === emotionId);
+
   const statusBadge = (status) => {
     const map = {
-      pending: { bg: "#fff9c4", color: "#b45309" },
+      pending:  { bg: "#fff9c4", color: "#b45309" },
       approved: { bg: "#d1fae5", color: "#065f46" },
-      rejected: { bg: "#fee2e2", color: "#991b1b" }
+      rejected: { bg: "#fee2e2", color: "#991b1b" },
     };
     const s = map[status] || map.pending;
     return (
-      <span style={{ backgroundColor: s.bg, color: s.color, padding: "2px 10px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600 }}>
+      <span
+        style={{
+          backgroundColor: s.bg, color: s.color,
+          padding: "2px 10px", borderRadius: "20px",
+          fontSize: "0.75rem", fontWeight: 600,
+        }}
+      >
         {status}
       </span>
     );
   };
 
-  const getEmotion = (emotionId) => allEmotions.find(e => e.id === emotionId);
-
-  const coachFavMap = {};
-  coachFavorites.forEach(fav => {
-    if (!coachFavMap[fav.coach_id]) coachFavMap[fav.coach_id] = [];
-    coachFavMap[fav.coach_id].push(fav.entry_id);
-  });
-
   return (
     <div className="container mt-5" style={{ maxWidth: "680px" }}>
-
       <div className="mb-4 mt-5">
         <h2 className="mb-0">Shared</h2>
         <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>
@@ -107,13 +145,13 @@ const Shared = () => {
       <div className="d-flex gap-2 mb-4">
         <button
           className={`btn btn-forum-switch rounded-pill px-4 ${view === "friends" ? "active" : ""}`}
-          onClick={() => { setView("friends"); }}
+          onClick={() => setView("friends")}
         >
           <i className="bi bi-people me-2"></i>Friends
         </button>
         <button
           className={`btn btn-forum-switch rounded-pill px-4 ${view === "coaches" ? "active" : ""}`}
-          onClick={() => { setView("coaches");}}
+          onClick={() => setView("coaches")}
         >
           <i className="bi bi-person-badge me-2"></i>Coach Likes
         </button>
@@ -122,10 +160,15 @@ const Shared = () => {
       {view === "friends" && (
         <div className="d-flex flex-column gap-3">
           {friends.length === 0 && (
-            <p className="text-muted text-center mt-5">No friends yet — approve access requests first</p>
+            <p className="text-muted text-center mt-5">
+              No friends yet — approve access requests first
+            </p>
           )}
-          {friends.map(f => (
-            <div key={f.id} className="forum-card p-3 d-flex justify-content-between align-items-center">
+          {friends.map((f) => (
+            <div
+              key={f.id}
+              className="forum-card p-3 d-flex justify-content-between align-items-center"
+            >
               <div>
                 <p className="mb-0 fw-semibold" style={{ fontSize: "0.95rem" }}>
                   {f.client_email || `Client #${f.client_id}`}
@@ -162,8 +205,8 @@ const Shared = () => {
                 <i className="bi bi-person-badge me-2"></i>Coach #{coachId}
               </p>
               <div className="d-flex flex-column gap-2">
-                {entryIds.map(entryId => {
-                  const entry = allEntries.find(e => e.id === entryId);
+                {entryIds.map((entryId) => {
+                  const entry = store.entries.find((e) => e.id === entryId);
                   if (!entry) return null;
                   const emotion = getEmotion(entry.emotion_id);
                   return (
@@ -176,8 +219,15 @@ const Shared = () => {
                         <span style={{ fontSize: "1.1rem" }}>{emotion?.emoji}</span>
                         <h6 className="fw-semibold mb-0">{entry.title}</h6>
                       </div>
-                      <small className="text-muted">{emotion?.name} · {entry.date}</small>
-                      <p className="mt-2 mb-0" style={{ color: "#374151", fontSize: "0.9rem", lineHeight: "1.6" }}>{entry.description}</p>
+                      <small className="text-muted">
+                        {emotion?.name} · {entry.date}
+                      </small>
+                      <p
+                        className="mt-2 mb-0"
+                        style={{ color: "#374151", fontSize: "0.9rem", lineHeight: "1.6" }}
+                      >
+                        {entry.description}
+                      </p>
                     </div>
                   );
                 })}

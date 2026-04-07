@@ -58,4 +58,3 @@ def get_reaction_client_posts():
 def get_reaction_admint_posts():
     return jsonify([r.serialize() for r in ReactionAdmintPost.query.all()]), 200
 
-

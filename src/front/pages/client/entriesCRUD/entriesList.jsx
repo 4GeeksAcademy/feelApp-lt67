@@ -14,12 +14,12 @@ const EntriesList = () => {
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries`, {
-  headers: { Authorization: `Bearer ${store.clientToken}` }
-  })
-  .then(resp => resp.json())
-  .then(data => {
-    if (Array.isArray(data)) dispatch({ type: "set_entries", payload: data });
-  });
+      headers: { Authorization: `Bearer ${store.clientToken}` }
+    })
+      .then(resp => resp.json())
+      .then(data => {
+        if (Array.isArray(data)) dispatch({ type: "set_entries", payload: data });
+      });
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotions`)
       .then(resp => resp.json())
@@ -51,19 +51,26 @@ const EntriesList = () => {
   };
 
   const handleDelete = async (id) => {
-    await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${store.clientToken}` }
-    });
-    dispatch({ type: "set_entries", payload: store.entries.filter(e => e.id !== id) });
-    setDeleteModal(null);
+    try {
+      const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${store.clientToken}` }
+      });
+
+      if (resp.ok) {
+        dispatch({ type: "remove_entry", payload: id });
+        setDeleteModal(null);
+      }
+    } catch (error) {
+      console.error("Error deleting entry:", error);
+    }
   };
   
   return (
     <div className="container mt-5" style={{ maxWidth: "680px" }}>
         <div className="text-start mt-5" >
-        <h2 style={{ margin: 0}}>Entries</h2>
-        <p className="text-muted">Record your thoughts and feelings</p>
+          <h2 style={{ margin: 0}}>Entries</h2>
+          <p className="text-muted">Record your thoughts and feelings</p>
         </div>
       <div className="d-flex justify-content-end mb-5">
         <Link to="/entries/create" className="btn btn-custom rounded-pill px-4">
@@ -81,7 +88,7 @@ const EntriesList = () => {
             const emotion = store.emotions.find(em => em.id === entry.emotion_id);
             const isFav = favorites.includes(entry.id);
             return (
-              <div key={entry.id} className="col-12 col-md-3 col-lg-4">
+              <div key={entry.id} className="col-12 col-md-6 col-lg-4">
                 <div style={{
                   background: "#ffffff", borderRadius: "20px", padding: "20px",
                   height: "200px", border: "1px solid #edf2f7", position: "relative",
@@ -124,6 +131,7 @@ const EntriesList = () => {
           })}
         </div>
       )}
+
       {deleteModal && (
         <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }}>
           <div className="modal-dialog modal-dialog-centered">

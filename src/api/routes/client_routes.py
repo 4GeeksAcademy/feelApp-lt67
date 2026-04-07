@@ -251,43 +251,6 @@ def delete_reaction_admint_post(reaction_id):
     db.session.commit()
     return jsonify({"message": "Reaction deleted successfully"}), 200
 
-@client_bp.route('/access-coach', methods=['POST'])
-@jwt_required()
-def create_access_coach():
-    current_client_id = get_jwt_identity()
-    body = request.get_json()
-    new_item = AccessCoach(client_id=current_client_id, coach_id=body["coach_id"], status=body.get("status", "pending"))
-    db.session.add(new_item)
-    db.session.commit()
-    return jsonify(new_item.serialize()), 201
-
-@client_bp.route('/access-coach/<int:id>', methods=['PUT'])
-@jwt_required()
-def update_access_coach_status(id):
-    current_client_id = get_jwt_identity()
-    item = AccessCoach.query.get(id)
-    if item is None:
-        return jsonify({"error": "Not found"}), 404
-    if str(item.client_id) != str(current_client_id):
-        return jsonify({"error": "Only the client can approve this"}), 403
-    data = request.get_json()
-    if "status" in data:
-        if data["status"] not in ["pending", "approved", "rejected"]:
-            return jsonify({"msg": "Invalid status"}), 400
-        item.status = data["status"]
-    db.session.commit()
-    return jsonify(item.serialize()), 200
-
-@client_bp.route('/access-coach/<int:id>', methods=['DELETE'])
-@jwt_required()
-def delete_access_coach(id):
-    item = AccessCoach.query.get(id)
-    if item is None:
-        return jsonify({"error": "Not found"}), 404
-    db.session.delete(item)
-    db.session.commit()
-    return jsonify({"msg": "Deleted"}), 200
-
 @client_bp.route('/access-clients', methods=['POST'])
 @jwt_required()
 def create_access_client():
@@ -347,13 +310,26 @@ def get_posts_by_client(client_id):
 @jwt_required()
 def get_entries_by_client(client_id):
     current_id = get_jwt_identity()
-    access = AccessClient.query.filter_by(
+
+    is_owner = str(current_id) == str(client_id)
+
+    access_as_client = AccessClient.query.filter(
+        AccessClient.status == "approved",
+        db.or_(
+            db.and_(AccessClient.client_id == client_id, AccessClient.shared_with_id == current_id),
+            db.and_(AccessClient.client_id == current_id, AccessClient.shared_with_id == client_id)
+        )
+    ).first()
+    
+    access_as_coach = AccessCoach.query.filter_by(
         client_id=client_id,
-        shared_with_id=current_id,
+        coach_id=current_id,
         status="approved"
     ).first()
-    if str(current_id) != str(client_id) and not access:
+    
+    if not (is_owner or access_as_client or access_as_coach):
         return jsonify({"error": "Access denied"}), 403
+        
     entries = Entry.query.filter_by(client_id=client_id).all()
     return jsonify([e.serialize() for e in entries]), 200
 
@@ -368,19 +344,100 @@ def get_entries():
 @client_bp.route('/entries/<int:entry_id>', methods=['GET'])
 @jwt_required()
 def get_entry(entry_id):
-    current_user_id = get_jwt_identity()
+    current_id = get_jwt_identity()
     entry = Entry.query.get(entry_id)
+    
     if entry is None:
         return jsonify({"error": "Entry not found"}), 404
-    if str(entry.client_id) == str(current_user_id):
+    
+    owner_id = entry.client_id
+    
+    if str(owner_id) == str(current_id):
         return jsonify(entry.serialize()), 200
     
-    access = AccessClient.query.filter_by(
-        client_id=entry.client_id,
-        shared_with_id=current_user_id,
+    access_client = AccessClient.query.filter(
+        AccessClient.status == "approved",
+        db.or_(
+            db.and_(AccessClient.client_id == owner_id, AccessClient.shared_with_id == current_id),
+            db.and_(AccessClient.client_id == current_id, AccessClient.shared_with_id == owner_id)
+        )
+    ).first()
+    
+    access_coach = AccessCoach.query.filter_by(
+        client_id=owner_id,
+        coach_id=current_id,
         status="approved"
     ).first()
-    if not access:
+    
+    if not (access_client or access_coach):
         return jsonify({"error": "Access denied"}), 403
     
     return jsonify(entry.serialize()), 200
+
+# ACCESS COACH
+
+@client_bp.route('/access-coach', methods=['POST'])
+@jwt_required()
+def create_access_coach():
+    current_user_id = get_jwt_identity()
+    body = request.get_json()
+    
+    exists = AccessCoach.query.filter_by(
+        client_id=current_user_id, 
+        coach_id=body["coach_id"]
+    ).first()
+    
+    if exists:
+        return jsonify({"msg": "Request already exists"}), 400
+
+    new_item = AccessCoach(
+        client_id=current_user_id,
+        coach_id=body["coach_id"],
+        status="approved"  
+    )
+    
+    db.session.add(new_item)
+    db.session.commit()
+    return jsonify(new_item.serialize()), 201
+
+@client_bp.route('/access-coach/<int:id>', methods=['PUT'])
+@jwt_required()
+def update_access_coach_status(id):
+    current_client_id = get_jwt_identity()
+    item = AccessCoach.query.get(id)
+    
+    if item is None:
+        return jsonify({"error": "Not found"}), 404
+        
+    if str(item.client_id) != str(current_client_id):
+        return jsonify({"error": "Only the client can grant access to their data"}), 403
+
+    data = request.get_json()
+    if "status" in data:
+        new_status = data["status"]
+        if new_status in ["approved", "rejected"]:
+            item.status = new_status
+            db.session.commit()
+            return jsonify(item.serialize()), 200
+            
+    return jsonify({"msg": "Invalid action"}), 400
+
+@client_bp.route('/access-coach/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_access_coach(id):
+    current_user_id = get_jwt_identity()
+    
+    item = AccessCoach.query.get(id)
+    if item is None:
+        return jsonify({"error": "Not found"}), 404
+
+    is_owner_client = str(item.client_id) == str(current_user_id)
+    is_owner_coach = str(item.coach_id) == str(current_user_id)
+
+    if not (is_owner_client or is_owner_coach):
+        return jsonify({"error": "Unauthorized to delete this connection"}), 403
+
+    db.session.delete(item)
+    db.session.commit()
+    
+    return jsonify({"msg": "Access revoked and connection deleted"}), 200
