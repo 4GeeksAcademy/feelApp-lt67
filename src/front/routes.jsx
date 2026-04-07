@@ -30,8 +30,6 @@ import ClientsPostsUpdate from "./pages/CRUDs/clientspostsCRUD/ClientsPostsUpdat
 
 import { AccessCoachList } from "./pages/CRUDs/access_coachCRUD/AccessCoachList";
 import { AccessCoachCreate } from "./pages/CRUDs/access_coachCRUD/AccessCoachCreate";
-import { AccessCoachDetails } from "./pages/CRUDs/access_coachCRUD/AccessCoachDetails";
-import { AccessCoachUpdate } from "./pages/CRUDs/access_coachCRUD/AccessCoachUpdate";
 
 import { CrudList } from "./pages/CrudList";
 
@@ -128,8 +126,6 @@ export const router = createBrowserRouter(
 
       <Route path="/access-coach" element={<AccessCoachList />} />
       <Route path="/access-coach/create" element={<AccessCoachCreate />} />
-      <Route path="/access-coach/:id" element={<AccessCoachDetails />} />
-      <Route path="/access-coach/update/:id" element={<AccessCoachUpdate />} />
 
       <Route path="/access-clients" element={<AccessClientList />} />
 

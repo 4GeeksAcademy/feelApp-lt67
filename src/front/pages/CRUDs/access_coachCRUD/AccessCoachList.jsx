@@ -1,28 +1,48 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 export const AccessCoachList = () => {
-    const [data, setData] = useState([]);
+    const { store, dispatch } = useGlobalReducer();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach`)
+        if (!store.clientToken) {
+            navigate("/");
+            return;
+        }
+
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach`, {
+            headers: { Authorization: `Bearer ${store.clientToken}` }
+        })
             .then(res => res.json())
-            .then(data => setData(data));
-    }, []);
+            .then(data => {
+                if (Array.isArray(data)) {
+                    dispatch({ type: "set_access_coach", payload: data });
+                }
+            });
+    }, [store.clientToken, dispatch, navigate]);
 
     const handleDelete = async (id) => {
         if (!confirm("Delete?")) return;
 
-        await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach/${id}`, {
-            method: "DELETE"
-        });
+        try {
+            const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${store.clientToken}` }
+            });
 
-        setData(data.filter(item => item.id !== id));
+            if (resp.ok) {
+                dispatch({ type: "remove_access_coach", payload: id });
+            }
+        } catch (error) {
+            console.error("Error deleting access coach:", error);
+        }
     };
 
     return (
-        <div className="container">
-            <h2>Access Coach List</h2>
+        <div className="container mt-5">
+            <h2 className="mt-5">Access Coach List</h2>
 
             <Link to="/access-coach/create" className="btn btn-primary mb-3">
                 Create
@@ -35,19 +55,17 @@ export const AccessCoachList = () => {
                         <th>Client</th>
                         <th>Coach</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th>-</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map(item => (
+                    {store.access_coach?.map(item => (
                         <tr key={item.id}>
                             <td>{item.id}</td>
                             <td>{item.client_id}</td>
                             <td>{item.coach_id}</td>
                             <td>{item.status}</td>
                             <td>
-                                <Link to={`/access-coach/${item.id}`} className="btn btn-info me-2">View</Link>
-                                <Link to={`/access-coach/update/${item.id}`} className="btn btn-warning me-2">Edit</Link>
                                 <button onClick={() => handleDelete(item.id)} className="btn btn-danger">Delete</button>
                             </td>
                         </tr>
