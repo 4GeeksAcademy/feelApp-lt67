@@ -251,6 +251,9 @@ def delete_reaction_admint_post(reaction_id):
     db.session.commit()
     return jsonify({"message": "Reaction deleted successfully"}), 200
 
+
+# ACCESS CLIENT     
+
 @client_bp.route('/access-clients', methods=['POST'])
 @jwt_required()
 def create_access_client():
@@ -294,42 +297,45 @@ def delete_access_client(access_id):
 @jwt_required()
 def get_posts_by_client(client_id):
     current_id = get_jwt_identity()
-    access = AccessClient.query.filter_by(
-        client_id=client_id,
-        shared_with_id=current_id,
-        status="approved"
-    ).first()
+    access = AccessClient.query.filter(
+    (
+        (AccessClient.client_id == client_id) &
+        (AccessClient.shared_with_id == current_id)
+    ) |
+    (
+        (AccessClient.client_id == current_id) &
+        (AccessClient.shared_with_id == client_id)
+    ),
+    AccessClient.status == "approved"
+).first()
     if str(current_id) != str(client_id) and not access:
         return jsonify({"error": "Access denied"}), 403
     posts = ClientPost.query.filter_by(client_id=client_id).all()
     return jsonify([p.serialize() for p in posts]), 200
 
 
-# ACCESS to entries
+# ENTRIES AND ACCESS
+
 @client_bp.route('/entries/client/<int:client_id>', methods=['GET'])
 @jwt_required()
 def get_entries_by_client(client_id):
     current_id = get_jwt_identity()
 
-    is_owner = str(current_id) == str(client_id)
+    access = AccessClient.query.filter(
+        (
+            (AccessClient.client_id == client_id) &
+            (AccessClient.shared_with_id == current_id)
+        ) |
+        (
+            (AccessClient.client_id == current_id) &
+            (AccessClient.shared_with_id == client_id)
+        ),
+        AccessClient.status == "approved"
+    ).first()
 
-    access_as_client = AccessClient.query.filter(
-        AccessClient.status == "approved",
-        db.or_(
-            db.and_(AccessClient.client_id == client_id, AccessClient.shared_with_id == current_id),
-            db.and_(AccessClient.client_id == current_id, AccessClient.shared_with_id == client_id)
-        )
-    ).first()
-    
-    access_as_coach = AccessCoach.query.filter_by(
-        client_id=client_id,
-        coach_id=current_id,
-        status="approved"
-    ).first()
-    
-    if not (is_owner or access_as_client or access_as_coach):
+    if str(current_id) != str(client_id) and not access:
         return jsonify({"error": "Access denied"}), 403
-        
+
     entries = Entry.query.filter_by(client_id=client_id).all()
     return jsonify([e.serialize() for e in entries]), 200
 
@@ -344,34 +350,30 @@ def get_entries():
 @client_bp.route('/entries/<int:entry_id>', methods=['GET'])
 @jwt_required()
 def get_entry(entry_id):
-    current_id = get_jwt_identity()
+    current_user_id = get_jwt_identity()
     entry = Entry.query.get(entry_id)
-    
+
     if entry is None:
         return jsonify({"error": "Entry not found"}), 404
-    
-    owner_id = entry.client_id
-    
-    if str(owner_id) == str(current_id):
+
+    if str(entry.client_id) == str(current_user_id):
         return jsonify(entry.serialize()), 200
-    
-    access_client = AccessClient.query.filter(
-        AccessClient.status == "approved",
-        db.or_(
-            db.and_(AccessClient.client_id == owner_id, AccessClient.shared_with_id == current_id),
-            db.and_(AccessClient.client_id == current_id, AccessClient.shared_with_id == owner_id)
-        )
+
+    access = AccessClient.query.filter(
+        (
+            (AccessClient.client_id == entry.client_id) &
+            (AccessClient.shared_with_id == current_user_id)
+        ) |
+        (
+            (AccessClient.client_id == current_user_id) &
+            (AccessClient.shared_with_id == entry.client_id)
+        ),
+        AccessClient.status == "approved"
     ).first()
-    
-    access_coach = AccessCoach.query.filter_by(
-        client_id=owner_id,
-        coach_id=current_id,
-        status="approved"
-    ).first()
-    
-    if not (access_client or access_coach):
+
+    if not access:
         return jsonify({"error": "Access denied"}), 403
-    
+
     return jsonify(entry.serialize()), 200
 
 # ACCESS COACH
@@ -441,3 +443,7 @@ def delete_access_coach(id):
     db.session.commit()
     
     return jsonify({"msg": "Access revoked and connection deleted"}), 200
+
+
+
+

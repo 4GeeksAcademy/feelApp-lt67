@@ -13,6 +13,7 @@ class Client(db.Model):
     password: Mapped[str] = mapped_column(nullable=False)
     sign_up_date: Mapped[datetime] = mapped_column(
         DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
+    profile_image = db.Column(db.String(255), nullable=True)
     
     reactions = db.relationship("ReactionAdmintPost", back_populates="client")
     entries = db.relationship("Entry", back_populates="client")
@@ -35,7 +36,8 @@ class Client(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            "sign_up_date": self.sign_up_date.isoformat()
+            "sign_up_date": self.sign_up_date.isoformat(),
+            "profile_image": self.profile_image
         }
 
 
@@ -46,13 +48,16 @@ class Admint(db.Model):
     password: Mapped[str] = mapped_column(nullable=False)
     sign_up_date: Mapped[datetime] = mapped_column(
         DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
+    profile_image = db.Column(db.String(255), nullable=True)
+
     posts = db.relationship("AdmintPost", back_populates="admint")
 
     def serialize(self):
         return {
             "id": self.id,
             "email": self.email,
-            "sign_up_date": self.sign_up_date.isoformat()
+            "sign_up_date": self.sign_up_date.isoformat(),
+            "profile_image": self.profile_image
         }
 
 
@@ -63,6 +68,8 @@ class Coach(db.Model):
     password: Mapped[str] = mapped_column(nullable=False)
     sign_up_date: Mapped[datetime] = mapped_column(
         DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
+    profile_image = db.Column(db.String(255), nullable=True)
+
     favorites = db.relationship("CoachFavorites", back_populates="coach")
     coach_requests = db.relationship("AccessCoach",back_populates="coach")
 
@@ -70,7 +77,8 @@ class Coach(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            "sign_up_date": self.sign_up_date.isoformat()
+            "sign_up_date": self.sign_up_date.isoformat(),
+            "profile_image": self.profile_image
         }
 
 
