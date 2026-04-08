@@ -39,8 +39,6 @@ import { AdminPrivate } from "./pages/login/AdminPrivate";
 import Forum from "./pages/client/Forum";
 import AccessPage from "./pages/client/AccessPage";
 import Shared from "./pages/client/Shared";
-import FriendEntriesList from "./pages/client/FriendEntriesList";
-import FriendEntriesDetails from "./pages/client/FriendEntriesDetails";
 
 import ReactionClientPostList from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostList";
 import ReactionClientPostCreate from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostCreate";
@@ -66,6 +64,9 @@ import AdmintsCreate from "./pages/CRUDs/adminsCRUD/AdminsCreate";
 import AdmintsDetails from "./pages/CRUDs/adminsCRUD/AdminsDetails";
 import AdmintsUpdate from "./pages/CRUDs/adminsCRUD/AdminsUpdate";
 import AdmintsList from "./pages/CRUDs/adminsCRUD/AdminsList";
+
+import SharedEntriesList from "./pages/client/SharedEntriesList";
+import SharedEntriesDetails from "./pages/client/SharedEntriesDetails";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -143,8 +144,8 @@ export const router = createBrowserRouter(
       <Route path="/forum" element={<Forum />} />
       <Route path="/access" element={<AccessPage />} />
       <Route path="/shared" element={<Shared />} />
-      <Route path="/entries/friend/:clientId" element={<FriendEntriesList />} />
-      <Route path="/entries/friend/:clientId/:entryId" element={<FriendEntriesDetails />} />
+      <Route path="/entries/friend/:clientId" element={<SharedEntriesList />} />
+      <Route path="/entries/friend/:clientId/:entryId" element={<SharedEntriesDetails />} />
 
     </Route>
   )

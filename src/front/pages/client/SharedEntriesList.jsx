@@ -2,18 +2,20 @@ import { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
-const FriendEntriesList = () => {
+const SharedEntriesList = () => {
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
   const { clientId } = useParams();
 
+  const activeToken = store.clientToken || store.coachToken;
+
   useEffect(() => {
-    if (!store.clientToken) navigate("/");
-  }, [store.clientToken]);
+    if (!activeToken) navigate("/");
+  }, [activeToken]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/client/${clientId}`, {
-      headers: { Authorization: `Bearer ${store.clientToken}` },
+      headers: { Authorization: `Bearer ${activeToken}` },
     })
       .then((r) => r.json())
       .then((data) => {
@@ -29,7 +31,7 @@ const FriendEntriesList = () => {
 
     if (store.favorites.length === 0) {
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
-        headers: { Authorization: `Bearer ${store.clientToken}` },
+        headers: { Authorization: `Bearer ${activeToken}` },
       })
         .then((r) => r.json())
         .then((data) => {
@@ -40,7 +42,7 @@ const FriendEntriesList = () => {
 
     if (store.clients.length === 0) {
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
-        headers: { Authorization: `Bearer ${store.clientToken}` },
+        headers: { Authorization: `Bearer ${activeToken}` },
       })
         .then((r) => r.json())
         .then((data) => {
@@ -64,7 +66,7 @@ const FriendEntriesList = () => {
         `${import.meta.env.VITE_BACKEND_URL}/api/client-favorites/entry/${entryId}`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${store.clientToken}` },
+          headers: { Authorization: `Bearer ${activeToken}` },
         }
       );
       if (resp.ok) {
@@ -78,7 +80,7 @@ const FriendEntriesList = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${store.clientToken}`,
+            Authorization: `Bearer ${activeToken}`,
           },
           body: JSON.stringify({ entry_id: entryId }),
         }
@@ -183,4 +185,4 @@ const FriendEntriesList = () => {
   );
 };
 
-export default FriendEntriesList;
+export default SharedEntriesList;
