@@ -39,8 +39,7 @@ const EntriesUpdate = () => {
       const data = await resp.json();
       if (!resp.ok) { setError(data.error || "Error updating entry"); return; }
       
-      const updatedEntries = store.entries.map(e => e.id === parseInt(id) ? data : e);
-      dispatch({ type: "set_entries", payload: updatedEntries });
+      dispatch({ type: "update_entry", payload: data });
       navigate("/entries");
     } catch (err) {
       setError("Server connection failed");

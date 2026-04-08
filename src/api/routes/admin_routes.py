@@ -9,11 +9,11 @@ admin_bp = Blueprint('admin_routes', __name__)
 def admint_signup():
     body = request.get_json()
     if Admint.query.filter_by(email=body["email"]).first():
-        return jsonify({"msg": "Ya se encuentra registrado un Admint con ese correo"}), 401
+        return jsonify({"msg": "Admin already exists"}), 401
     new_admint = Admint(email=body["email"], password=body["password"])
     db.session.add(new_admint)
     db.session.commit()
-    return jsonify({"msg": "Admint creado exitosamente!!"}), 200
+    return jsonify({"msg": "Admint created"}), 200
 
 @admin_bp.route('/admint-login', methods=['POST'])
 def admint_login():
@@ -21,9 +21,9 @@ def admint_login():
     password = request.json.get("password")
     admint = Admint.query.filter_by(email=email).first()
     if admint is None:
-        return jsonify({"msg": "El usuario no esta registrado"}), 401
+        return jsonify({"msg": "Admin not found"}), 401
     if password != admint.password:
-        return jsonify({"msg": "Admint o contraseña incorrectos"}), 401
+        return jsonify({"msg": "Bad credentials"}), 401
     access_token = create_access_token(identity=str(admint.id))
     return jsonify({"token": access_token, "admint": admint.serialize()}), 200
 

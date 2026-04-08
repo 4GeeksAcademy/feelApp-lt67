@@ -1,5 +1,6 @@
-from flask import Blueprint, jsonify
-from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost
+from flask import Blueprint, jsonify, request
+from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost, Client, Coach, Admint
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 shared_bp = Blueprint('shared_routes', __name__)
 
@@ -58,4 +59,34 @@ def get_reaction_client_posts():
 def get_reaction_admint_posts():
     return jsonify([r.serialize() for r in ReactionAdmintPost.query.all()]), 200
 
+
+#PROFILE
+@shared_bp.route('/profile-image', methods=['PUT'])
+@jwt_required()
+def update_profile_image():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    image = data.get("profile_image")
+
+    if not image:
+        return jsonify({"msg": "No image provided"}), 400
+
+    user = None
+
+    if Client.query.get(user_id):
+        user = Client.query.get(user_id)
+
+    elif Coach.query.get(user_id):
+        user = Coach.query.get(user_id)
+
+    elif Admint.query.get(user_id):
+        user = Admint.query.get(user_id)
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    user.profile_image = image
+    db.session.commit()
+
+    return jsonify(user.serialize()), 200
 
