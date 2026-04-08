@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import useGlobalReducer from "../../../hooks/useGlobalReducer";
+import useGlobalReducer from "../../hooks/useGlobalReducer";
 
 const CoachFavoritesList = () => {
     const { store, dispatch } = useGlobalReducer();
@@ -8,7 +8,7 @@ const CoachFavoritesList = () => {
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/coach-favorites`)
     .then(resp => resp.json())
-    .then(data => dispatch({ type: "set_coach_favorites", payload: data }))
+    .then(data => dispatch({ type: "set_coach_favorites", payload: Array.isArray(data) ? data : []}))
     .catch(err => console.error("Error fetching favorites:", err));
     }, []);
 

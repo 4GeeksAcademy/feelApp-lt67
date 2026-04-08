@@ -20,9 +20,6 @@ import EntriesCreate from "./pages/client/entriesCRUD/entriesCreate";
 import EntriesDetails from "./pages/client/entriesCRUD/entriesDetails";
 import EntriesUpdate from "./pages/client/entriesCRUD/entriesUpdate";
 
-import CoachFavoritesList from "./pages/CRUDs/coachFavoritesCRD/CoachFavoritesList";
-import CoachFavoritesCreate from "./pages/CRUDs/coachFavoritesCRD/CoachFavoritesCreate";
-
 import CLientsPostsList from "./pages/CRUDs/ClientsPostsList";
 
 import { AccessCoachList } from "./pages/CRUDs/access_coachCRUD/AccessCoachList";
@@ -44,8 +41,9 @@ import ReactionClientPostList from "./pages/CRUDs/reactionClientPostCRUD/Reactio
 import ReactionClientPostCreate from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostCreate";
 import ReactionClientPostUpdate from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostUpdate";
 
-import ClientFavoritesList from "./pages/CRUDs/clientfavoritesCRD/ClientFavoritesList";
-import ClientFavoritesCreate from "./pages/CRUDs/clientfavoritesCRD/ClientFavoritesCreate";
+import ClientFavoritesList from "./pages/CRUDs/ClientFavoritesList";
+import CoachFavoritesList from "./pages/CRUDs/CoachFavoritesList";
+
 import AccessClientList from "./pages/CRUDs/access_clientCRUD/AccessClientList";
 
 import EmotionsDetails from "./pages/CRUDs/emotionsCRUD/EmotionDetails";
@@ -110,10 +108,8 @@ export const router = createBrowserRouter(
       <Route path="/reactions/:id/edit" element={<ReactionAdmintPostsUpdate />} />
 
       <Route path="/client-favorites" element={<ClientFavoritesList />} />
-      <Route path="/client-favorites/create" element={<ClientFavoritesCreate />} />
 
       <Route path="/coach-favorites" element={<CoachFavoritesList />} />
-      <Route path="/coach-favorites/create" element={<CoachFavoritesCreate />} />
 
       <Route path="/clients-posts" element={<CLientsPostsList />} />
 
