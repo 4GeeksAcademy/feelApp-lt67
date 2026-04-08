@@ -16,7 +16,6 @@ export const CoachPrivate = () => {
 
             <div className="row mt-4 g-3">
                 {[
-                    { to: "/entries", label: "Entries" },
                     { to: "/client-favorites", label: "Client Fav" },
                     { to: "/coach-favorites", label: "Coach Fav" },
                     { to: "/access-coach", label: "Access Coach" },
