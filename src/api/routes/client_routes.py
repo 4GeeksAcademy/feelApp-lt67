@@ -257,27 +257,71 @@ def delete_reaction_admint_post(reaction_id):
 @client_bp.route('/access-clients', methods=['POST'])
 @jwt_required()
 def create_access_client():
-    current_client_id = get_jwt_identity()
+    current_client_id = str(get_jwt_identity())
     data = request.get_json()
-    new_access = AccessClient(client_id=current_client_id, shared_with_id=data["shared_with_id"], status="pending")
+    target_id = str(data["shared_with_id"])
+
+    existing = AccessClient.query.filter(
+        (
+            (AccessClient.client_id == current_client_id) &
+            (AccessClient.shared_with_id == target_id)
+        ) |
+        (
+            (AccessClient.client_id == target_id) &
+            (AccessClient.shared_with_id == current_client_id)
+        )
+    ).first()
+
+    if existing:
+        return jsonify({"msg": "Request already exists"}), 400
+
+    new_access = AccessClient(
+        client_id=current_client_id,
+        shared_with_id=target_id,
+        status="pending"
+    )
+
     db.session.add(new_access)
     db.session.commit()
+
     return jsonify(new_access.serialize()), 201
 
 @client_bp.route('/access-clients/<int:access_id>', methods=['PUT'])
 @jwt_required()
 def update_access_client(access_id):
-    current_client_id = get_jwt_identity()
+    current_client_id = str(get_jwt_identity())
     access = db.session.get(AccessClient, access_id)
+
     if not access:
         return jsonify({"msg": "Not found"}), 404
+
     if str(access.client_id) == current_client_id:
         return jsonify({"msg": "You cannot update your own access request"}), 403
+
     data = request.get_json()
+
     if "status" in data:
         if data["status"] not in ["pending", "approved", "rejected"]:
             return jsonify({"msg": "Invalid status"}), 400
+
         access.status = data["status"]
+
+        if data["status"] == "approved":
+            reverse = AccessClient.query.filter_by(
+                client_id=current_client_id,
+                shared_with_id=access.client_id
+            ).first()
+
+            if not reverse:
+                reverse = AccessClient(
+                    client_id=current_client_id,
+                    shared_with_id=access.client_id,
+                    status="approved"
+                )
+                db.session.add(reverse)
+            else:
+                reverse.status = "approved"
+
     db.session.commit()
     return jsonify(access.serialize()), 200
 

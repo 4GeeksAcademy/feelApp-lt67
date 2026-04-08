@@ -2,20 +2,22 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
-const FriendEntriesDetails = () => {
+const SharedEntriesDetails = () => {
   const { clientId, entryId } = useParams();
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
   const [entry, setEntry] = useState(null);
   const [isFav, setIsFav] = useState(false);
 
+  const activeToken = store.clientToken || store.coachToken;
+
   useEffect(() => {
-    if (!store.clientToken) navigate("/");
-  }, [store.clientToken, navigate]);
+    if (!activeToken) navigate("/");
+  }, [activeToken, navigate]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${entryId}`, {
-      headers: { Authorization: `Bearer ${store.clientToken}` },
+      headers: { Authorization: `Bearer ${activeToken}` },
     })
       .then((r) => r.json())
       .then((data) => setEntry(data));
@@ -34,7 +36,7 @@ const FriendEntriesDetails = () => {
     } else {
       if (store.favorites.length === 0) {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
-          headers: { Authorization: `Bearer ${store.clientToken}` },
+          headers: { Authorization: `Bearer ${activeToken}` },
         })
           .then((r) => r.json())
           .then((data) => {
@@ -53,7 +55,7 @@ const FriendEntriesDetails = () => {
         `${import.meta.env.VITE_BACKEND_URL}/api/client-favorites/entry/${entryId}`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${store.clientToken}` },
+          headers: { Authorization: `Bearer ${activeToken}` },
         }
       );
       if (resp.ok) {
@@ -70,7 +72,7 @@ const FriendEntriesDetails = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${store.clientToken}`,
+            Authorization: `Bearer ${activeToken}`,
           },
           body: JSON.stringify({ entry_id: parseInt(entryId) }),
         }
@@ -167,4 +169,4 @@ const FriendEntriesDetails = () => {
   );
 };
 
-export default FriendEntriesDetails;
+export default SharedEntriesDetails;
