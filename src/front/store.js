@@ -19,6 +19,7 @@ export const initialStore = () => {
     clientId: sessionStorage.getItem("clientId") || null,
     clientEmail: sessionStorage.getItem("clientEmail") || null,
     clientSignupDate: sessionStorage.getItem("clientSignupDate") || null,
+    userAvatar: sessionStorage.getItem("userAvatar") || null,
 
     // Auth — coach
     coachToken: sessionStorage.getItem("coachToken") || null,
@@ -77,34 +78,44 @@ export default function storeReducer(store, action = {}) {
         admintSignupDate: action.payload.admint?.sign_up_date || null,
       };
 
+      case "set_user_avatar":
+      sessionStorage.setItem("userAvatar", action.payload);
+      return { ...store, userAvatar: action.payload };
+
       case "logout_client":
         sessionStorage.removeItem("clientToken");
+        sessionStorage.removeItem("userAvatar");
         return { 
           ...store, 
           clientToken: null, 
           clientEmail: null, 
           clientId: null, 
-          clientSignupDate: null 
+          clientSignupDate: null,
+          userAvatar: null  
         };
 
       case "logout_coach":
         sessionStorage.removeItem("coachToken");
+        sessionStorage.removeItem("userAvatar");
         return { 
           ...store, 
           coachToken: null, 
           coachEmail: null, 
           coachId: null, 
-          coachSignupDate: null 
+          coachSignupDate: null,
+          userAvatar: null 
         };
 
       case "logout_admint":
         sessionStorage.removeItem("admintToken");
+        sessionStorage.removeItem("userAvatar");
         return { 
           ...store, 
           admintToken: null, 
           admintEmail: null, 
           admintId: null, 
-          admintSignupDate: null 
+          admintSignupDate: null,
+          userAvatar: null  
         };
 
         // USERS
