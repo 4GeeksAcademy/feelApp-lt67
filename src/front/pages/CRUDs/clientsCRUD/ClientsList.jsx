@@ -1,9 +1,15 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import useGlobalReducer from "../../../hooks/useGlobalReducer";
+import { useNavigate , Link } from "react-router-dom";
+import useGlobalReducer from "../../hooks/useGlobalReducer";
+
 
 const ClientsList = () => {
     const { store, dispatch } = useGlobalReducer();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!store.admintToken) navigate("/");
+    }, [store.admintToken, navigate]);
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`)

@@ -11,6 +11,10 @@ const ClientsUpdate = () => {
     const [password, setPassword] = useState("");
 
     useEffect(() => {
+        if (!store.admintToken) navigate("/");
+    }, [store.admintToken, navigate]);
+
+    useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients/${id}`)
             .then(resp => resp.json())
             .then(data => setEmail(data.email));

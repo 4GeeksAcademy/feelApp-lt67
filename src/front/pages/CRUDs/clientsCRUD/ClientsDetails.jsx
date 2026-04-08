@@ -9,6 +9,10 @@ const ClientsDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!store.admintToken) navigate("/");
+    }, [store.admintToken, navigate]);
+
+    useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients/${id}`)
             .then(resp => resp.json())
             .then(data => setClient(data));
@@ -34,8 +38,8 @@ const ClientsDetails = () => {
     if (!client) return <p className="container mt-4">Loading...</p>;
 
     return (
-        <div className="clients-page container mt-4">
-            <h2>Client Details</h2>
+        <div className="clients-page container mt-5">
+            <h2 className="mt-5">Client Details</h2>
 
             <p><strong>ID:</strong> {client.id}</p>
             <p><strong>Email:</strong> {client.email}</p>
