@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 export const AccessCoachList = () => {
@@ -44,8 +44,8 @@ export const AccessCoachList = () => {
         <div className="container mt-5">
             <h2 className="mt-5">Access Coach List</h2>
 
-            <table className="table">
-                <thead>
+            <table className="table mt-3">
+                <thead className="table-light">
                     <tr>
                         <th>ID</th>
                         <th>Client</th>
