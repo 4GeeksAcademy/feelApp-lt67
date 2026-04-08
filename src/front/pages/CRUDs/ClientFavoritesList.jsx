@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import useGlobalReducer from "../../../hooks/useGlobalReducer";
+import useGlobalReducer from "../../hooks/useGlobalReducer";
 
 const ClientFavoritesList = () => {
     const { store, dispatch } = useGlobalReducer();
@@ -8,26 +7,19 @@ const ClientFavoritesList = () => {
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`)
             .then(resp => resp.json())
-            .then(data => dispatch({ type: "set_favorites", payload: data }));
+            .then(data => {
+            const favorites = data.results ?? data.favorites ?? data ?? [];
+            dispatch({
+            type: "set_favorites",
+            payload: Array.isArray(favorites) ? favorites : []
+        });
+    });
     }, []);
 
-    const handleDelete = async (id) => {
-        if (!confirm("Remove this favorite?")) return;
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites/${id}`, {
-            method: "DELETE"
-        });
-        if (!resp.ok) return;
-        dispatch({
-            type: "set_favorites",
-            payload: store.favorites.filter(f => f.id !== id)
-        });
-    };
-
     return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-3">
+        <div className="container mt-5">
+            <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
                 <h2 style={{ fontWeight: "600" }}>Favorites</h2>
-                <Link to="/client-favorites/create" className="btn btn-primary">Add Favorite</Link>
             </div>
             <div style={{ background: "#fff", borderRadius: "10px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", padding: "15px" }}>
                 <table className="table table-hover align-middle mb-0">
@@ -53,14 +45,6 @@ const ClientFavoritesList = () => {
                                     </td>
                                     <td>
                                         {store.entries.find(e => e.id === fav.entry_id)?.title || fav.entry_id}
-                                    </td>
-                                    <td>
-                                        <button
-                                            className="btn btn-outline-danger btn-sm"
-                                            onClick={() => handleDelete(fav.id)}
-                                        >
-                                            Remove
-                                        </button>
                                     </td>
                                 </tr>
                             ))
