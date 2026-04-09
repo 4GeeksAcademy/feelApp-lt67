@@ -18,7 +18,6 @@ import ReactionAdmintPostsList from "./pages/CRUDs/reactionAdminPostCRUD/Reactio
 import EntriesList from "./pages/client/entriesCRUD/entriesList";
 import EntriesCreate from "./pages/client/entriesCRUD/entriesCreate";
 import EntriesDetails from "./pages/client/entriesCRUD/entriesDetails";
-import EntriesUpdate from "./pages/client/entriesCRUD/entriesUpdate";
 
 import CLientsPostsList from "./pages/CRUDs/ClientsPostsList";
 
@@ -65,6 +64,7 @@ import AdmintsList from "./pages/CRUDs/adminsCRUD/AdminsList";
 
 import SharedEntriesList from "./pages/client/SharedEntriesList";
 import SharedEntriesDetails from "./pages/client/SharedEntriesDetails";
+import EmotionalStats from "./pages/client/EmotionalStats";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -99,7 +99,6 @@ export const router = createBrowserRouter(
       <Route path="/entries" element={<EntriesList />} />
       <Route path="/entries/create" element={<EntriesCreate />} />
       <Route path="/entries/:id" element={<EntriesDetails />} />
-      <Route path="/entries/:id/edit" element={<EntriesUpdate />} />
 
       <Route path="/entries/client/:client_id" element={<EntriesList />} />
 
@@ -142,6 +141,7 @@ export const router = createBrowserRouter(
       <Route path="/shared" element={<Shared />} />
       <Route path="/entries/friend/:clientId" element={<SharedEntriesList />} />
       <Route path="/entries/friend/:clientId/:entryId" element={<SharedEntriesDetails />} />
+      <Route path="/stats" element={<EmotionalStats />} />
 
     </Route>
   )

@@ -156,7 +156,7 @@ class Entry(db.Model):
     description: Mapped[str] = mapped_column(String(255), nullable=False)
     date: Mapped[str] = mapped_column(String(20), nullable=False)
     emotion_id: Mapped[int] = mapped_column(
-        ForeignKey("emotions.id"), nullable=False)
+        ForeignKey("emotions.id"), nullable=True)
     client = db.relationship("Client", back_populates="entries")
     emotion = db.relationship("Emotion", back_populates="entries")
     favorites = db.relationship("ClientFavorites", back_populates="entry")

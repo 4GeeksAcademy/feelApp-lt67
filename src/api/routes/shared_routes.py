@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost, Client, Coach, Admint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -89,4 +89,5 @@ def update_profile_image():
     db.session.commit()
 
     return jsonify(user.serialize()), 200
+
 
