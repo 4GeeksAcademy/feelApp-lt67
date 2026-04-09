@@ -168,7 +168,7 @@ const EmotionalStats = () => {
                     <p className="text-muted">IA is analyzing your thoughts...</p>
                 </div>
             ) : labels.length > 0 ? (
-                <div className="row justify-content-center">
+                <div className="row justify-content-center pt-4">
                     <div className="col-12 col-md-2 col-lg-6">
                         <Pie data={dataChart} options={{ responsive: true }} />
                     </div>
