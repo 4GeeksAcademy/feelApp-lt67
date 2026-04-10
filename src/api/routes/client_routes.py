@@ -1,4 +1,6 @@
 from flask import Blueprint, request, jsonify
+import os
+import requests
 from api.models import db, Client, Entry, Emotion, ClientFavorites, ClientPost, ReactionClientPost, ReactionAdmintPost, AdmintPost, AccessCoach, AccessClient
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
@@ -488,6 +490,35 @@ def delete_access_coach(id):
     
     return jsonify({"msg": "Access revoked and connection deleted"}), 200
 
+@client_bp.route('/analyze-emotion', methods=['POST'])
+def analyze_emotion():
+    body = request.get_json()
+    text = body.get("text")
+    
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
 
+    model_url = "https://router.huggingface.co/hf-inference/models/j-hartmann/emotion-english-distilroberta-base"
+    headers = {"Authorization": f"Bearer {os.getenv('VITE_HF_API_KEY')}"}
 
-
+    try:
+        response = requests.post(
+            model_url, 
+            headers=headers, 
+            json={"inputs": text}  
+        )
+        
+        print(f"HF Status: {response.status_code}")
+        print(f"HF Body: {response.text}")
+        
+        if response.status_code == 200:
+            return jsonify(response.json()), 200
+        else:
+            return jsonify({
+                "error": "AI provider error", 
+                "status": response.status_code,
+                "detail": response.text
+            }), response.status_code
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

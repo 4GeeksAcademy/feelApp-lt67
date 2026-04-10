@@ -15,7 +15,7 @@ export const ClientPrivate = () => {
     { to: "/forum", icon: "bi bi-chat-dots", label: "Forum" },
     { to: "/access", icon: "bi-key", label: "Access" },
     { to: "/shared", icon: "bi-link-45deg", label: "Shared" },
-    { to: "/client-private", icon: "bi-bar-chart", label: "Stats" },
+    { to: "/stats", icon: "bi-bar-chart", label: "Stats" },
   ];
 
   return (
