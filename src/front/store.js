@@ -311,7 +311,7 @@ export default function storeReducer(store, action = {}) {
             return { ...store, access_coach: action.payload };
           case "add_access_coach":
             return { ...store, access_coach: [...store.access_coach, action.payload] };
-          case "remove_access_coach":
+           case "remove_access_coach":
             return {
               ...store,
               access_coach: store.access_coach.filter((a) => a.id !== action.payload),

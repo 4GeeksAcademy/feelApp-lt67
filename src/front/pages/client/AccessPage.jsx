@@ -173,8 +173,8 @@ const AccessPage = () => {
     );
   };
 
-  const sentToClients      = store.access_clients.filter((a) => String(a.client_id)      === String(myId));
-  const receivedFromClients = store.access_clients.filter((a) => String(a.shared_with_id) === String(myId));
+  const sentToClients      = store.access_clients.filter((a) => String(a.client_id) === String(myId));
+  const receivedFromClients = store.access_clients.filter((a) => String(a.shared_with_id) === String(myId) && String(a.client_id) !== String(myId));
   const sentToCoaches      = store.access_coach.filter((a)   => String(a.client_id)      === String(myId));
 
   const filteredClients = store.clients.filter(
