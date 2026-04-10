@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 export const AccessCoachList = () => {
@@ -13,7 +13,7 @@ export const AccessCoachList = () => {
         }
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach`, {
-            headers: { Authorization: `Bearer ${store.coachToken}` } 
+            headers: { Authorization: `Bearer ${store.coachToken}` }
         })
             .then(res => res.json())
             .then(data => {
@@ -21,7 +21,7 @@ export const AccessCoachList = () => {
                     dispatch({ type: "set_access_coach", payload: data });
                 }
             });
-    }, [store.coachToken, dispatch, navigate]); 
+    }, [store.coachToken, dispatch, navigate]);
 
     const handleDelete = async (id) => {
         if (!confirm("Delete?")) return;
@@ -44,16 +44,11 @@ export const AccessCoachList = () => {
         <div className="container mt-5">
             <h2 className="mt-5">Access Coach List</h2>
 
-            <Link to="/access-coach/create" className="btn btn-primary mb-3">
-                Create
-            </Link>
-
-            <table className="table">
-                <thead>
+            <table className="table mt-3">
+                <thead className="table-light">
                     <tr>
                         <th>ID</th>
                         <th>Client</th>
-                        <th>Coach</th>
                         <th>Status</th>
                         <th>-</th>
                     </tr>
@@ -63,9 +58,14 @@ export const AccessCoachList = () => {
                         <tr key={item.id}>
                             <td>{item.id}</td>
                             <td>{item.client_id}</td>
-                            <td>{item.coach_id}</td>
                             <td>{item.status}</td>
                             <td>
+                                <button
+                                    className="btn btn-primary mx-3"
+                                    onClick={() => navigate(`/entries/friend/${item.client_id}`)}
+                                >
+                                    Ver entries
+                                </button>
                                 <button onClick={() => handleDelete(item.id)} className="btn btn-danger">Delete</button>
                             </td>
                         </tr>

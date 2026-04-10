@@ -439,7 +439,7 @@ def create_access_coach():
     new_item = AccessCoach(
         client_id=current_user_id,
         coach_id=body["coach_id"],
-        status="approved"  
+        status="pending"  
     )
     
     db.session.add(new_item)
@@ -487,6 +487,8 @@ def delete_access_coach(id):
     db.session.commit()
     
     return jsonify({"msg": "Access revoked and connection deleted"}), 200
+
+
 
 
 
