@@ -19,8 +19,10 @@ def coach_signup():
     db.session.commit()
     return jsonify({"msg": "Coach created"}), 201
 
-@coach_bp.route('/coach-login', methods=['POST'])
+@coach_bp.route('/coach-login', methods=['POST', 'OPTIONS'])
 def coach_login():
+    if request.method == 'OPTIONS':
+        return '', 200
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")

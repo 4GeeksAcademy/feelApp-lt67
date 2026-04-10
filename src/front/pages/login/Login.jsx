@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
-export const Login = ({ apiEndpoint, dispatchType, redirectPath, showSignInLink = true, signupPath, loginPath, tokenKey, title }) => {
+export const Login = ({ apiEndpoint, dispatchType, redirectPath, signupPath, tokenKey, title }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -79,11 +79,9 @@ export const Login = ({ apiEndpoint, dispatchType, redirectPath, showSignInLink 
           </button>
         </form>
       
-        {showSignInLink && (
-          <p className="mt-4 text-center mb-0">
-            Already have an account? <Link to={loginPath} className="fw-bold">Sign In</Link>
-          </p>
-        )}
+             <p className="mt-2 mb-0 text-center">
+          Don't have an account? <Link to={signupPath} className="fw-bold text-decoration-none">Sign Up</Link>
+        </p>
       </div>
     </div>
   );
