@@ -66,6 +66,7 @@ import SharedEntriesList from "./pages/client/SharedEntriesList";
 import SharedEntriesDetails from "./pages/client/SharedEntriesDetails";
 import EmotionalStats from "./pages/client/EmotionalStats";
 import About from "./pages/About";
+import FindNearYou from "./pages/FindNearYou";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -128,8 +129,9 @@ export const router = createBrowserRouter(
       <Route path="/coach-login" element={<Login title="Coach Access" apiEndpoint="/api/coach-login" dispatchType="login_coach" tokenKey="coachToken" redirectPath="/coach-private" signupPath="/coach-signup" />} />
       <Route path="/coach-signup" element={<SignUp title="Coach Sign Up" apiEndpoint="/api/coach-signup" loginPath="/coach-login" />} />
 
-      <Route path="/admint-login" element={<Login title="Admin Access" apiEndpoint="/api/admint-login" dispatchType="login_admint" tokenKey="admintToken" redirectPath="/admint-private" signupPath="/admint-signup" showSignInLink={false} />} />
-
+           <Route path="/admint-login" element={<Login title="Admin Access" apiEndpoint="/api/admint-login" dispatchType="login_admint" tokenKey="admintToken" redirectPath="/admint-private" signupPath="/admint-signup" />} />
+      <Route path="/admint-signup" element={<SignUp title="Admin Sign Up" apiEndpoint="/api/admint-signup" loginPath="/admint-login" />} />
+      
       <Route path="/client-private" element={<ClientPrivate />} />
       <Route path="/coach-private" element={<CoachPrivate />} />
       <Route path="/admint-private" element={<AdminPrivate />} />
@@ -143,6 +145,7 @@ export const router = createBrowserRouter(
       <Route path="/entries/friend/:clientId/:entryId" element={<SharedEntriesDetails />} />
       <Route path="/stats" element={<EmotionalStats />} />
       <Route path="/about" element={<About />} />
+      <Route path="/nearyou" element={<FindNearYou />} />
 
     </Route>
   )

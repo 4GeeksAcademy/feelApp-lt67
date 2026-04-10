@@ -119,7 +119,8 @@ export const Navbar = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav mx-auto text-center">
               <li className="nav-item"><Link className="nav-link fw-bold" to={getHomePath()}>Home</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/about">About</Link></li>
+              <li className="nav-item"><Link className="nav-link fw-bold" to="/about">About</Link></li>
+              <li className="nav-item"><Link className="nav-link fw-bold" to="/nearyou">Find Near You</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/crudlist">CRUDs</Link></li>
             </ul>
             <div className="d-flex flex-column flex-lg-row align-items-center gap-2 ms-auto">

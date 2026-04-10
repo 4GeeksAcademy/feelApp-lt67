@@ -21,8 +21,10 @@ def signup():
     db.session.commit()
     return jsonify({"msg": "Client created"}), 201
 
-@client_bp.route('/login', methods=['POST'])
+@client_bp.route('/login', methods=['POST', 'OPTIONS'])
 def login():
+    if request.method == 'OPTIONS':
+        return '', 200
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
