@@ -1,19 +1,33 @@
-import { Outlet } from "react-router-dom/dist"
-import ScrollToTop from "../components/ScrollToTop"
-import { Navbar } from "../components/Navbar"
+import { Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
+import ScrollToTop from "../components/ScrollToTop";
+import { Navbar } from "../components/Navbar";
+import { Sidebar } from "../components/Sidebar";
 
 export const Layout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isSidebarOpen]);
+
   return (
     <ScrollToTop>
-      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-        <Navbar />
-
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", paddingTop: "25px", overflow: "hidden"  }}>
-          <Outlet />
-        </div>
-
-      </div>
+      <Navbar onToggleSidebar={toggleSidebar} />
+      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+      <main style={{ minHeight: "100vh" }}>
+        <Outlet />
+      </main>
     </ScrollToTop>
   );
 };
-

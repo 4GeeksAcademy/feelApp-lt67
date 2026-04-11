@@ -236,22 +236,58 @@ function HowItWorks() {
     { text: "Share securely", icon: "bi-shield-check", color: "#DCD7FF" },
     { text: "Improve your wellbeing", icon: "bi-heart-pulse", color: "#D6D8FF" }
   ];
+
   return (
-    <section className="py-100 bg-white">
-      <div className="container text-center">
-        <h2 className="mb-5 fw-bold">How it works</h2>
-        <div className="row g-4">
-          {steps.map((step, i) => (
-            <div key={i} className="col-md-3">
-              <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.2 }}>
-                <div className="icon-circle" style={{ backgroundColor: step.color }}><i className={`bi ${step.icon}`}></i></div>
-                <p className="fw-bold text-secondary">{step.text}</p>
-              </motion.div>
-            </div>
-          ))}
+    <>
+      <style>{`
+        .how-it-works-row {
+          position: relative;
+        }
+        
+        .step-container {
+          position: relative;
+          z-index: 2;
+        }
+
+        .step-connector {
+          position: absolute;
+          top: 40px;
+          left: 50%;
+          width: 100%;
+          height: 2px;
+          border-top: 2px dashed #DCD7FF;
+          z-index: 1;
+        }
+
+        @media (max-width: 767px) {
+          .step-connector { display: none; }
+        }
+      `}</style>
+
+      <section className="py-100 bg-white">
+        <div className="container text-center">
+          <h2 className="mb-5 fw-bold">How it works</h2>
+          <div className="row g-4 how-it-works-row">
+            {steps.map((step, i) => (
+              <div key={i} className="col-md-3 step-container">
+                {i < steps.length - 1 && <div className="step-connector"></div>}
+                <motion.div 
+                  initial={{ opacity: 0, y: 40 }} 
+                  whileInView={{ opacity: 1, y: 0 }} 
+                  viewport={{ once: true }} 
+                  transition={{ delay: i * 0.2 }}
+                >
+                  <div className="icon-circle" style={{ backgroundColor: step.color }}>
+                    <i className={`bi ${step.icon}`}></i>
+                  </div>
+                  <p className="fw-bold text-secondary">{step.text}</p>
+                </motion.div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
