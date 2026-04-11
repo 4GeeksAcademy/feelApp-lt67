@@ -110,7 +110,6 @@ export const Navbar = () => {
       <nav className="navbar navbar-expand-lg fixed-top custom-navbar">
         <div className="container-fluid container">
           <Link className="navbar-brand logo-feelapp" to="/">
-            <img src="public/favicon.png" alt="Logo" width="35" height="35" className="d-inline-block align-top me-2" />
             FeelApp
           </Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -118,10 +117,8 @@ export const Navbar = () => {
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav mx-auto text-center">
-              <li className="nav-item"><Link className="nav-link fw-bold" to={getHomePath()}>Home</Link></li>
-              <li className="nav-item"><Link className="nav-link fw-bold" to="/about">About</Link></li>
+              <li className="nav-item"><Link className="nav-link fw-bold" to={getHomePath()}>Dashboard</Link></li>
               <li className="nav-item"><Link className="nav-link fw-bold" to="/nearyou">Find Near You</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/crudlist">CRUDs</Link></li>
             </ul>
             <div className="d-flex flex-column flex-lg-row align-items-center gap-2 ms-auto">
               {!activeToken ? (
