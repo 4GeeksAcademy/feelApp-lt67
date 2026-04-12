@@ -13,7 +13,7 @@ export const AccessCoachList = () => {
         }
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach`, {
-            headers: { Authorization: `Bearer ${store.coachToken}` } 
+            headers: { Authorization: `Bearer ${store.coachToken}` }
         })
             .then(res => res.json())
             .then(data => {
@@ -21,7 +21,7 @@ export const AccessCoachList = () => {
                     dispatch({ type: "set_access_coach", payload: data });
                 }
             });
-    }, [store.coachToken, dispatch, navigate]); 
+    }, [store.coachToken, dispatch, navigate]);
 
     const handleDelete = async (id) => {
         if (!confirm("Delete?")) return;
@@ -57,16 +57,16 @@ export const AccessCoachList = () => {
                     {store.access_coach?.map(item => (
                         <tr key={item.id}>
                             <td>{item.id}</td>
-                            <td>{item.client_id}</td>
+                            <td>{item.client_email}</td>
                             <td>{item.status}</td>
                             <td>
-                            <button
-                            className="btn btn-primary mx-3"
-                            onClick={() => navigate(`/entries/friend/${item.client_id}`)}
-                             >
-                            Ver entries
-                        </button>
-                            <button onClick={() => handleDelete(item.id)} className="btn btn-danger">Delete</button>
+                                <button
+                                    className="btn btn-primary mx-3"
+                                    onClick={() => navigate(`/entries/friend/${item.client_id}`)}
+                                >
+                                    Ver entries
+                                </button>
+                                <button onClick={() => handleDelete(item.id)} className="btn btn-danger">Delete</button>
                             </td>
                         </tr>
                     ))}
