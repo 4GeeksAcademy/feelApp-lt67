@@ -14,6 +14,9 @@ class Client(db.Model):
     sign_up_date: Mapped[datetime] = mapped_column(
         DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
     profile_image = db.Column(db.String(255), nullable=True)
+    bio = db.Column(db.Text, nullable=True)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
     
     reactions = db.relationship("ReactionAdmintPost", back_populates="client")
     entries = db.relationship("Entry", back_populates="client")
@@ -37,7 +40,10 @@ class Client(db.Model):
             "id": self.id,
             "email": self.email,
             "sign_up_date": self.sign_up_date.isoformat(),
-            "profile_image": self.profile_image
+            "profile_image": self.profile_image,
+            "bio": self.bio,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
         }
 
 
@@ -69,6 +75,9 @@ class Coach(db.Model):
     sign_up_date: Mapped[datetime] = mapped_column(
         DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
     profile_image = db.Column(db.String(255), nullable=True)
+    bio = db.Column(db.Text, nullable=True)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
 
     favorites = db.relationship("CoachFavorites", back_populates="coach")
     coach_requests = db.relationship("AccessCoach",back_populates="coach")
@@ -78,7 +87,10 @@ class Coach(db.Model):
             "id": self.id,
             "email": self.email,
             "sign_up_date": self.sign_up_date.isoformat(),
-            "profile_image": self.profile_image
+            "profile_image": self.profile_image,
+            "bio": self.bio,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
         }
 
 
@@ -156,7 +168,7 @@ class Entry(db.Model):
     description: Mapped[str] = mapped_column(String(255), nullable=False)
     date: Mapped[str] = mapped_column(String(20), nullable=False)
     emotion_id: Mapped[int] = mapped_column(
-        ForeignKey("emotions.id"), nullable=False)
+        ForeignKey("emotions.id"), nullable=True)
     client = db.relationship("Client", back_populates="entries")
     emotion = db.relationship("Emotion", back_populates="entries")
     favorites = db.relationship("ClientFavorites", back_populates="entry")

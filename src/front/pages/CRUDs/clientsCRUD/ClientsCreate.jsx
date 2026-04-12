@@ -13,6 +13,10 @@ const ClientsCreate = () => {
         e.preventDefault();
         setError("");
 
+        useEffect(() => {
+                if (!store.admintToken) navigate("/");
+            }, [store.admintToken, navigate]);
+
         const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -33,6 +37,7 @@ const ClientsCreate = () => {
 
         navigate("/clients");
     };
+
 
     return (
         <div className="clients-page container mt-5">

@@ -8,6 +8,7 @@ from api import models
 from api.admin import setup_admin
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from api.commands import setup_commands
 
 # from models import Person
 
@@ -35,6 +36,8 @@ jwt = JWTManager(app)
 
 # add the admin
 setup_admin(app)
+
+setup_commands(app)
 
 # Add all endpoints form the API with a "api" prefix
 

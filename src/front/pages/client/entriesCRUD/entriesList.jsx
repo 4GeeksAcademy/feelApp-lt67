@@ -56,26 +56,55 @@ const EntriesList = () => {
         method: "DELETE",
         headers: { Authorization: `Bearer ${store.clientToken}` }
       });
-
       if (resp.ok) {
         dispatch({ type: "remove_entry", payload: id });
         setDeleteModal(null);
       }
     } catch (error) {
-      console.error("Error deleting entry:", error);
+      console.error(error);
     }
   };
   
   return (
-    <div className="container mt-5" style={{ maxWidth: "680px" }}>
-        <div className="text-start mt-5" >
-          <h2 style={{ margin: 0}}>Entries</h2>
-          <p className="text-muted">Record your thoughts and feelings</p>
-        </div>
-      <div className="d-flex justify-content-end mb-5">
-        <Link to="/entries/create" className="btn btn-custom rounded-pill px-4">
-          <i className="bi bi-plus-lg me-2"></i> New Entry
-        </Link>
+    <div className="container" style={{ 
+      maxWidth: "680px", 
+      paddingTop: "120px", 
+      paddingBottom: "100px",
+      minHeight: "100vh"
+    }}>
+      <style>{`
+        .glass-entry-card {
+          background: rgba(255, 255, 255, 0.4);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.6);
+          border-radius: 24px;
+          padding: 24px;
+          height: 240px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          transition: all 0.3s ease;
+          box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+
+        .glass-entry-card:hover {
+          transform: translateY(-5px);
+          background: rgba(255, 255, 255, 0.55);
+          box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .dropdown-menu {
+          background: rgba(255, 255, 255, 0.8);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.5);
+          border-radius: 15px;
+        }
+      `}</style>
+
+      <div className="text-start mb-5">
+        <h2 style={{ fontWeight: "500", margin: 0 }}>Entries</h2>
+        <p className="text-muted">Record your thoughts and feelings</p>
       </div>
 
       {store.entries.length === 0 ? (
@@ -89,14 +118,9 @@ const EntriesList = () => {
             const isFav = favorites.includes(entry.id);
             return (
               <div key={entry.id} className="col-12 col-md-6 col-lg-4">
-                <div style={{
-                  background: "#ffffff", borderRadius: "20px", padding: "20px",
-                  height: "200px", border: "1px solid #edf2f7", position: "relative",
-                  display: "flex", flexDirection: "column", justifyContent: "space-between",
-                  boxShadow: "0 2px 10px rgba(0,0,0,0.03)"
-                }}>
+                <div className="glass-entry-card">
                   <div className="d-flex justify-content-between align-items-start">
-                    <button onClick={() => toggleFavorite(entry.id)} style={{ background: "none", border: "none", padding: 0 }}>
+                    <button onClick={() => toggleFavorite(entry.id)} style={{ background: "none", border: "none" }}>
                       <i className={`bi ${isFav ? "bi-heart-fill text-danger" : "bi-heart text-muted"}`} style={{ fontSize: "1.2rem" }}></i>
                     </button>
                     
@@ -104,24 +128,23 @@ const EntriesList = () => {
                       <button className="btn btn-link text-muted p-0" data-bs-toggle="dropdown">
                         <i className="bi bi-three-dots-vertical" style={{ fontSize: "1.2rem" }}></i>
                       </button>
-                      <ul className="dropdown-menu dropdown-menu-end border-0 shadow-sm text-center">
+                      <ul className="dropdown-menu dropdown-menu-end shadow-sm">
                         <li><Link className="dropdown-item" to={`/entries/${entry.id}`}>Details</Link></li>
-                        <li><Link className="dropdown-item" to={`/entries/${entry.id}/edit`}>Edit</Link></li>
                         <li><hr className="dropdown-divider" /></li>
                         <li><button className="dropdown-item text-danger" onClick={() => setDeleteModal(entry.id)}>Delete</button></li>
                       </ul>
                     </div>
                   </div>
 
-                  <div className="text-center">
-                    <div style={{ fontSize: "2.5rem", marginBottom: "5px" }}>{emotion?.emoji}</div>
-                    <h6 style={{ fontWeight: "700", color: "#1f2937", margin: 0, textTransform: "capitalize" }}>
+                  <div className="text-center flex-grow-1 d-flex flex-column justify-content-center">
+                    <div style={{ fontSize: "3.5rem", marginBottom: "8px" }}>{emotion?.emoji}</div>
+                    <h6 className="fw-bold mb-0 text-capitalize" style={{ color: "#1e293b" }}>
                       {entry.title}
                     </h6>
                   </div>
 
-                  <div className="text-center">
-                    <small style={{ color: "#9ca3af", fontWeight: "500", fontSize: "0.75rem" }}>
+                  <div className="text-center mt-2">
+                    <small style={{ color: "#94a3b8", fontWeight: "600", fontSize: "0.75rem" }}>
                       {entry.date}
                     </small>
                   </div>
@@ -135,13 +158,13 @@ const EntriesList = () => {
       {deleteModal && (
         <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content border-0" style={{ borderRadius: "20px", padding: "10px" }}>
+            <div className="modal-content border-0" style={{ borderRadius: "24px", padding: "10px" }}>
               <div className="modal-body text-center">
                 <h5 className="fw-bold mb-3">Delete Entry?</h5>
                 <p className="text-muted">This action cannot be undone.</p>
                 <div className="d-flex gap-2 justify-content-center mt-4">
-                  <button className="btn btn-light px-4" style={{ borderRadius: "10px" }} onClick={() => setDeleteModal(null)}>Cancel</button>
-                  <button className="btn btn-danger px-4" style={{ borderRadius: "10px" }} onClick={() => handleDelete(deleteModal)}>Delete</button>
+                  <button className="btn btn-light px-4" style={{ borderRadius: "12px" }} onClick={() => setDeleteModal(null)}>Cancel</button>
+                  <button className="btn btn-danger px-4" style={{ borderRadius: "12px" }} onClick={() => handleDelete(deleteModal)}>Delete</button>
                 </div>
               </div>
             </div>

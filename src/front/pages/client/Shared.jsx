@@ -134,7 +134,7 @@ const Shared = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "680px" }}>
+    <div className="container" style={{ maxWidth: "680px", paddingTop: "80px"}}>
       <div className="mb-4 mt-5">
         <h2 className="mb-0">Shared</h2>
         <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>

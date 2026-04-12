@@ -18,14 +18,11 @@ import ReactionAdmintPostsList from "./pages/CRUDs/reactionAdminPostCRUD/Reactio
 import EntriesList from "./pages/client/entriesCRUD/entriesList";
 import EntriesCreate from "./pages/client/entriesCRUD/entriesCreate";
 import EntriesDetails from "./pages/client/entriesCRUD/entriesDetails";
-import EntriesUpdate from "./pages/client/entriesCRUD/entriesUpdate";
 
 import CLientsPostsList from "./pages/CRUDs/ClientsPostsList";
 
 import { AccessCoachList } from "./pages/CRUDs/access_coachCRUD/AccessCoachList";
 import { AccessCoachCreate } from "./pages/CRUDs/access_coachCRUD/AccessCoachCreate";
-
-import { CrudList } from "./pages/CrudList";
 
 import { SignUp } from "./pages/login/SignUp";
 import { Login } from "./pages/login/Login";
@@ -34,7 +31,6 @@ import { CoachPrivate } from "./pages/login/CoachPrivate";
 import { AdminPrivate } from "./pages/login/AdminPrivate";
 
 import Forum from "./pages/client/Forum";
-import AccessPage from "./pages/client/AccessPage";
 import Shared from "./pages/client/Shared";
 
 import ReactionClientPostList from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostList";
@@ -50,14 +46,17 @@ import EmotionsDetails from "./pages/CRUDs/emotionsCRUD/EmotionDetails";
 import EmotionsUpdate from "./pages/CRUDs/emotionsCRUD/EmotionsUpdate";
 import EmotionsCreate from "./pages/CRUDs/emotionsCRUD/EmotionsCreate";
 import EmotionsList from "./pages/CRUDs/emotionsCRUD/EmotionList";
+
 import ClientsList from "./pages/CRUDs/clientsCRUD/ClientsList";
 import ClientsCreate from "./pages/CRUDs/clientsCRUD/ClientsCreate";
 import ClientsDetails from "./pages/CRUDs/clientsCRUD/ClientsDetails";
 import ClientsUpdate from "./pages/CRUDs/clientsCRUD/ClientsUpdate";
+
 import CoachsList from "./pages/CRUDs/coachesCRUD/coachsList";
 import CoachsCreate from "./pages/CRUDs/coachesCRUD/coachsCreate";
 import CoachsDetails from "./pages/CRUDs/coachesCRUD/coachsDetails";
 import CoachsUpdate from "./pages/CRUDs/coachesCRUD/coachsUpdate";
+
 import AdmintsCreate from "./pages/CRUDs/adminsCRUD/AdminsCreate";
 import AdmintsDetails from "./pages/CRUDs/adminsCRUD/AdminsDetails";
 import AdmintsUpdate from "./pages/CRUDs/adminsCRUD/AdminsUpdate";
@@ -65,6 +64,11 @@ import AdmintsList from "./pages/CRUDs/adminsCRUD/AdminsList";
 
 import SharedEntriesList from "./pages/client/SharedEntriesList";
 import SharedEntriesDetails from "./pages/client/SharedEntriesDetails";
+import EmotionalStats from "./pages/client/EmotionalStats";
+import FindNearYou from "./pages/FindNearYou";
+import AccessClient from "./pages/client/AccessClient";
+import AccessCoach from "./pages/client/AccessCoach";
+import NewClientPost from "./pages/client/NewClientPost";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -99,7 +103,6 @@ export const router = createBrowserRouter(
       <Route path="/entries" element={<EntriesList />} />
       <Route path="/entries/create" element={<EntriesCreate />} />
       <Route path="/entries/:id" element={<EntriesDetails />} />
-      <Route path="/entries/:id/edit" element={<EntriesUpdate />} />
 
       <Route path="/entries/client/:client_id" element={<EntriesList />} />
 
@@ -135,13 +138,15 @@ export const router = createBrowserRouter(
       <Route path="/coach-private" element={<CoachPrivate />} />
       <Route path="/admint-private" element={<AdminPrivate />} />
 
-      <Route path="/crudlist" element={<CrudList />} />
-
       <Route path="/forum" element={<Forum />} />
-      <Route path="/access" element={<AccessPage />} />
       <Route path="/shared" element={<Shared />} />
       <Route path="/entries/friend/:clientId" element={<SharedEntriesList />} />
       <Route path="/entries/friend/:clientId/:entryId" element={<SharedEntriesDetails />} />
+      <Route path="/stats" element={<EmotionalStats />} />
+      <Route path="/nearyou" element={<FindNearYou />} />
+      <Route path="/access/friends" element={<AccessClient />} />
+      <Route path="/access/coach" element={<AccessCoach />} />
+      <Route path="/client/post" element={<NewClientPost />} />
 
     </Route>
   )

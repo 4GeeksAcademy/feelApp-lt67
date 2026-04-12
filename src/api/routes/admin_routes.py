@@ -15,8 +15,10 @@ def admint_signup():
     db.session.commit()
     return jsonify({"msg": "Admint created"}), 200
 
-@admin_bp.route('/admint-login', methods=['POST'])
+@admin_bp.route('/admint-login', methods=['POST', 'OPTIONS'])
 def admint_login():
+    if request.method == 'OPTIONS':
+        return '', 200
     email = request.json.get("email")
     password = request.json.get("password")
     admint = Admint.query.filter_by(email=email).first()

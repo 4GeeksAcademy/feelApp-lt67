@@ -13,6 +13,7 @@ export const initialStore = () => {
     reaction_client: [],
     access_coach: [],
     access_clients: [],
+    nearbyUsers: [],
 
     // Auth — client
     clientToken: sessionStorage.getItem("clientToken") || null,
@@ -311,7 +312,7 @@ export default function storeReducer(store, action = {}) {
             return { ...store, access_coach: action.payload };
           case "add_access_coach":
             return { ...store, access_coach: [...store.access_coach, action.payload] };
-          case "remove_access_coach":
+           case "remove_access_coach":
             return {
               ...store,
               access_coach: store.access_coach.filter((a) => a.id !== action.payload),
@@ -327,6 +328,11 @@ export default function storeReducer(store, action = {}) {
               ...store,
               access_clients: store.access_clients.filter((a) => a.id !== action.payload),
             };
+            case "set_nearby_users":
+            return { ...store, nearbyUsers: action.payload };
+
+          case "clear_nearby_users":
+            return { ...store, nearbyUsers: [] };
 
   
     default:

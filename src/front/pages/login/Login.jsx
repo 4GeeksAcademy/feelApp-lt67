@@ -42,7 +42,7 @@ export const Login = ({ apiEndpoint, dispatchType, redirectPath, signupPath, tok
   };
 
   return (
-      <div className="auth-wrapper d-flex flex-column justify-content-center align-items-center mt-5 text-center" style={{ height: "calc(85vh - 56px)", overflow: "hidden" }}>
+    <div className="auth-wrapper d-flex flex-column justify-content-center align-items-center mt-5 text-center" style={{ height: "calc(85vh - 56px)", overflow: "hidden" }}>
       <div className="custom-container">
         <h1 className="text-center mb-2 fw-normal">{title}</h1>
         <p className="text-center text-muted mb-4">Enter your credentials to access</p>
@@ -51,7 +51,7 @@ export const Login = ({ apiEndpoint, dispatchType, redirectPath, signupPath, tok
         {error && <div className="alert alert-danger p-2 text-center small">{error}</div>}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
+          <div className="mb-3 text-start">
             <label className="form-label small fw-bold">Email</label>
             <input 
               type="email" 
@@ -62,7 +62,7 @@ export const Login = ({ apiEndpoint, dispatchType, redirectPath, signupPath, tok
               required 
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-4 text-start">
             <label className="form-label small fw-bold">Password</label>
             <input 
               type="password" 
@@ -78,8 +78,8 @@ export const Login = ({ apiEndpoint, dispatchType, redirectPath, signupPath, tok
             Login
           </button>
         </form>
-
-        <p className="mt-2 mb-0 text-center">
+      
+             <p className="mt-2 mb-0 text-center">
           Don't have an account? <Link to={signupPath} className="fw-bold text-decoration-none">Sign Up</Link>
         </p>
       </div>

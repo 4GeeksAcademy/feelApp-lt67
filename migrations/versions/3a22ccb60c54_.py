@@ -1,8 +1,8 @@
-"""initial migration
+"""empty message
 
-Revision ID: b3da302f7277
+Revision ID: 3a22ccb60c54
 Revises: 
-Create Date: 2026-03-31 06:09:08.732857
+Create Date: 2026-04-09 00:05:40.814075
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b3da302f7277'
+revision = '3a22ccb60c54'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,7 @@ def upgrade():
     sa.Column('email', sa.String(length=60), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('sign_up_date', sa.DateTime(), nullable=False),
+    sa.Column('profile_image', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -31,6 +32,7 @@ def upgrade():
     sa.Column('email', sa.String(length=60), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('sign_up_date', sa.DateTime(), nullable=False),
+    sa.Column('profile_image', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -39,6 +41,7 @@ def upgrade():
     sa.Column('email', sa.String(length=60), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('sign_up_date', sa.DateTime(), nullable=False),
+    sa.Column('profile_image', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -49,6 +52,15 @@ def upgrade():
     sa.Column('color', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
+    )
+    op.create_table('access_clients',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('client_id', sa.Integer(), nullable=False),
+    sa.Column('shared_with_id', sa.Integer(), nullable=False),
+    sa.Column('status', sa.String(length=20), nullable=False),
+    sa.ForeignKeyConstraint(['client_id'], ['clients.id'], ),
+    sa.ForeignKeyConstraint(['shared_with_id'], ['clients.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('access_coach',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -124,13 +136,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['client_post_id'], ['client_posts.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('client_id', sa.Integer(), nullable=False),
-    sa.Column('entries_id', sa.Integer(), nullable=False),
-    sa.Column('reaction', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['client_id'], ['clients.id'], ),
-    sa.ForeignKeyConstraint(['entries_id'], ['entries.id'], ),
-    sa.PrimaryKeyConstraint('id')
     # ### end Alembic commands ###
 
 
@@ -144,6 +149,7 @@ def downgrade():
     op.drop_table('client_posts')
     op.drop_table('admint_posts')
     op.drop_table('access_coach')
+    op.drop_table('access_clients')
     op.drop_table('emotions')
     op.drop_table('coaches')
     op.drop_table('clients')
