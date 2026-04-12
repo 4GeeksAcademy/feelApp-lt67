@@ -11,6 +11,15 @@ export const Layout = () => {
   const closeSidebar = () => setIsSidebarOpen(false);
 
   useEffect(() => {
+    const handleOpenSidebar = () => {
+      setIsSidebarOpen(true);
+    };
+
+    window.addEventListener("openSidebar", handleOpenSidebar);
+    return () => window.removeEventListener("openSidebar", handleOpenSidebar);
+  }, []);
+
+  useEffect(() => {
     if (isSidebarOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -25,7 +34,7 @@ export const Layout = () => {
     <ScrollToTop>
       <Navbar onToggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
-      <main style={{ minHeight: "100vh"}}>
+      <main style={{ minHeight: "100vh" }}>
         <Outlet />
       </main>
     </ScrollToTop>
