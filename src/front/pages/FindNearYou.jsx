@@ -185,10 +185,10 @@ export default function FindNearYou() {
   }, []);
 
   return (
-    <div className="container mt-5" style={{maxWidth: 680}}>
-      <h1 className="mt-5" style={{ fontSize: 22, fontWeight: 500, marginBottom: 4 }}>
+    <div className="container" style={{maxWidth: 680, paddingTop: "80px"}}>
+      <h2 className="mt-5" style={{ fontWeight: 500, marginBottom: 4 }}>
         {mode === "coach" ? "Find coaches near you" : "Find clients near you"}
-      </h1>
+      </h2>
       <p style={{ fontSize: 14, color: "#888", marginBottom: "1.25rem" }}>
         Search a location to discover {mode === "coach" ? "professionals" : "clients"} in that area.
       </p>

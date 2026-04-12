@@ -11,6 +11,15 @@ export const Layout = () => {
   const closeSidebar = () => setIsSidebarOpen(false);
 
   useEffect(() => {
+    const handleOpenSidebar = () => {
+      setIsSidebarOpen(true);
+    };
+
+    window.addEventListener("openSidebar", handleOpenSidebar);
+    return () => window.removeEventListener("openSidebar", handleOpenSidebar);
+  }, []);
+
+  useEffect(() => {
     if (isSidebarOpen) {
       document.body.style.overflow = "hidden";
     } else {

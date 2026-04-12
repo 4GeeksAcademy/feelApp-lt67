@@ -15,8 +15,6 @@ const Forum = () => {
   const [deleteModal, setDeleteModal] = useState(null);
   const [editPost, setEditPost] = useState(null);
   const [editForm, setEditForm] = useState({ title: "", text: "" });
-  const [showCreate, setShowCreate] = useState(false);
-  const [createForm, setCreateForm] = useState({ title: "", text: "" });
   const [error, setError] = useState("");
 
   const isAdmin = !!store.admintToken;
@@ -33,14 +31,14 @@ const Forum = () => {
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data))
-          dispatch({ type: "set_clients_posts", payload: data }); 
+          dispatch({ type: "set_clients_posts", payload: data });
       });
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts`)
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data))
-          dispatch({ type: "set_admint_posts", payload: data }); 
+          dispatch({ type: "set_admint_posts", payload: data });
       });
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reaction-client-posts`, {
@@ -51,7 +49,8 @@ const Forum = () => {
         if (!Array.isArray(data)) return;
         const map = {};
         data.forEach((r) => {
-          if (String(r.client_id) === String(myId)) map[r.client_post_id] = r.reaction;
+          if (String(r.client_id) === String(myId))
+            map[r.client_post_id] = r.reaction;
         });
         setClientReactions(map);
       });
@@ -64,7 +63,8 @@ const Forum = () => {
         if (!Array.isArray(data)) return;
         const map = {};
         data.forEach((r) => {
-          if (String(r.client_id) === String(myId)) map[r.admint_post_id] = r.reaction;
+          if (String(r.client_id) === String(myId))
+            map[r.admint_post_id] = r.reaction;
         });
         setAdmintReactions(map);
       });
@@ -136,30 +136,6 @@ const Forum = () => {
     }
   };
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    setError("");
-    const resp = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/api/client-posts`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${activeToken}`,
-        },
-        body: JSON.stringify(createForm),
-      }
-    );
-    const data = await resp.json();
-    if (resp.ok) {
-      dispatch({ type: "add_client_post", payload: data });
-      setCreateForm({ title: "", text: "" });
-      setShowCreate(false);
-    } else {
-      setError(data.error);
-    }
-  };
-
   const [searchParams] = useSearchParams();
   const filterClientId = searchParams.get("client");
 
@@ -180,7 +156,7 @@ const Forum = () => {
     : [];
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "680px" }}>
+    <div className="container" style={{ maxWidth: "680px", paddingTop: "80px" }}>
       <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
         <div>
           <h2 className="mb-0">Forum</h2>
@@ -188,25 +164,21 @@ const Forum = () => {
             {view === "clients" ? "Community posts" : "Info from admins"}
           </p>
         </div>
-        {isClient && (
-          <button
-            className="btn btn-custom rounded-pill px-4"
-            onClick={() => setShowCreate(true)}
-          >
-            <i className="bi bi-plus-lg me-1"></i>New Post
-          </button>
-        )}
       </div>
 
       <div className="d-flex gap-2 mb-4">
         <button
-          className={`btn btn-forum-switch rounded-pill px-4 ${view === "clients" ? "active" : ""}`}
+          className={`btn btn-forum-switch rounded-pill px-4 ${
+            view === "clients" ? "active" : ""
+          }`}
           onClick={() => setView("clients")}
         >
           <i className="bi bi-people me-2"></i>Community
         </button>
         <button
-          className={`btn btn-forum-switch rounded-pill px-4 ${view === "admins" ? "active" : ""}`}
+          className={`btn btn-forum-switch rounded-pill px-4 ${
+            view === "admins" ? "active" : ""
+          }`}
           onClick={() => setView("admins")}
         >
           <i className="bi bi-megaphone me-2"></i>Info
@@ -216,7 +188,9 @@ const Forum = () => {
       {view === "clients" && isClient && (
         <div className="d-flex justify-content-end mb-3">
           <button
-            className={`btn btn-sm rounded-pill px-3 ${myPosts ? "btn-custom" : "btn-forum-switch"}`}
+            className={`btn btn-sm rounded-pill px-3 ${
+              myPosts ? "btn-custom" : "btn-forum-switch"
+            }`}
             onClick={() => setMyPosts(!myPosts)}
           >
             {myPosts ? "All posts" : "My posts"}
@@ -258,7 +232,10 @@ const Forum = () => {
                               className="dropdown-item"
                               onClick={() => {
                                 setEditPost(post.id);
-                                setEditForm({ title: post.title, text: post.text });
+                                setEditForm({
+                                  title: post.title,
+                                  text: post.text,
+                                });
                               }}
                             >
                               Edit
@@ -285,7 +262,10 @@ const Forum = () => {
                   )}
                 </div>
 
-                <p className="mb-3" style={{ color: "#374151", lineHeight: "1.6" }}>
+                <p
+                  className="mb-3"
+                  style={{ color: "#374151", lineHeight: "1.6" }}
+                >
                   {post.text}
                 </p>
 
@@ -295,11 +275,15 @@ const Forum = () => {
                       className="btn btn-sm reaction-badge"
                       onClick={() =>
                         setShowReactionMenu(
-                          showReactionMenu === `c-${post.id}` ? null : `c-${post.id}`
+                          showReactionMenu === `c-${post.id}`
+                            ? null
+                            : `c-${post.id}`
                         )
                       }
                     >
-                      {myReaction || <i className="bi bi-emoji-smile me-1"></i>}
+                      {myReaction || (
+                        <i className="bi bi-emoji-smile me-1"></i>
+                      )}
                       {!myReaction && "React"}
                     </button>
                     {showReactionMenu === `c-${post.id}` && (
@@ -354,7 +338,10 @@ const Forum = () => {
                     <small className="text-muted">{post.admint_mail}</small>
                   </div>
                   <h6 className="fw-semibold mt-2 mb-1">{post.title}</h6>
-                  <p className="mb-3" style={{ color: "#374151", lineHeight: "1.6" }}>
+                  <p
+                    className="mb-3"
+                    style={{ color: "#374151", lineHeight: "1.6" }}
+                  >
                     {post.text}
                   </p>
                   <div className="position-relative d-inline-block">
@@ -362,11 +349,15 @@ const Forum = () => {
                       className="btn btn-sm reaction-badge"
                       onClick={() =>
                         setShowReactionMenu(
-                          showReactionMenu === `a-${post.id}` ? null : `a-${post.id}`
+                          showReactionMenu === `a-${post.id}`
+                            ? null
+                            : `a-${post.id}`
                         )
                       }
                     >
-                      {myReaction || <i className="bi bi-emoji-smile me-1"></i>}
+                      {myReaction || (
+                        <i className="bi bi-emoji-smile me-1"></i>
+                      )}
                       {!myReaction && "React"}
                     </button>
                     {showReactionMenu === `a-${post.id}` && (
@@ -393,65 +384,6 @@ const Forum = () => {
         </div>
       )}
 
-      {showCreate && (
-        <div
-          className="modal show d-block"
-          style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div
-              className="modal-content border-0 shadow"
-              style={{ borderRadius: "16px" }}
-            >
-              <div className="modal-header border-0 pb-0">
-                <h5 className="modal-title">New Post</h5>
-                <button className="btn-close" onClick={() => setShowCreate(false)}></button>
-              </div>
-              <form onSubmit={handleCreate}>
-                <div className="modal-body">
-                  {error && <div className="alert alert-danger">{error}</div>}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">Title</label>
-                    <input
-                      className="form-control forum-input"
-                      value={createForm.title}
-                      onChange={(e) =>
-                        setCreateForm({ ...createForm, title: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">Content</label>
-                    <textarea
-                      className="form-control forum-input"
-                      rows="4"
-                      value={createForm.text}
-                      onChange={(e) =>
-                        setCreateForm({ ...createForm, text: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="modal-footer border-0 pt-0">
-                  <button
-                    type="button"
-                    className="btn btn-forum-switch rounded-pill px-4"
-                    onClick={() => setShowCreate(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn btn-custom rounded-pill px-4">
-                    Post
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
       {editPost && (
         <div
           className="modal show d-block"
@@ -464,7 +396,10 @@ const Forum = () => {
             >
               <div className="modal-header border-0 pb-0">
                 <h5 className="modal-title">Edit Post</h5>
-                <button className="btn-close" onClick={() => setEditPost(null)}></button>
+                <button
+                  className="btn-close"
+                  onClick={() => setEditPost(null)}
+                ></button>
               </div>
               <form onSubmit={handleEdit}>
                 <div className="modal-body">

@@ -100,7 +100,7 @@ const SharedEntriesDetails = () => {
   return (
     <div
       className="container d-flex justify-content-center align-items-center"
-      style={{ minHeight: "85vh", padding: "20px" }}
+      style={{ minHeight: "85vh", padding: "20px", paddingTop: "80px" }}
     >
       <div
         style={{

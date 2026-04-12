@@ -93,8 +93,8 @@ const SharedEntriesList = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "680px" }}>
-      <div className="text-start mt-5">
+    <div className="container" style={{ maxWidth: "680px", paddingTop: "120px"}}>
+      <div className="text-start">
         <h2 style={{ margin: 0 }}>Entries</h2>
         <p className="text-muted">{friendEmail}</p>
       </div>
