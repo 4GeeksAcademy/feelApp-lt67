@@ -144,7 +144,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 >
                   Friends
                 </h6>
-                <Link to="/access" style={linkStyle("/access")}>
+                <Link to="/access/friends" style={linkStyle("/access/friends")}>
                   <i className="bi bi-people"></i>
                   <span>Friends</span>
                 </Link>
@@ -184,13 +184,13 @@ export const Sidebar = ({ isOpen, onClose }) => {
                     margin: "0 8px 12px",
                   }}
                 >
-                Connect
+                  Connect
                 </h6>
                 <Link to="/nearyou" style={linkStyle("/nearyou")}>
                   <i className="bi bi-geo-alt"></i>
                   <span>Find Near You</span>
                 </Link>
-                <Link to="/access" style={linkStyle("/access")}>
+                <Link to="/access/coach" style={linkStyle("/access/coach")}>
                   <i className="bi bi-briefcase"></i>
                   <span>My Coach</span>
                 </Link>

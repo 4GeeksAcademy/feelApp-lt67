@@ -322,7 +322,7 @@ function Testimonials() {
 
 function Footer() {
   return (
-    <footer className="glass-footer py-100">
+    <footer className="glass-footer py-100 bg-white">
       <div className="container">
         <div className="row g-4 text-start">
           <div className="col-12 col-md-4">

@@ -25,7 +25,7 @@ export const Layout = () => {
     <ScrollToTop>
       <Navbar onToggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
-      <main style={{ minHeight: "100vh" }}>
+      <main style={{ minHeight: "100vh"}}>
         <Outlet />
       </main>
     </ScrollToTop>

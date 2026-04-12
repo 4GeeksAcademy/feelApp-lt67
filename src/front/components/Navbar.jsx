@@ -57,12 +57,12 @@ export const Navbar = ({ onToggleSidebar }) => {
               <>
                 <li className="nav-item">
                   <Link className="nav-link fw-bold" to="/">
-                    Home
+                    Who are we?
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link fw-bold" to="/nearyou">
-                    Find Near You
+                  <Link className="nav-link fw-bold" to="/">
+                    Contact
                   </Link>
                 </li>
               </>
