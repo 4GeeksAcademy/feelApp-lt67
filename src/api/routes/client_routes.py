@@ -439,7 +439,7 @@ def create_access_coach():
     new_item = AccessCoach(
         client_id=current_user_id,
         coach_id=body["coach_id"],
-        status="pending"  
+        status="approved"  
     )
     
     db.session.add(new_item)

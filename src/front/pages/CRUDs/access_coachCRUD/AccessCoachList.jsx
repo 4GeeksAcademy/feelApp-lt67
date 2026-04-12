@@ -57,7 +57,7 @@ export const AccessCoachList = () => {
                     {store.access_coach?.map(item => (
                         <tr key={item.id}>
                             <td>{item.id}</td>
-                            <td>{item.client_id}</td>
+                            <td>{item.client_email}</td>
                             <td>{item.status}</td>
                             <td>
                                 <button
