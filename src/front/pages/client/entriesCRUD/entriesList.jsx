@@ -67,7 +67,7 @@ const EntriesList = () => {
   
   return (
     <div className="container" style={{ 
-      maxWidth: "900px", 
+      maxWidth: "680px", 
       paddingTop: "120px", 
       paddingBottom: "100px",
       minHeight: "100vh"
@@ -103,7 +103,7 @@ const EntriesList = () => {
       `}</style>
 
       <div className="text-start mb-5">
-        <h2 className="fw-bold display-6" style={{ color: "#1e293b" }}>Entries</h2>
+        <h2 style={{ fontWeight: "500", margin: 0 }}>Entries</h2>
         <p className="text-muted">Record your thoughts and feelings</p>
       </div>
 

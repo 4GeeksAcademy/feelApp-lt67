@@ -167,6 +167,10 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 >
                   Forum
                 </h6>
+                      <Link to="/client/post" style={linkStyle("/client/post")}>
+                  <i className="bi bi-plus-circle"></i>
+                  <span>New Post</span>
+                </Link>
                 <Link to="/forum" style={linkStyle("/forum")}>
                   <i className="bi bi-chat-dots"></i>
                   <span>Forum</span>

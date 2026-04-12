@@ -68,6 +68,7 @@ import EmotionalStats from "./pages/client/EmotionalStats";
 import FindNearYou from "./pages/FindNearYou";
 import AccessClient from "./pages/client/AccessClient";
 import AccessCoach from "./pages/client/AccessCoach";
+import NewClientPost from "./pages/client/NewClientPost";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -145,6 +146,8 @@ export const router = createBrowserRouter(
       <Route path="/nearyou" element={<FindNearYou />} />
       <Route path="/access/friends" element={<AccessClient />} />
       <Route path="/access/coach" element={<AccessCoach />} />
+      <Route path="/client/post" element={<NewClientPost />} />
+
     </Route>
   )
 );
