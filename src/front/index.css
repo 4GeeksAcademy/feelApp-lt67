@@ -218,3 +218,18 @@ h2, h3 {
 body{
   background: linear-gradient(135deg, #cfe0f8 0%, #fcd9df 100%);
 }
+
+.btn-primary-custom {
+  background: linear-gradient(135deg, #a5c8ff, #f4b6c2);
+  border: none;
+  color: #1e293b;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(165, 200, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(165, 200, 255, 0.5);
+  color: #1e293b;
+}

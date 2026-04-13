@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import blob from "../assets/img/holo.jpg";
 
 export const Home = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <style>{`
@@ -66,21 +69,6 @@ export const Home = () => {
           100% { transform: translateY(0); }
         }
 
-        .btn-primary-custom {
-          background: linear-gradient(135deg, #a5c8ff, #f4b6c2);
-          border: none;
-          color: #1e293b;
-          font-weight: 600;
-          box-shadow: 0 8px 20px rgba(165, 200, 255, 0.4);
-          transition: all 0.3s ease;
-        }
-
-        .btn-primary-custom:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 25px rgba(165, 200, 255, 0.5);
-          color: #1e293b;
-        }
-
         .btn-outline-secondary {
           background: rgba(255,255,255,0.6);
           backdrop-filter: blur(10px);
@@ -131,7 +119,7 @@ export const Home = () => {
         }
       `}</style>
       
-      <Hero />
+      <Hero navigate={navigate} />
       <Intro />
       <Features />
       <HowItWorks />
@@ -141,7 +129,7 @@ export const Home = () => {
   );
 }
 
-function Hero() {
+function Hero({ navigate }) {
   return (
     <section className="vh-100 d-flex align-items-center gradient-bg overflow-hidden">
       <div className="container">
@@ -154,7 +142,12 @@ function Hero() {
             <h1 className="fw-bold display-5">Track, understand, and share your emotions</h1>
             <p className="mt-3 text-muted">A modern platform to log your feelings, visualize patterns, and connect with professionals securely.</p>
             <div className="mt-4 d-flex gap-3">
-              <button className="btn btn-primary-custom px-4">Get Started</button>
+              <button 
+                className="btn btn-primary-custom px-4"
+                onClick={() => navigate("/login")}
+              >
+                Get Started
+              </button>
               <button className="btn btn-outline-secondary px-4">Explore</button>
             </div>
           </motion.div>
