@@ -12,10 +12,10 @@ const CoachsList = () => {
     }, []);
 
     return (
-        <div className="container mt-4">
+        <div className="container" style={{marginTop: "80px"}}>
 
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h2 style={{ fontWeight: "600" }}>Coachs</h2>
+                <h2 className="mt-5" style={{ fontWeight: "600" }}>Coachs</h2>
                 <Link to="/coachs/create" className="btn btn-primary">
                     Create Coach
                 </Link>

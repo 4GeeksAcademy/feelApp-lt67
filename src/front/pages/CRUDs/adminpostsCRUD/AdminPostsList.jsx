@@ -15,7 +15,6 @@ const AdminsPostsList = () => {
         <div className="container mt-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 style={{ fontWeight: "600" }}>Admin Posts</h2>
-                <Link to="/admint-posts/create" className="btn btn-primary">Create Post</Link>
             </div>
             <div style={{ background: "#fff", borderRadius: "10px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", padding: "15px" }}>
                 <table className="table table-hover align-middle mb-0">

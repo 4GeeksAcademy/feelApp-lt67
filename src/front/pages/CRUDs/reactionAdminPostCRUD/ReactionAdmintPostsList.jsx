@@ -36,9 +36,6 @@ const ReactionAdmintPostsList = () => {
         <div className="container mt-5">
             <div className="d-flex justify-content-between mb-3 mt-5">
                 <h2>Reactions</h2>
-                <Link to="/reactions/create" className="btn btn-primary mb-2">
-                    Create Reaction
-                </Link>
             </div>
 
             <table className="table">

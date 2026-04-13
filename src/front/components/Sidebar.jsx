@@ -228,24 +228,88 @@ export const Sidebar = ({ isOpen, onClose }) => {
           )}
 
           {isAdmin && (
-            <div style={{ marginBottom: "28px" }}>
-              <h6
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: "700",
-                  color: "#9ca3af",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                  margin: "0 8px 12px",
-                }}
-              >
-                Admin
-              </h6>
-              <Link to="/admint-private" style={linkStyle("/admint-private")}>
-                <i className="bi bi-sliders"></i>
-                <span>Dashboard</span>
-              </Link>
-            </div>
+             <>
+              <div style={{ marginBottom: "28px" }}>
+                <h6
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "700",
+                    color: "#9ca3af",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    margin: "0 8px 12px",
+                  }}
+                >
+                  Users
+                </h6>
+                <Link to="/clients" style={linkStyle("/clients")}>
+                  <i className="bi bi-person"></i>
+                  <span>Clients</span>
+                </Link>
+                <Link to="/coachs" style={linkStyle("/coachs")}>
+                  <i className="bi bi-person"></i>
+                  <span>Coaches</span>
+                </Link>
+                <Link to="/admints" style={linkStyle("/admints")}>
+                  <i className="bi bi-person"></i>
+                  <span>Admins</span>
+                </Link>
+              </div>
+
+              <div style={{ marginBottom: "28px" }}>
+                <h6
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "700",
+                    color: "#9ca3af",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    margin: "0 8px 12px",
+                  }}
+                >
+                  Posts
+                </h6>
+                <Link to="/clients-posts" style={linkStyle("/clients-posts")}>
+                  <i className="bi bi-pencil-square"></i>
+                  <span>Clients Posts</span>
+                </Link>
+                 <Link to="/reactions-client" style={linkStyle("/reactions-client")}>
+                  <i className="bi bi-emoji-smile"></i>
+                  <span>Reaction Client Post</span>
+                </Link>
+                <Link to="/admint-posts" style={linkStyle("/admint-posts")}>
+                  <i className="bi bi-pencil-square"></i>
+                  <span>Admin Posts</span>
+                </Link>
+                <Link to="/reactions" style={linkStyle("/reactions")}>
+                  <i className="bi bi-emoji-smile"></i>
+                  <span>Reaction admin Post</span>
+                </Link>
+              </div>
+
+                <div style={{ marginBottom: "28px" }}>
+                <h6
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "700",
+                    color: "#9ca3af",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    margin: "0 8px 12px",
+                  }}
+                >
+                  Create 
+                </h6>
+                <Link to="/admint-posts/create" style={linkStyle("/admint-posts/create")}>
+                  <i className="bi bi-plus-circle"></i>
+                  <span>New Post</span>
+                </Link>
+                 <Link to="/emotions" style={linkStyle("/emotions")}>
+                  <i className="bi bi-plus-circle"></i>
+                  <span>New emotion</span>
+                </Link>
+              </div>
+            </>
           )}
         </nav>
 
