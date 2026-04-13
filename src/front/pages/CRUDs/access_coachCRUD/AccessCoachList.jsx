@@ -7,9 +7,8 @@ export const AccessCoachList = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!store.coachToken) {
+        if (!store.coachToken && !store.admintToken) {
             navigate("/");
-            return;
         }
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach`, {
@@ -21,7 +20,7 @@ export const AccessCoachList = () => {
                     dispatch({ type: "set_access_coach", payload: data });
                 }
             });
-    }, [store.coachToken, dispatch, navigate]);
+    }, [store.coachToken, store.admintToken, dispatch, navigate]);
 
     const handleDelete = async (id) => {
         if (!confirm("Delete?")) return;
@@ -41,7 +40,7 @@ export const AccessCoachList = () => {
     };
 
     return (
-        <div className="container mt-5">
+        <div className="container" style={{ maxWidth: "680px", paddingTop: "80px"}}>
             <h2 className="mt-5">Access Coach List</h2>
 
             <table className="table mt-3">

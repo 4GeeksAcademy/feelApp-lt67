@@ -73,33 +73,6 @@ export const Navbar = ({ onToggleSidebar }) => {
               </>
             )}
           </ul>
-
-          <div className="d-flex flex-column flex-lg-row align-items-center gap-2 ms-auto">
-            {!activeToken ? (
-              <div className="dropdown">
-                <button className="btn btn-login dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                  Login
-                </button>
-                <ul className="dropdown-menu dropdown-menu-end shadow text-center">
-                  <li>
-                    <Link className="dropdown-item" to="/client-login">
-                      Client
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/coach-login">
-                      Coach
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/admint-login">
-                      Admin
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            ) : null}
-          </div>
         </div>
       </div>
     </nav>
