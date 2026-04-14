@@ -216,11 +216,17 @@ export const Sidebar = ({ isOpen, onClose }) => {
               >
                 Clients
               </h6>
+                <Link to="/access-coach" style={linkStyle("/access-coach")}>
+                  <i className="bi bi-people"></i>
+                  <span>My clients</span>
+                </Link>
+                {/*
               <Link to="/coach-favorites" style={linkStyle("/coach-favorites")}>
                 <i className="bi-star"></i>
                 <span>My favorite entries</span>
               </Link>
-              <Link to="/access-coach" style={linkStyle("/access-coach")}>
+              */}
+              <Link to="/access-coach/create" style={linkStyle("/access-coach/create")}>
                 <i className="bi-chat-dots"></i>
                 <span>Access</span>
               </Link>

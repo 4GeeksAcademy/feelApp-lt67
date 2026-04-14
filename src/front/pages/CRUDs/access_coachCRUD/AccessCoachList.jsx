@@ -9,6 +9,7 @@ export const AccessCoachList = () => {
     useEffect(() => {
         if (!store.coachToken && !store.admintToken) {
             navigate("/");
+            return;
         }
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach`, {
@@ -22,55 +23,63 @@ export const AccessCoachList = () => {
             });
     }, [store.coachToken, store.admintToken, dispatch, navigate]);
 
-    const handleDelete = async (id) => {
-        if (!confirm("Delete?")) return;
-
-        try {
-            const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach/${id}`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${store.coachToken}` }
-            });
-
-            if (resp.ok) {
-                dispatch({ type: "remove_access_coach", payload: id });
-            }
-        } catch (error) {
-            console.error("Error deleting access coach:", error);
-        }
-    };
+    const approvedClients = store.access_coach?.filter(item => 
+        item.status.toLowerCase() === "approved"
+    ) || [];
 
     return (
-        <div className="container" style={{ maxWidth: "680px", paddingTop: "80px"}}>
-            <h2 className="mt-5">Access Coach List</h2>
+        <div className="container" style={{ paddingTop: "80px", maxWidth: "800px", margin: "0 auto" }}>
+            <h2 className="mt-5 fw-normal" style={{ color: "#1e293b" }}>My Clients</h2>
 
-            <table className="table mt-3">
-                <thead className="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Client</th>
-                        <th>Status</th>
-                        <th>-</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {store.access_coach?.map(item => (
-                        <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.client_email}</td>
-                            <td>{item.status}</td>
-                            <td>
-                                <button
-                                    className="btn btn-primary mx-3"
-                                    onClick={() => navigate(`/entries/friend/${item.client_id}`)}
-                                >
-                                    Ver entries
-                                </button>
-                                <button onClick={() => handleDelete(item.id)} className="btn btn-danger">Delete</button>
-                            </td>
+            <div className="card shadow-sm border-0 mt-4" style={{ overflow: "hidden" }}>
+                <table className="table align-middle mb-0">
+                    <thead className="table-light">
+                        <tr>
+                            <th className="ps-4">Client Email</th>
+                            <th>Status</th>
+                            <th></th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {approvedClients.length > 0 ? (
+                            approvedClients.map(item => (
+                                <tr key={item.id}>
+                                    <td className="ps-4 fw-medium" style={{ color: "#475569" }}>
+                                        {item.client_email}
+                                    </td>
+                                    <td>
+                                        <span className="text-success small fw-bold">
+                                            {item.status}
+                                        </span>
+                                    </td>
+                                    <td className="text-end pe-4">
+                                        <div className="d-flex justify-content-end gap-2">
+                                            <button
+                                                className="btn btn-sm btn-outline-secondary border-dark"
+                                                onClick={() => navigate(`/entries/friend/${item.client_id}`)}
+                                            >
+                                                Entries
+                                            </button>
+                                            <button
+                                                className="btn btn-sm btn-outline-secondary border-dark"
+                                                onClick={() => navigate(`/stats/${item.client_id}`)}
+                                            >
+                                                Stats
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="3" className="text-center py-5 text-muted">
+                                    No approved clients found.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

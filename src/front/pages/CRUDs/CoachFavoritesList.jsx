@@ -1,3 +1,4 @@
+/// Todo este componente esta mal
 import { useEffect } from "react";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
@@ -28,7 +29,7 @@ const CoachFavoritesList = () => {
     };
 
     return (
-        <div className="container" style={{ maxWidth: "680px", paddingTop: "80px"}}>
+        <div className="container" style={{ maxWidth: "800px", paddingTop: "80px"}}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="mt-5" style={{ fontWeight: "600" }}>Favorites</h2>
             </div>

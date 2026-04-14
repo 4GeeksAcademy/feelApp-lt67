@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Pie } from "react-chartjs-2";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 import {
@@ -24,15 +24,28 @@ const DEFAULT_EMOTIONS = [
 const EmotionalStats = () => {
     const { store } = useGlobalReducer();
     const navigate = useNavigate();
+    const { clientId } = useParams();
     
     const [entries, setEntries] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadingEntries, setLoadingEntries] = useState(true);
     const [emotionCounts, setEmotionCounts] = useState({});
     const [range, setRange] = useState("week");
+    
+    const isCoach = !!store.coachToken;
+    const isClient = !!store.clientToken;
+    const token = store.coachToken || store.clientToken;
+    const viewingOwnData = !clientId;
+
+    const endpoint = clientId && isCoach
+        ? `/api/entries/client/${clientId}`
+        : `/api/entries`;
 
     useEffect(() => {
-        if (!store.clientToken) navigate("/");
-    }, [store.clientToken, navigate]);
+        if (!store.clientToken && !store.coachToken) {
+            navigate("/");
+        }
+    }, [store.clientToken, store.coachToken, navigate]);
 
     const availableEmotions = useMemo(() => {
         return store.emotions && store.emotions.length > 0 
@@ -41,20 +54,24 @@ const EmotionalStats = () => {
     }, [store.emotions]);
 
     useEffect(() => {
-        if (!store.clientToken) return;
+        if (!token) return;
 
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries`, {
-            headers: { "Authorization": `Bearer ${store.clientToken}` }
+        setLoadingEntries(true);
+        fetch(`${import.meta.env.VITE_BACKEND_URL}${endpoint}`, {
+            headers: { "Authorization": `Bearer ${token}` }
         })
         .then(res => res.ok ? res.json() : Promise.reject(res))
-        .then(data => Array.isArray(data) && setEntries(data))
-        .catch(err => console.error("Error al cargar entradas:", err));
-    }, [store.clientToken]);
+        .then(data => {
+            if (Array.isArray(data)) setEntries(data);
+        })
+        .catch(err => console.error("Error al cargar entradas:", err))
+        .finally(() => setLoadingEntries(false));
+    }, [token, endpoint]);
 
     const filterByRange = (items) => {
         const now = new Date();
         return items.filter(entry => {
-            const entryDate = new Date(entry.date);
+            const entryDate = new Date(entry.created_at || entry.date);
             const diffDays = (now - entryDate) / (1000 * 60 * 60 * 24);
             if (range === "week") return diffDays <= 7;
             if (range === "month") return diffDays <= 30;
@@ -65,58 +82,62 @@ const EmotionalStats = () => {
     };
 
     const analyzeEntries = async () => {
-    const filtered = filterByRange(entries);
-    if (!filtered.length) return;
+        const filtered = filterByRange(entries);
+        if (!filtered.length) {
+            setEmotionCounts({});
+            return;
+        }
 
-    setLoading(true);
-    const counts = {};
+        setLoading(true);
+        const counts = {};
 
-    const emotionMap = {
-    joy: "joy",
-    sadness: "sadness", 
-    anger: "anger",
-    fear: "fear",
-    surprise: "surprise",
-    disgust: "disgust",
-    neutral: "neutral"
-    };
+        const emotionMap = {
+            joy: "joy",
+            sadness: "sadness", 
+            anger: "anger",
+            fear: "fear",
+            surprise: "surprise",
+            disgust: "disgust",
+            neutral: "neutral"
+        };
 
-    try {
-        const promises = filtered.map(async (entry) => {
-            if (!entry.description || entry.description.length < 10) return null;
+        try {
+            const promises = filtered.map(async (entry) => {
+                const description = entry.description || entry.notes || "";
+                if (!description || description.length < 10) return null;
 
-            const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/analyze-emotion`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${store.clientToken}`
-                },
-                body: JSON.stringify({ text: entry.description })
+                const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/analyze-emotion`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ text: description })
+                });
+
+                if (!resp.ok) return null;
+
+                const data = await resp.json();
+                
+                if (data && data[0] && Array.isArray(data[0])) {
+                    const rawLabel = data[0].sort((a, b) => b.score - a.score)[0].label;
+                    return emotionMap[rawLabel] || rawLabel;
+                }
+                return null;
             });
 
-            if (!resp.ok) return null;
+            const results = await Promise.all(promises);
+            results.forEach(emotion => {
+                if (emotion) counts[emotion] = (counts[emotion] || 0) + 1;
+            });
 
-            const data = await resp.json();
-            
-            if (data && data[0] && Array.isArray(data[0])) {
-                const rawLabel = data[0].sort((a, b) => b.score - a.score)[0].label;
-                return emotionMap[rawLabel] || rawLabel;
-            }
-            return null;
-        });
-
-        const results = await Promise.all(promises);
-        results.forEach(emotion => {
-            if (emotion) counts[emotion] = (counts[emotion] || 0) + 1;
-        });
-
-        setEmotionCounts(counts);
-    } catch (err) {
-        console.error("Error en el puente del Backend:", err);
-    } finally {
-        setLoading(false);
-    }
-};
+            setEmotionCounts(counts);
+        } catch (err) {
+            console.error("Error en el análisis:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         if (entries.length > 0) analyzeEntries();
@@ -138,19 +159,27 @@ const EmotionalStats = () => {
         ]
     };
 
+    const pageTitle = viewingOwnData 
+        ? "My Emotional Stats"
+        : `Client's Emotional Stats`;
+
+    const pageDescription = viewingOwnData
+        ? "Check your emotional stats"
+        : "Track client's emotional patterns";
+
     return (
-        
-     <div className="container" style={{ maxWidth: "680px", paddingTop: "80px" }}>
-      <div className="mb-4 mt-5">
-        <h2 className="mb-0">Emotional Stats</h2>
-        <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>
-          Check your emotional stats 
-        </p>
-      </div>
+        <div className="container" style={{ maxWidth: "680px", paddingTop: "80px" }}>
+            <div className="mb-4 mt-5">
+                <h2 className="mb-0">{pageTitle}</h2>
+                <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>
+                    {pageDescription}
+                </p>
+            </div>
+
             <div className="my-4">
                 <label className="form-label text-muted small">Select Period:</label>
                 <select
-                    className="form-select rounded-pill "
+                    className="form-select rounded-pill"
                     value={range}
                     onChange={(e) => setRange(e.target.value)}
                     style={{ maxWidth: "220px" }}
@@ -162,7 +191,12 @@ const EmotionalStats = () => {
                 </select>
             </div>
 
-            {loading ? (
+            {loadingEntries ? (
+                <div className="text-center p-5">
+                    <div className="spinner-border text-primary mb-2"></div>
+                    <p className="text-muted">Loading entries...</p>
+                </div>
+            ) : loading ? (
                 <div className="text-center p-5">
                     <div className="spinner-border text-primary mb-2"></div>
                     <p className="text-muted">IA is analyzing your thoughts...</p>
