@@ -69,6 +69,7 @@ import FindNearYou from "./pages/FindNearYou";
 import AccessClient from "./pages/client/AccessClient";
 import AccessCoach from "./pages/client/AccessCoach";
 import NewClientPost from "./pages/client/NewClientPost";
+import { AboutUs } from "./pages/AboutUs";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -142,6 +143,7 @@ export const router = createBrowserRouter(
       <Route path="/login" element={<Login />} />
       <Route path="/client-signup" element={<SignUp title="Client Sign Up" apiEndpoint="/api/signup" loginPath="/login" />} />
       <Route path="/coach-signup" element={<SignUp title="Coach Sign Up" apiEndpoint="/api/coach-signup" loginPath="/login" />} />
+      <Route path="/aboutUs" element={<AboutUs />} />
 
 
     </Route>

@@ -200,7 +200,7 @@ function Features() {
   ];
 
   return (
-    <section className="features-wrapper py-100">
+    <section id="features" className="features-wrapper py-100">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-12 col-lg-9 text-center">
@@ -291,7 +291,7 @@ function Testimonials() {
     { name: "Lucas Benitez", role: "Regular User", text: "I love being able to share my entries safely with only my closest friends." }
   ];
   return (
-    <section className="testimonials-wrapper py-100">
+    <section id="testimonies" className="testimonials-wrapper py-100">
       <div className="container text-center">
         <h2 className="display-5 mb-5 fw-bold">What users say</h2>
         <div className="row g-4">
@@ -315,7 +315,7 @@ function Testimonials() {
 
 function Footer() {
   return (
-    <footer className="glass-footer py-100 bg-white">
+    <footer id="contact" className="glass-footer py-100 bg-white">
       <div className="container">
         <div className="row g-4 text-start">
           <div className="col-12 col-md-4">
