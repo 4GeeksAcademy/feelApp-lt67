@@ -105,3 +105,47 @@ def delete_access_coach(id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({"msg": "Deleted"}), 200
+
+@coach_bp.route('/access-request', methods=['POST'])
+@jwt_required()
+def create_access_request():
+
+    current_coach_id = get_jwt_identity()
+    body = request.get_json()
+    
+    if "client_id" not in body:
+        return jsonify({"error": "client_id is required"}), 400
+    
+    client_id = body["client_id"]
+    
+    existing = AccessCoach.query.filter_by(
+        client_id=client_id,
+        coach_id=current_coach_id
+    ).first()
+    
+    if existing:
+        return jsonify({"msg": "Request already exists"}), 400
+    
+    new_request = AccessCoach(
+        client_id=client_id,
+        coach_id=current_coach_id,
+        status="pending"
+    )
+    
+    db.session.add(new_request)
+    db.session.commit()
+    
+    return jsonify(new_request.serialize()), 201
+ 
+ 
+@coach_bp.route('/access-requests', methods=['GET'])
+@jwt_required()
+def get_coach_access_requests():
+
+    current_coach_id = get_jwt_identity()
+    
+    requests = AccessCoach.query.filter_by(
+        coach_id=current_coach_id
+    ).all()
+    
+    return jsonify([r.serialize() for r in requests]), 200

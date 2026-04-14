@@ -145,6 +145,7 @@ export const router = createBrowserRouter(
       <Route path="/coach-signup" element={<SignUp title="Coach Sign Up" apiEndpoint="/api/coach-signup" loginPath="/login" />} />
       <Route path="/aboutUs" element={<AboutUs />} />
 
+      <Route path="/stats/:clientId" element={<EmotionalStats />} />
 
     </Route>
   )
