@@ -33,7 +33,7 @@ const ReactionAdmintPostsList = () => {
     const posts     = Array.isArray(store.admint_posts)  ? store.admint_posts  : [];
 
     return (
-        <div className="container mt-5">
+        <div className="container" style={{marginTop:"80px"}}>
             <div className="d-flex justify-content-between mb-3 mt-5">
                 <h2>Reactions</h2>
             </div>

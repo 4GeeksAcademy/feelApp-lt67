@@ -14,7 +14,7 @@ const AccessClientList = () => {
   
 
   return (
-    <div className="container mt-5">
+    <div className="container" style={{marginTop:"100px"}}>
       <h2 className="mt-5">Access Requests</h2>
 
       {store.access_clients.map(item => (

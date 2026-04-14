@@ -297,7 +297,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 </Link>
               </div>
 
-                <div style={{ marginBottom: "28px" }}>
+               <div style={{ marginBottom: "28px" }}>
                 <h6
                   style={{
                     fontSize: "0.75rem",
@@ -319,8 +319,31 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <span>New emotion</span>
                 </Link>
               </div>
+
+                <div style={{ marginBottom: "28px" }}>
+                <h6
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "700",
+                    color: "#9ca3af",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    margin: "0 8px 12px",
+                  }}
+                >
+                  Access
+                </h6>
+                <Link to="/access-clients" style={linkStyle("/access-clients")}>
+                  <i className="bi bi-share"></i>
+                  <span>Access client to client</span>
+                </Link>
+                 <Link to="/access-coach" style={linkStyle("/access-coach")}>
+                  <i className="bi bi-share"></i>
+                  <span>Access coach to coach</span>
+                </Link>
+              </div>         
             </>
-          )}
+            )}
         </nav>
 
         <div

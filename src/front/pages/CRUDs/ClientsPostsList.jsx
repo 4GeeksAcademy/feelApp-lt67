@@ -41,7 +41,7 @@ const CLientsPostsList = () => {
   const posts = Array.isArray(store.clients_posts) ? store.clients_posts : [];
 
   return (
-    <div className="container mt-5">
+    <div className="container" style={{marginTop:"100px"}}>
       <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
         <h2>Clients Posts</h2>
       </div>

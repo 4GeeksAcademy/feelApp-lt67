@@ -18,7 +18,7 @@ const ClientsList = () => {
     }, []);
 
     return (
-        <div className="container mt-5">
+        <div className="container" style={{marginTop:"100px"}}>
 
             <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
                 <h2 style={{ fontWeight: "600" }}>Clients</h2>
