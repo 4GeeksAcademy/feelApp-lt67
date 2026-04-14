@@ -224,6 +224,10 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 <i className="bi-chat-dots"></i>
                 <span>Access</span>
               </Link>
+                    <Link to="/nearyou" style={linkStyle("/nearyou")}>
+                  <i className="bi bi-geo-alt"></i>
+                  <span>Find Near You</span>
+                </Link>
             </div>
           )}
 
