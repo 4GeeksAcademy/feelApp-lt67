@@ -56,21 +56,29 @@ export const Navbar = ({ onToggleSidebar }) => {
             {!activeToken ? (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link fw-bold" to="/">
-                    Who are we?
-                  </Link>
+                  <a className="nav-link fw-bold" href="/#features">
+                    Features
+                  </a>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link fw-bold" to="/">
+                  <a className="nav-link fw-bold" href="/#testimonies">
+                    Testimonials
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link fw-bold" href="/#contact">
                     Contact
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link fw-bold" to="/aboutUs">
+                    About us
                   </Link>
                 </li>
               </>
             ) : (
-              <>
-                <li className="nav-item">
-                </li>
-              </>
+              <li className="nav-item">
+              </li>
             )}
           </ul>
         </div>
@@ -78,4 +86,3 @@ export const Navbar = ({ onToggleSidebar }) => {
     </nav>
   );
 };
-

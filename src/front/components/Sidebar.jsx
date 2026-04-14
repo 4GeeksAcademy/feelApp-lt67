@@ -85,7 +85,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
             alignItems: "center",
           }}
         >
-          <h5 style={{ color: "#1f2937", fontWeight: "700", marginBottom: 0 }}>FeelApp</h5>
+          <h5 className="logo-feelapp" style={{ color: "#1f2937", fontWeight: "700", marginBottom: 0 }}>FeelApp</h5>
           <button
             onClick={onClose}
             style={{
