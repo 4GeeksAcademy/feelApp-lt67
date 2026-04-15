@@ -11,6 +11,7 @@ export const ClientPrivate = () => {
   }, [store.clientToken]);
 
   const handleStartTracking = () => {
+    navigate("/entries/create");
     window.dispatchEvent(new CustomEvent("openSidebar"));
   };
 

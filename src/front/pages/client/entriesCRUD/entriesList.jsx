@@ -102,9 +102,15 @@ const EntriesList = () => {
         }
       `}</style>
 
-      <div className="text-start mb-5">
+      <div className="text-start mb-2">
         <h2 style={{ fontWeight: "500", margin: 0 }}>Entries</h2>
         <p className="text-muted">Record your thoughts and feelings</p>
+      </div>
+        
+      <div className="d-flex justify-content-end mb-5">
+        <Link to="/entries/create" className="btn btn-custom rounded-pill px-4">
+          <i className="bi bi-plus-lg me-2"></i> New Entry
+        </Link>
       </div>
 
       {store.entries.length === 0 ? (

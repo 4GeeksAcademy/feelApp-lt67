@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 import logImg from "../../assets/img/logImg.jpeg";
 
@@ -11,6 +11,8 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
+  const location = useLocation();
+  const successMessage = location.state?.message;
 
   useEffect(() => {
     if (store.clientToken) navigate("/client-private");
@@ -144,6 +146,20 @@ export const Login = () => {
 
         <div className="form-side">
           <div style={{ width: "100%", maxWidth: "320px", margin: "0 auto" }}>
+
+            {successMessage && (
+              <div className="alert alert-success py-2 px-3 small rounded-3 mb-3 animate__animated animate__fadeIn" style={{ fontSize: "0.85rem" }}>
+                <i className="bi bi-check-circle-fill me-2"></i>
+                {successMessage}
+              </div>
+            )}
+
+            {error && (
+              <div className="alert alert-danger py-2 px-3 small rounded-3 mb-3" style={{ fontSize: "0.85rem" }}>
+                {error}
+              </div>
+            )}
+            
             <h2 style={{ fontWeight: "700", fontSize: "1.8rem", marginBottom: "5px" }}>{config.title}</h2>
             <p className="text-muted small mb-4">Enter your credentials to access</p>
 
