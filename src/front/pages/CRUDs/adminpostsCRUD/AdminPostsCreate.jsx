@@ -27,25 +27,25 @@ const AdminsPostsCreate = () => {
     };
 
     return (
-        <div className="container mt-4">
-            <h2>Create Post</h2>
+        <div className="container mt-5">
+            <h2 className="mt-80 bg-gray-200 p-4">Create Post</h2>
             {error && <div className="alert alert-danger">{error}</div>}
             <form onSubmit={handleCreate}>
                 <div className="mb-3">
                     <label className="form-label">Admin ID</label>
                     <select
-                    className="form-select"
-                    value={admintId}
-                    onChange={e => setAdmintId(e.target.value)}
-                    required
-                >
-                    <option value="">Select an admin</option>
-                    {store.admints?.map((admint) => (
-                        <option key={admint.id} value={admint.id}>
-                            {admint.name || `Admin ${admint.id}`}
-                        </option>
-                    ))}
-                </select>
+                        className="form-select"
+                        value={admintId}
+                        onChange={e => setAdmintId(e.target.value)}
+                        required
+                    >
+                        <option value="">Select an admin</option>
+                        {store.admints?.map((admint) => (
+                            <option key={admint.id} value={admint.id}>
+                                {admint.name || `Admin ${admint.id}`}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Title</label>

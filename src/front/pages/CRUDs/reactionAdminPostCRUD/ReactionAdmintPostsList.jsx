@@ -34,7 +34,7 @@ const ReactionAdmintPostsList = () => {
 
     return (
         <div className="container mt-5">
-            <div className="d-flex justify-content-between mb-3 mt-5">
+            <div className="d-flex justify-content-between mb-3 mt-5 mt-80 bg-gray-200 p-4">
                 <h2>Reactions</h2>
             </div>
 

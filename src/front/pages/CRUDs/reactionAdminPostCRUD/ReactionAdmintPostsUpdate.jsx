@@ -42,7 +42,7 @@ const ReactionAdmintPostsUpdate = () => {
 
     return (
         <div className="container mt-5">
-            <h2 className="mt-5">Edit Reaction</h2>
+            <h2 className="mt-5 mt-80 bg-gray-200 p-4">Edit Reaction</h2>
 
             <form onSubmit={handleUpdate}>
                 <label>Reaction</label>

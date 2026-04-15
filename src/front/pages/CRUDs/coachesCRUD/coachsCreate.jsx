@@ -37,8 +37,8 @@ const CoachsCreate = () => {
     };
 
     return (
-        <div className="coachs-page container mt-4">
-            <h2 className="mb-3">Create Coach </h2>
+        <div className="coachs-page container mt-5">
+            <h2 className="mb-3 mt-80 bg-gray-200 p-4">Create Coach </h2>
 
             {error && <div className="alert alert-danger">{error}</div>}
 

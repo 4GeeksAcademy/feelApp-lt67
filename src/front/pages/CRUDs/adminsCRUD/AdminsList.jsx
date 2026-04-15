@@ -14,10 +14,10 @@ const AdmintsList = () => {
     }, []);
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-5">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h2 style={{ fontWeight: "700", marginBottom: "0" }}>Admins</h2>
+                    <h2 style={{ fontWeight: "700", marginBottom: "0", marginTop: "80px"}}>Admins</h2>
                     <small className="text-muted">Manage your admin users</small>
                 </div>
 

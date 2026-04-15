@@ -14,8 +14,8 @@ const ClientsCreate = () => {
         setError("");
 
         useEffect(() => {
-                if (!store.admintToken) navigate("/");
-            }, [store.admintToken, navigate]);
+            if (!store.admintToken) navigate("/");
+        }, [store.admintToken, navigate]);
 
         const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
             method: "POST",
@@ -41,7 +41,7 @@ const ClientsCreate = () => {
 
     return (
         <div className="clients-page container mt-5">
-            <h2 className="mt-5">Create Client</h2>
+            <h2 className="mt-80 bg-gray-200 p-4">Create Client</h2>
 
             {error && <div className="alert alert-danger">{error}</div>}
 
