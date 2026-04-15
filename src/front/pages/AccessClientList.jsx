@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useGlobalReducer from "../../../hooks/useGlobalReducer";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 const AccessClientList = () => {
   const { store, dispatch } = useGlobalReducer();
@@ -11,10 +11,10 @@ const AccessClientList = () => {
         dispatch({ type: "set_access_clients", payload: data })
       );
   }, []);
-  
+
 
   return (
-    <div className="container" style={{marginTop:"100px"}}>
+    <div className="container" style={{ marginTop: "100px" }}>
       <h2 className="mt-5">Access Requests</h2>
 
       {store.access_clients.map(item => (
@@ -23,7 +23,7 @@ const AccessClientList = () => {
           <p>Target: {item.shared_with_id}</p>
           <p>Status: {item.status}</p>
 
- 
+
         </div>
       ))}
     </div>

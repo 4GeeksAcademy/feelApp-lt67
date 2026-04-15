@@ -1,4 +1,7 @@
 /// Todo este componente esta mal
+// Navigate si no hay token coach
+/// fetch con Auth bearer token
+
 import { useEffect } from "react";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 

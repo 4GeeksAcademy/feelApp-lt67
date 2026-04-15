@@ -6,47 +6,26 @@ import {
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 
+
+//////// ADMIN ////////
+
+// POSTS
 import AdminsPostsList from "./pages/CRUDs/adminpostsCRUD/AdminPostsList";
 import AdminsPostsCreate from "./pages/CRUDs/adminpostsCRUD/AdminPostsCreate";
 import AdminsPostsDetails from "./pages/CRUDs/adminpostsCRUD/AdminPostsDetails";
 import AdminsPostsUpdate from "./pages/CRUDs/adminpostsCRUD/AdminPostsUpdate";
 
-import ReactionAdmintPostsCreate from "./pages/CRUDs/reactionAdminPostCRUD/ReactionAdmintPostsCreate";
-import ReactionAdmintPostsUpdate from "./pages/CRUDs/reactionAdminPostCRUD/ReactionAdmintPostsUpdate";
-import ReactionAdmintPostsList from "./pages/CRUDs/reactionAdminPostCRUD/ReactionAdmintPostsList";
+// REACTIONS
+import ReactionAdmintPostsList from "./pages/ReactionAdmintPostsList";
+import ReactionClientPostList from "./pages/ReactionClientPostList";
 
-import EntriesList from "./pages/client/entriesCRUD/entriesList";
-import EntriesCreate from "./pages/client/entriesCRUD/entriesCreate";
-import EntriesDetails from "./pages/client/entriesCRUD/entriesDetails";
-
-import CLientsPostsList from "./pages/CRUDs/ClientsPostsList";
-
-import { AccessCoachList } from "./pages/CRUDs/access_coachCRUD/AccessCoachList";
-import { AccessCoachCreate } from "./pages/CRUDs/access_coachCRUD/AccessCoachCreate";
-
-import { SignUp } from "./pages/login/SignUp";
-import { Login } from "./pages/login/Login";
-import { ClientPrivate } from "./pages/client/ClientPrivate";
-import { CoachPrivate } from "./pages/login/CoachPrivate";
-import { AdminPrivate } from "./pages/login/AdminPrivate";
-
-import Forum from "./pages/client/Forum";
-import Shared from "./pages/client/Shared";
-
-import ReactionClientPostList from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostList";
-import ReactionClientPostCreate from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostCreate";
-import ReactionClientPostUpdate from "./pages/CRUDs/reactionClientPostCRUD/ReactionClientPostUpdate";
-
-import ClientFavoritesList from "./pages/CRUDs/ClientFavoritesList";
-import CoachFavoritesList from "./pages/CRUDs/CoachFavoritesList";
-
-import AccessClientList from "./pages/CRUDs/access_clientCRUD/AccessClientList";
-
+// EMOTIONS
 import EmotionsDetails from "./pages/CRUDs/emotionsCRUD/EmotionDetails";
 import EmotionsUpdate from "./pages/CRUDs/emotionsCRUD/EmotionsUpdate";
 import EmotionsCreate from "./pages/CRUDs/emotionsCRUD/EmotionsCreate";
 import EmotionsList from "./pages/CRUDs/emotionsCRUD/EmotionList";
 
+// USERS CRUDS
 import ClientsList from "./pages/CRUDs/clientsCRUD/ClientsList";
 import ClientsCreate from "./pages/CRUDs/clientsCRUD/ClientsCreate";
 import ClientsDetails from "./pages/CRUDs/clientsCRUD/ClientsDetails";
@@ -62,14 +41,49 @@ import AdmintsDetails from "./pages/CRUDs/adminsCRUD/AdminsDetails";
 import AdmintsUpdate from "./pages/CRUDs/adminsCRUD/AdminsUpdate";
 import AdmintsList from "./pages/CRUDs/adminsCRUD/AdminsList";
 
-import SharedEntriesList from "./pages/client/SharedEntriesList";
-import SharedEntriesDetails from "./pages/client/SharedEntriesDetails";
-import EmotionalStats from "./pages/client/EmotionalStats";
-import FindNearYou from "./pages/FindNearYou";
+// ACCESS
+import AccessClientList from "./pages/AccessClientList";
+
+// CLIENTS POSTS
+import CLientsPostsList from "./pages/CRUDs/ClientsPostsList";
+
+
+//////// CLIENT ////////
+
+// ENTRIES
+import EntriesList from "./pages/client/entriesCRUD/entriesList";
+import EntriesCreate from "./pages/client/entriesCRUD/entriesCreate";
+import EntriesDetails from "./pages/client/entriesCRUD/entriesDetails";
+
+// VIEWS
+import Forum from "./pages/client/Forum";
+import Shared from "./pages/client/Shared";
 import AccessClient from "./pages/client/AccessClient";
 import AccessCoach from "./pages/client/AccessCoach";
 import NewClientPost from "./pages/client/NewClientPost";
+
+// COMPONENTS CLIENT | COACH
+import SharedEntriesList from "./pages/client/SharedEntriesList";
+import SharedEntriesDetails from "./pages/client/SharedEntriesDetails";
+import EmotionalStats from "./pages/client/EmotionalStats";
+
+//////// COACH ////////
+import { AccessCoachList } from "./pages/CRUDs/access_coachCRUD/AccessCoachList";
+import { AccessCoachCreate } from "./pages/CRUDs/access_coachCRUD/AccessCoachCreate";
+import CoachFavoritesList from "./pages/CRUDs/CoachFavoritesList";
+
+//////// GENERAL ////////
+
+import { SignUp } from "./pages/login/SignUp";
+import { Login } from "./pages/login/Login";
 import { AboutUs } from "./pages/AboutUs";
+import FindNearYou from "./pages/FindNearYou";
+
+// PRIVATES
+import { ClientPrivate } from "./pages/client/ClientPrivate";
+import { CoachPrivate } from "./pages/login/CoachPrivate";
+import { AdminPrivate } from "./pages/login/AdminPrivate";
+
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -108,18 +122,11 @@ export const router = createBrowserRouter(
       <Route path="/entries/client/:client_id" element={<EntriesList />} />
 
       <Route path="/reactions" element={<ReactionAdmintPostsList />} />
-      <Route path="/reactions/create" element={<ReactionAdmintPostsCreate />} />
-      <Route path="/reactions/:id/edit" element={<ReactionAdmintPostsUpdate />} />
-
-      <Route path="/client-favorites" element={<ClientFavoritesList />} />
+      <Route path="/reactions-client" element={<ReactionClientPostList />} />
 
       <Route path="/coach-favorites" element={<CoachFavoritesList />} />
 
       <Route path="/clients-posts" element={<CLientsPostsList />} />
-
-      <Route path="/reactions-client" element={<ReactionClientPostList />} />
-      <Route path="/reactions-client/create" element={<ReactionClientPostCreate />} />
-      <Route path="/reactions-client/:id/edit" element={<ReactionClientPostUpdate />} />
 
       <Route path="/access-coach" element={<AccessCoachList />} />
       <Route path="/access-coach/create" element={<AccessCoachCreate />} />
