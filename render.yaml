@@ -9,5 +9,3 @@ services:
             value: src/app.py
           - key: FLASK_DEBUG
             value: 0
-          - key: DATABASE_URL
-            value: "postgresql://feelapp_db_user:PevwTunPTI4AdFp1lQXt31CaxcNBL7s0@dpg-d7fc1iq8qa3s73dgc7mg-a.oregon-postgres.render.com/feelapp_db"
