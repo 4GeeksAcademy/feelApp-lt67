@@ -100,11 +100,11 @@ const SharedEntriesList = () => {
       </div>
       <div className="d-flex justify-content-end mb-5">
         <button
-          className="btn btn-forum-switch rounded-pill px-4"
-          onClick={() => navigate("/shared")}
-        >
-          <i className="bi bi-arrow-left me-2"></i>Back
-        </button>
+        className="btn btn-forum-switch rounded-pill px-4"
+        onClick={() => navigate(store.clientToken ? "/shared" : "/access-coach")}
+      >
+        <i className="bi bi-arrow-left me-2"></i>Back
+      </button>
       </div>
 
       {store.entries.length === 0 ? (

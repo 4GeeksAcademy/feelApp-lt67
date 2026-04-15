@@ -13,7 +13,7 @@ const AccessClient = () => {
 
   useEffect(() => {
     if (!store.clientToken) navigate("/");
-  }, [store.clientToken]);
+  }, [store.clientToken, navigate]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-clients`, {
@@ -35,7 +35,7 @@ const AccessClient = () => {
             dispatch({ type: "set_clients", payload: data });
         });
     }
-  }, []);
+  }, [dispatch, store.clientToken, store.clients.length]);
 
   const sendClientRequest = async (sharedWithId) => {
     setError("");
@@ -71,6 +71,8 @@ const AccessClient = () => {
   };
 
   const updateClientAccess = async (id, status) => {
+    setError("");
+    setSuccess("");
     const resp = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/access-clients/${id}`,
       {
@@ -84,7 +86,11 @@ const AccessClient = () => {
     );
     const data = await resp.json();
     if (resp.ok) {
+      dispatch({ type: "remove_access_client", payload: id });
       dispatch({ type: "add_access_client", payload: data });
+      setSuccess(`Request ${status}!`);
+    } else {
+      setError(data.msg || "Error updating request");
     }
   };
 
@@ -98,6 +104,7 @@ const AccessClient = () => {
     );
     if (resp.ok) {
       dispatch({ type: "remove_access_client", payload: id });
+      setSuccess("Connection deleted");
     }
   };
 
@@ -127,6 +134,7 @@ const AccessClient = () => {
   const sentToClients = store.access_clients.filter(
     (a) => String(a.client_id) === String(myId)
   );
+  
   const receivedFromClients = store.access_clients.filter(
     (a) =>
       String(a.shared_with_id) === String(myId) &&
@@ -141,11 +149,19 @@ const AccessClient = () => {
 
   return (
     <div className="container mt-5" style={{ maxWidth: "680px", paddingTop: "80px" }}>
-      <div className="mb-4">
-        <h2 className="mb-0">Friends Access</h2>
-        <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>
-          Manage who can see your entries
-        </p>
+      <div className="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+          <h2 className="mb-0">Friends Access</h2>
+          <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>
+            Manage who can see your entries
+          </p>
+        </div>
+        <button
+          className="btn btn-forum-switch rounded-pill px-4"
+          onClick={() => navigate("/shared")}
+        >
+          <i className="bi bi-heart me-2"></i>Shared
+        </button>
       </div>
 
       {error && <div className="alert alert-danger py-2">{error}</div>}
@@ -261,6 +277,14 @@ const AccessClient = () => {
                           <i className="bi bi-x me-1"></i>Reject
                         </button>
                       </div>
+                    )}
+                    {a.status !== "pending" && (
+                      <button
+                        className="btn btn-sm btn-forum-switch rounded-pill"
+                        onClick={() => deleteClientAccess(a.id)}
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
                     )}
                   </div>
                 </div>
