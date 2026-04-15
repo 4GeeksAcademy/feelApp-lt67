@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate , Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 
@@ -21,7 +21,7 @@ const ClientsList = () => {
         <div className="container" style={{marginTop:"100px"}}>
 
             <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
-                <h2 style={{ fontWeight: "600" }}>Clients</h2>
+                <h2 className="mt-80 bg-gray-200 p-4" style={{ fontWeight: "600" }}>Clients</h2>
                 <Link to="/clients/create" className="btn btn-primary">
                     Create Client
                 </Link>

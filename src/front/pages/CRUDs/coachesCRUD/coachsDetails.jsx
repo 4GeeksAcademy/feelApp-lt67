@@ -37,8 +37,8 @@ const CoachsDetails = () => {
   if (!coach) return <p className="container mt-4">Loading...</p>;
 
   return (
-    <div className="coachs-page container mt-4">
-      <h2>Coach Details</h2>
+    <div className="coachs-page container mt-5">
+      <h2 className="mt-80 bg-gray-200 p-4">Coach Details</h2>
 
       <p><strong>ID:</strong> {coach.id}</p>
       <p><strong>Email:</strong> {coach.email}</p>

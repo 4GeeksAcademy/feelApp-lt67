@@ -18,9 +18,9 @@ const CLientsPostsList = () => {
       });
       const data = await resp.json();
       if (resp.ok) {
-        dispatch({ 
-          type: "set_clients_posts", 
-          payload: Array.isArray(data) ? data : [] 
+        dispatch({
+          type: "set_clients_posts",
+          payload: Array.isArray(data) ? data : []
         });
       }
     };
@@ -43,9 +43,9 @@ const CLientsPostsList = () => {
   return (
     <div className="container" style={{marginTop:"100px"}}>
       <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
-        <h2>Clients Posts</h2>
+        <h2 className="mt-80 bg-gray-200 p-4">Clients Posts</h2>
       </div>
-      
+
       <table className="table">
         <thead>
           <tr>

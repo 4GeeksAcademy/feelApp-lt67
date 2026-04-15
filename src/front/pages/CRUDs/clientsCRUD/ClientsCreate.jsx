@@ -14,8 +14,8 @@ const ClientsCreate = () => {
         setError("");
 
         useEffect(() => {
-                if (!store.admintToken) navigate("/");
-            }, [store.admintToken, navigate]);
+            if (!store.admintToken) navigate("/");
+        }, [store.admintToken, navigate]);
 
         const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
             method: "POST",

@@ -45,8 +45,8 @@ const CoachsUpdate = () => {
   };
 
   return (
-    <div className="coachs-page container mt-4">
-      <h2>Edit Coach</h2>
+    <div className="coachs-page container mt-5">
+      <h2 className="container" style={{ marginTop: "80px" }}>Edit Coach</h2>
 
       <form onSubmit={handleUpdate}>
         <input
