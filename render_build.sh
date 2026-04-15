@@ -9,4 +9,3 @@ pipenv install
 
 pipenv run upgrade
 
-pipenv run flask insert-test-data
