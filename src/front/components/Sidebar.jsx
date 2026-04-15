@@ -85,7 +85,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
             alignItems: "center",
           }}
         >
-          <h5 style={{ color: "#1f2937", fontWeight: "700", marginBottom: 0 }}>FeelApp</h5>
+          <h5 className="logo-feelapp" style={{ color: "#1f2937", fontWeight: "700", marginBottom: 0 }}>FeelApp</h5>
           <button
             onClick={onClose}
             style={{
@@ -216,14 +216,24 @@ export const Sidebar = ({ isOpen, onClose }) => {
               >
                 Clients
               </h6>
+                <Link to="/access-coach" style={linkStyle("/access-coach")}>
+                  <i className="bi bi-people"></i>
+                  <span>My clients</span>
+                </Link>
+                {/*
               <Link to="/coach-favorites" style={linkStyle("/coach-favorites")}>
                 <i className="bi-star"></i>
                 <span>My favorite entries</span>
               </Link>
-              <Link to="/access-coach" style={linkStyle("/access-coach")}>
+              */}
+              <Link to="/access-coach/create" style={linkStyle("/access-coach/create")}>
                 <i className="bi-chat-dots"></i>
                 <span>Access</span>
               </Link>
+                    <Link to="/nearyou" style={linkStyle("/nearyou")}>
+                  <i className="bi bi-geo-alt"></i>
+                  <span>Find Near You</span>
+                </Link>
             </div>
           )}
 
@@ -287,7 +297,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 </Link>
               </div>
 
-                <div style={{ marginBottom: "28px" }}>
+               <div style={{ marginBottom: "28px" }}>
                 <h6
                   style={{
                     fontSize: "0.75rem",
@@ -309,8 +319,31 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <span>New emotion</span>
                 </Link>
               </div>
+
+                <div style={{ marginBottom: "28px" }}>
+                <h6
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "700",
+                    color: "#9ca3af",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    margin: "0 8px 12px",
+                  }}
+                >
+                  Access
+                </h6>
+                <Link to="/access-clients" style={linkStyle("/access-clients")}>
+                  <i className="bi bi-share"></i>
+                  <span>Access client to client</span>
+                </Link>
+                 <Link to="/access-coach" style={linkStyle("/access-coach")}>
+                  <i className="bi bi-share"></i>
+                  <span>Access coach to coach</span>
+                </Link>
+              </div>         
             </>
-          )}
+            )}
         </nav>
 
         <div

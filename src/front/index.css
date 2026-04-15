@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 h1 {
   font-family: "Raleway", sans-serif;
   font-optical-sizing: auto;
@@ -11,28 +15,24 @@ h2, h3 {
   font-weight: 500;
   font-style: normal;
 }
- 
-/* Home */
- 
-.brand-badge {
-  background-color: #1c9cb3; 
-  color: white;
-  padding: 4px 16px;
-  border-radius: 12px;
-  display: inline-block;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+
+.logo-feelapp {
+  font-family: "Gugi", sans-serif !important;
+  font-weight: 400;
+  font-style: normal;
+  font-optical-sizing: auto;
+  font-size: 1.5rem;
 }
- 
-/* glass morphin style */
+
+.logo-text{
+  font-family: "Gugi", sans-serif !important;
+  font-weight: 400;
+}
+
 .brand-badge {
-  background: rgba(255, 255, 255, 0.1); 
-  color: #2c323b;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 4px 16px;
   border-radius: 12px;
-  display: inline-block;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
@@ -68,16 +68,7 @@ h2, h3 {
   transition: all 0.3s ease;
   z-index: 1050;
 }
- 
-.logo-feelapp {
-  font-size: 1.5rem;
-  letter-spacing: -1px;
-  font-weight: 500;
-  font-family: "Raleway", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-}
- 
+
 .nav-link {
   font-weight: 500;
   margin: 0 10px;
@@ -88,22 +79,6 @@ h2, h3 {
  
 .nav-link:hover {
   transform: translateY(-2px);
-}
- 
-.btn-login {
-  background: linear-gradient(135deg, #b3e5fc 0%, #f8bbd0 100%);
-  border: none;
-  color: #444;
-  font-weight: 600;
-  padding: 8px 20px;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
-}
- 
-.btn-login:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #f8bbd0 0%, #b3e5fc 100%);
 }
  
 .btn-logout {
@@ -131,18 +106,8 @@ h2, h3 {
   }
 }
  
-/* log */
- 
-.custom-container {
-  background-color: white;
-  width: 100%;
-  max-width: 450px; 
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); 
-  border: 1px solid #f0f0f0;
-}
- 
+/* btn */
+
 .btn-custom {
   background: linear-gradient(135deg, #b3e5fc 0%, #f8bbd0 100%);
   border: none;

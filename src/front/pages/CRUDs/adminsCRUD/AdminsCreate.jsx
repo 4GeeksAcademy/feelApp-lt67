@@ -40,8 +40,8 @@ const AdmintsCreate = () => {
     };
 
     return (
-        <div className="clients-page container mt-5">
-            <h2 className="mt-80 bg-gray-200 p-4">Create Admin </h2>
+        <div className="clients-page container" style={{marginTop:"80px"}}>
+            <h2 className="mb-3 mt-5">Create Admin </h2>
 
             {error && <div className="alert alert-danger">{error}</div>}
 

@@ -25,8 +25,8 @@ const EmotionsCreate = () => {
     };
 
     return (
-        <div className="emotions-page container mt-5">
-            <h2 className="mt-80 bg-gray-200 p-4">Create Emotion</h2>
+        <div className="emotions-page container" style={{marginTop:"100px"}}>
+            <h2>Create Emotion</h2>
             {error && <div className="alert alert-danger">{error}</div>}
             <form onSubmit={handleCreate}>
                 <div className="mb-3">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Map, Marker, useMapsLibrary } from "@vis.gl/react-google-maps";
-import useGlobalReducer from "../hooks/useGlobalReducer"
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 function getInitials(email = "") {
   return email.split("@")[0].slice(0, 2).toUpperCase();
@@ -116,18 +116,58 @@ export default function FindNearYou() {
   const { store, dispatch } = useGlobalReducer();
 
   const activeToken = store.clientToken || store.coachToken || store.admintToken;
+  const userRole = store.clientToken ? "client" : store.coachToken ? "coach" : "admin";
+  const defaultMode = userRole === "client" ? "coach" : "client";
 
-  const [mode,       setMode]       = useState("coach");
   const [bioFilter,  setBioFilter]  = useState("");
   const [mapCenter,  setMapCenter]  = useState(null);
   const [loading,    setLoading]    = useState(false);
   const [fetchError, setFetchError] = useState("");
+  const [savingLocation, setSavingLocation] = useState(false);
+  const [saveMessage, setSaveMessage] = useState(null);
+  const [bioValue, setBioValue] = useState("");
 
   const nearbyUsers = store.nearbyUsers ?? [];
 
   const handlePlaceSelect = useCallback((place) => {
     setMapCenter(place);
   }, []);
+
+  useEffect(() => {
+    if (!activeToken) return;
+
+    async function loadUserData() {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${activeToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.latitude && data.longitude) {
+            setMapCenter({
+              lat: data.latitude,
+              lng: data.longitude,
+              label: `${data.latitude}, ${data.longitude}`,
+            });
+          }
+          if (data.bio) {
+            setBioValue(data.bio);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading user data:", err);
+      }
+    }
+
+    loadUserData();
+  }, [activeToken]);
 
   useEffect(() => {
     if (!mapCenter) return;
@@ -141,7 +181,7 @@ export default function FindNearYou() {
 
       try {
         const params = new URLSearchParams({
-          role: mode,
+          role: defaultMode,
           lat:  mapCenter.lat,
           lng:  mapCenter.lng,
           ...(bioFilter.trim() ? { bio: bioFilter.trim() } : {}),
@@ -173,7 +213,54 @@ export default function FindNearYou() {
 
     fetchNearby();
     return () => controller.abort();
-  }, [mapCenter, mode]); 
+  }, [mapCenter, defaultMode, bioFilter, activeToken, dispatch]);
+
+  const handleSaveLocation = async () => {
+    if (!mapCenter || !activeToken) return;
+
+    setSavingLocation(true);
+    setSaveMessage(null);
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/profile/location`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${activeToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            latitude: mapCenter.lat,
+            longitude: mapCenter.lng,
+            bio: bioValue,
+          }),
+        }
+      );
+
+      setSavingLocation(false);
+
+      if (res.ok) {
+        setSaveMessage({
+          type: "success",
+          text: "Location and bio saved successfully!",
+        });
+        setTimeout(() => setSaveMessage(null), 3000);
+      } else {
+        const data = await res.json();
+        setSaveMessage({
+          type: "error",
+          text: data.msg || data.error || "Failed to save location.",
+        });
+      }
+    } catch (err) {
+      setSavingLocation(false);
+      setSaveMessage({
+        type: "error",
+        text: "Error saving location. Try again.",
+      });
+    }
+  };
 
   function handleBioSearch() {
     if (!mapCenter) return;
@@ -182,37 +269,16 @@ export default function FindNearYou() {
 
   useEffect(() => {
     return () => dispatch({ type: "clear_nearby_users" });
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="container" style={{maxWidth: 680, paddingTop: "80px"}}>
       <h2 className="mt-5" style={{ fontWeight: 500, marginBottom: 4 }}>
-        {mode === "coach" ? "Find coaches near you" : "Find clients near you"}
+        {defaultMode === "coach" ? "Find coaches near you" : "Find clients near you"}
       </h2>
       <p style={{ fontSize: 14, color: "#888", marginBottom: "1.25rem" }}>
-        Search a location to discover {mode === "coach" ? "professionals" : "clients"} in that area.
+        Search a location to discover {defaultMode === "coach" ? "professionals" : "clients"} in that area.
       </p>
-
-      <div style={{ display: "flex", gap: 8, marginBottom: "1.25rem" }}>
-        {["coach", "client"].map((m) => (
-          <button
-            key={m}
-            onClick={() => {
-              setMode(m);
-              dispatch({ type: "clear_nearby_users" });
-            }}
-            style={{
-              padding: "6px 18px", fontSize: 13, fontWeight: 500,
-              borderRadius: 8, cursor: "pointer",
-              border: mode === m ? "none" : "0.5px solid #ccc",
-              background: mode === m ? "#E6F1FB" : "transparent",
-              color: mode === m ? "#185FA5" : "#888",
-            }}
-          >
-            {m.charAt(0).toUpperCase() + m.slice(1)}s
-          </button>
-        ))}
-      </div>
 
       <div style={{ marginBottom: "1rem" }}>
         <label style={{ fontSize: 12, color: "#888", display: "block", marginBottom: 4 }}>
@@ -224,17 +290,17 @@ export default function FindNearYou() {
       <div style={{ marginBottom: "1.25rem", display: "flex", gap: 8, alignItems: "flex-end" }}>
         <div style={{ flex: 1 }}>
           <label style={{ fontSize: 12, color: "#888", display: "block", marginBottom: 4 }}>
-            Looking for (optional)
+            Bio (optional)
           </label>
           <textarea
             rows={2}
             placeholder={
-              mode === "coach"
-                ? "e.g. coach specializing in anxiety and mindfulness..."
-                : "e.g. client dealing with work stress..."
+              userRole === "coach"
+                ? "e.g. I specialize in anxiety and mindfulness coaching..."
+                : "e.g. I'm dealing with work stress and looking for guidance..."
             }
-            value={bioFilter}
-            onChange={(e) => setBioFilter(e.target.value)}
+            value={bioValue}
+            onChange={(e) => setBioValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -249,20 +315,55 @@ export default function FindNearYou() {
           />
         </div>
         <button
-          onClick={handleBioSearch}
-          disabled={!mapCenter}
+          onClick={handleSaveLocation}
+          disabled={!mapCenter || savingLocation}
           style={{
             padding: "8px 16px", fontSize: 13, fontWeight: 500,
             borderRadius: 8, border: "none",
-            background: mapCenter ? "#E6F1FB" : "#f0f0f0",
-            color: mapCenter ? "#185FA5" : "#bbb",
-            cursor: mapCenter ? "pointer" : "not-allowed",
+            background: mapCenter && !savingLocation ? "#E6F1FB" : "#f0f0f0",
+            color: mapCenter && !savingLocation ? "#185FA5" : "#bbb",
+            cursor: mapCenter && !savingLocation ? "pointer" : "not-allowed",
             whiteSpace: "nowrap", marginBottom: 2,
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            if (mapCenter && !savingLocation) {
+              e.currentTarget.style.background = "#d4ebf7";
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (mapCenter && !savingLocation) {
+              e.currentTarget.style.background = "#E6F1FB";
+            }
           }}
         >
-          Search
+          {savingLocation ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Saving...
+            </>
+          ) : (
+            "Save Location"
+          )}
         </button>
       </div>
+
+      {saveMessage && (
+        <div
+          style={{
+            padding: "10px 12px",
+            borderRadius: "8px",
+            marginBottom: "1.25rem",
+            fontSize: "13px",
+            fontWeight: 500,
+            background: saveMessage.type === "success" ? "#d1fae5" : "#fee2e2",
+            color: saveMessage.type === "success" ? "#065f46" : "#991b1b",
+            textAlign: "center",
+          }}
+        >
+          {saveMessage.text}
+        </div>
+      )}
 
       <div style={{
         width: "100%", height: 260, borderRadius: 12,
@@ -294,7 +395,7 @@ export default function FindNearYou() {
               ? "Loading..."
               : fetchError
               ? ""
-              : `${nearbyUsers.length} ${mode}${nearbyUsers.length !== 1 ? "s" : ""} found near ${mapCenter.label}`}
+              : `${nearbyUsers.length} ${defaultMode}${nearbyUsers.length !== 1 ? "s" : ""} found near ${mapCenter.label}`}
           </p>
 
           {fetchError && (
@@ -303,7 +404,7 @@ export default function FindNearYou() {
 
           {!loading && !fetchError && nearbyUsers.length === 0 && (
             <p style={{ fontSize: 13, color: "#bbb" }}>
-              No {mode}s found{bioFilter.trim() ? ` matching "${bioFilter.trim()}"` : " in this area"}.
+              No {defaultMode}s found{bioFilter.trim() ? ` matching "${bioFilter.trim()}"` : " in this area"}.
             </p>
           )}
 
@@ -314,7 +415,7 @@ export default function FindNearYou() {
               gap: 10,
             }}>
               {nearbyUsers.map((user, i) => (
-                <UserCard key={`${mode}-${user.id}`} user={user} index={i} />
+                <UserCard key={`${defaultMode}-${user.id}`} user={user} index={i} />
               ))}
             </div>
           )}

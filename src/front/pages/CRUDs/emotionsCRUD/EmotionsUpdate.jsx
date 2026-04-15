@@ -41,8 +41,8 @@ const EmotionsUpdate = () => {
     };
 
     return (
-        <div className="emotions-page container mt-5">
-            <h2 className="mt-80 bg-gray-200 p-4">Edit Emotion</h2>
+        <div className="emotions-page container" style={{marginTop:"100px"}}>
+            <h2>Edit Emotion</h2>
             <form onSubmit={handleUpdate}>
                 <div className="mb-3">
                     <label className="form-label">Name</label>

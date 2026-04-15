@@ -30,8 +30,8 @@ const EmotionsDetails = () => {
     if (!emotion) return <p className="container mt-4">Loading...</p>;
 
     return (
-        <div className="emotions-page container mt-5">
-            <h2 className="mt-80 bg-gray-200 p-4">Emotion Details</h2>
+        <div className="emotions-page container" style={{marginTop:"100px"}}>
+            <h2>Emotion Details</h2>
             <p><strong>ID:</strong> {emotion.id}</p>
             <p><strong>Name:</strong> {emotion.name}</p>
             <p><strong>Emoji:</strong> {emotion.emoji}</p>

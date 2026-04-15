@@ -136,3 +136,63 @@ def users_nearby():
     results.sort(key=lambda u: u["distance_km"])
 
     return jsonify({"users": results}), 200
+
+
+# put to edit bio and location
+@shared_bp.route('/profile/location', methods=['PUT'])
+@jwt_required()
+def update_profile_location():
+
+    user_id = get_jwt_identity()
+    body = request.get_json()
+    
+    if body is None:
+        return jsonify({"error": "Body cannot be empty"}), 400
+    
+    user = None
+    user_role = None
+    
+    if Client.query.get(user_id):
+        user = Client.query.get(user_id)
+        user_role = 'client'
+    elif Coach.query.get(user_id):
+        user = Coach.query.get(user_id)
+        user_role = 'coach'
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if "latitude" in body:
+        user.latitude = body["latitude"]
+    if "longitude" in body:
+        user.longitude = body["longitude"]
+    if "bio" in body:
+        user.bio = body["bio"]
+    
+    try:
+        db.session.commit()
+        return jsonify(user.serialize()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+ 
+ 
+@shared_bp.route('/profile', methods=['GET'])
+@jwt_required()
+def get_profile():
+
+    user_id = get_jwt_identity()
+    
+    user = None
+    
+    if Client.query.get(user_id):
+        user = Client.query.get(user_id)
+    elif Coach.query.get(user_id):
+        user = Coach.query.get(user_id)
+    elif Admint.query.get(user_id):
+        user = Admint.query.get(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    return jsonify(user.serialize()), 200

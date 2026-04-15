@@ -12,8 +12,8 @@ const AdminsPostsList = () => {
     }, []);
 
     return (
-        <div className="container mt-5">
-            <div className="d-flex justify-content-between align-items-center mb-3 mt-80 bg-gray-200 p-4">
+        <div className="container" style={{marginTop:"100px"}}>
+            <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 style={{ fontWeight: "600" }}>Admin Posts</h2>
             </div>
             <div style={{ background: "#fff", borderRadius: "10px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", padding: "15px" }}>

@@ -27,8 +27,8 @@ const AdminsPostsCreate = () => {
     };
 
     return (
-        <div className="container mt-5">
-            <h2 className="mt-80 bg-gray-200 p-4">Create Post</h2>
+        <div className="container" style={{marginTop:"100px"}}>
+            <h2>Create Post</h2>
             {error && <div className="alert alert-danger">{error}</div>}
             <form onSubmit={handleCreate}>
                 <div className="mb-3">
