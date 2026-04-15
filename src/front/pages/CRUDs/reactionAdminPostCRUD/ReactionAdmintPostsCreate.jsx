@@ -57,12 +57,12 @@ const ReactionAdmintPostsCreate = () => {
         navigate("/reactions");
     };
 
-    const clients = Array.isArray(store.clients)      ? store.clients      : [];
-    const posts   = Array.isArray(store.admint_posts) ? store.admint_posts : [];
+    const clients = Array.isArray(store.clients) ? store.clients : [];
+    const posts = Array.isArray(store.admint_posts) ? store.admint_posts : [];
 
     return (
         <div className="container mt-5">
-            <h2 className="mt-5">Create Reaction</h2>
+            <h2 className="mt-5 mt-80 bg-gray-200 p-4">Create Reaction</h2>
 
             {error && <div className="alert alert-danger">{error}</div>}
 

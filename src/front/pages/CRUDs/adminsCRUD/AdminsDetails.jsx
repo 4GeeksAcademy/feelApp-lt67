@@ -37,8 +37,8 @@ const AdmintsDetails = () => {
   if (!admint) return <p className="container mt-4">Loading...</p>;
 
   return (
-    <div className="clients-page container mt-4">
-      <h2>Admin Details</h2>
+    <div className="clients-page container mt-5">
+      <h2 className="mt-80 bg-gray-200 p-4">Admin Details</h2>
 
       <p><strong>ID:</strong> {admint.id}</p>
       <p><strong>Email:</strong> {admint.email}</p>

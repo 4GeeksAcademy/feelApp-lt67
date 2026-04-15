@@ -44,8 +44,8 @@ const AdminsPostsUpdate = () => {
     };
 
     return (
-        <div className="container mt-4">
-            <h2>Edit Post</h2>
+        <div className="container mt-5">
+            <h2 className="mt-80 bg-gray-200 p-4">Edit Post</h2>
             {error && <div className="alert alert-danger">{error}</div>}
             <form onSubmit={handleUpdate}>
                 <div className="mb-3">

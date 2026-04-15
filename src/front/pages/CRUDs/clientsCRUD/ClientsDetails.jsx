@@ -39,7 +39,7 @@ const ClientsDetails = () => {
 
     return (
         <div className="clients-page container mt-5">
-            <h2 className="mt-5">Client Details</h2>
+            <h2 className="mt-80 bg-gray-200 p-4">Client Details</h2>
 
             <p><strong>ID:</strong> {client.id}</p>
             <p><strong>Email:</strong> {client.email}</p>

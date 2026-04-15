@@ -43,8 +43,8 @@ const ClientsUpdate = () => {
     };
 
     return (
-        <div className="clients-page container mt-4">
-            <h2>Edit Client</h2>
+        <div className="clients-page container mt-5">
+            <h2 className="mt-80 bg-gray-200 p-4">Edit Client</h2>
 
             <form onSubmit={handleUpdate}>
                 <input
