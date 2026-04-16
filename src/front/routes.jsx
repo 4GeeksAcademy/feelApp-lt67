@@ -10,36 +10,25 @@ import { Home } from "./pages/Home";
 //////// ADMIN ////////
 
 // POSTS
-import AdminsPostsList from "./pages/CRUDs/adminpostsCRUD/AdminPostsList";
-import AdminsPostsCreate from "./pages/CRUDs/adminpostsCRUD/AdminPostsCreate";
-import AdminsPostsDetails from "./pages/CRUDs/adminpostsCRUD/AdminPostsDetails";
-import AdminsPostsUpdate from "./pages/CRUDs/adminpostsCRUD/AdminPostsUpdate";
-
-// REACTIONS
-import ReactionAdmintPostsList from "./pages/ReactionAdmintPostsList";
-import ReactionClientPostList from "./pages/ReactionClientPostList";
+import AdminsPostsList from "./pages/admin/AdminPostsList";
+import AdminsPostsCreate from "./pages/admin/AdminPostsCreate";
 
 // EMOTIONS
-import EmotionsDetails from "./pages/CRUDs/emotionsCRUD/EmotionDetails";
-import EmotionsUpdate from "./pages/CRUDs/emotionsCRUD/EmotionsUpdate";
-import EmotionsCreate from "./pages/CRUDs/emotionsCRUD/EmotionsCreate";
-import EmotionsList from "./pages/CRUDs/emotionsCRUD/EmotionList";
+import EmotionsCreate from "./pages/admin/EmotionsCreate";
+import EmotionsList from "./pages/admin/EmotionList";
 
 // USERS CRUDS
-import ClientsList from "./pages/CRUDs/clientsCRUD/ClientsList";
-import ClientsCreate from "./pages/CRUDs/clientsCRUD/ClientsCreate";
+import ClientsList from "./pages/admin/ClientsList";
+import ClientsCreate from "./pages/admin/ClientsCreate";
 
-import CoachsList from "./pages/CRUDs/coachesCRUD/coachsList";
-import CoachsCreate from "./pages/CRUDs/coachesCRUD/coachsCreate";
+import CoachsList from "./pages/admin/coachsList";
+import CoachsCreate from "./pages/admin/coachsCreate";
 
-import AdmintsCreate from "./pages/CRUDs/adminsCRUD/AdminsCreate";
-import AdmintsList from "./pages/CRUDs/adminsCRUD/AdminsList";
-
-// ACCESS
-import AccessClientList from "./pages/AccessClientList";
+import AdmintsCreate from "./pages/admin/AdminsCreate";
+import AdmintsList from "./pages/admin/AdminsList";
 
 // CLIENTS POSTS
-import CLientsPostsList from "./pages/CRUDs/ClientsPostsList";
+import CLientsPostsList from "./pages/admin/ClientsPostsList";
 
 
 //////// CLIENT ////////
@@ -62,9 +51,9 @@ import SharedEntriesDetails from "./pages/client/SharedEntriesDetails";
 import EmotionalStats from "./pages/client/EmotionalStats";
 
 //////// COACH ////////
-import { AccessCoachList } from "./pages/CRUDs/access_coachCRUD/AccessCoachList";
-import { AccessCoachCreate } from "./pages/CRUDs/access_coachCRUD/AccessCoachCreate";
-import CoachFavoritesList from "./pages/CRUDs/CoachFavoritesList";
+import { AccessCoachList } from "./pages/AccessCoachList";
+import { AccessCoachCreate } from "./pages/AccessCoachCreate";
+import CoachFavoritesList from "./pages/CoachFavoritesList";
 
 //////// GENERAL ////////
 
@@ -95,13 +84,9 @@ export const router = createBrowserRouter(
 
       <Route path="/emotions" element={<EmotionsList />} />
       <Route path="/emotions/create" element={<EmotionsCreate />} />
-      <Route path="/emotions/:id" element={<EmotionsDetails />} />
-      <Route path="/emotions/:id/edit" element={<EmotionsUpdate />} />
 
       <Route path="/admint-posts" element={<AdminsPostsList />} />
       <Route path="/admint-posts/create" element={<AdminsPostsCreate />} />
-      <Route path="/admint-posts/:id" element={<AdminsPostsDetails />} />
-      <Route path="/admint-posts/:id/edit" element={<AdminsPostsUpdate />} />
 
       <Route path="/entries" element={<EntriesList />} />
       <Route path="/entries/create" element={<EntriesCreate />} />
@@ -109,17 +94,12 @@ export const router = createBrowserRouter(
 
       <Route path="/entries/client/:client_id" element={<EntriesList />} />
 
-      <Route path="/reactions" element={<ReactionAdmintPostsList />} />
-      <Route path="/reactions-client" element={<ReactionClientPostList />} />
-
       <Route path="/coach-favorites" element={<CoachFavoritesList />} />
 
       <Route path="/clients-posts" element={<CLientsPostsList />} />
 
       <Route path="/access-coach" element={<AccessCoachList />} />
       <Route path="/access-coach/create" element={<AccessCoachCreate />} />
-
-      <Route path="/access-clients" element={<AccessClientList />} />
 
       <Route path="/client-private" element={<ClientPrivate />} />
       <Route path="/coach-private" element={<CoachPrivate />} />

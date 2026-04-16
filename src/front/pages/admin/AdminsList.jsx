@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import useGlobalReducer from "../../../hooks/useGlobalReducer";
+import { Link, useNavigate } from "react-router-dom";
+import useGlobalReducer from "../../hooks/useGlobalReducer";
 
-const ClientsList = () => {
+const AdmintsList = () => {
     const { store, dispatch } = useGlobalReducer();
     const navigate = useNavigate();
-    const clients = store.clients || [];
+    const admints = store.admints || [];
+
     const [editingId, setEditingId] = useState(null);
     const [editEmail, setEditEmail] = useState("");
 
@@ -14,50 +15,50 @@ const ClientsList = () => {
     }, [store.admintToken, navigate]);
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admints`, {
             headers: { Authorization: `Bearer ${store.admintToken}` }
         })
             .then(resp => resp.json())
             .then(data => {
-                if (Array.isArray(data)) dispatch({ type: "set_clients", payload: data });
+                if (Array.isArray(data)) dispatch({ type: "set_admints", payload: data });
             });
     }, [dispatch, store.admintToken]);
 
     const handleDelete = async (id) => {
-        if (!confirm("Are you sure you want to delete this client?")) return;
+        if (!confirm("Are you sure you want to delete this admin?")) return;
 
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients/${id}`, {
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admints/${id}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${store.admintToken}` }
         });
 
         if (resp.ok) {
             dispatch({
-                type: "set_clients",
-                payload: clients.filter(c => c.id !== id)
+                type: "set_admints",
+                payload: admints.filter(a => a.id !== id)
             });
         }
     };
 
     const handleQuickUpdate = async (id) => {
-        const newPassword = prompt("Enter new password for this client (leave blank to keep current):");
+        const newPassword = prompt("Enter new password (leave blank to keep current):");
         const body = { email: editEmail };
         if (newPassword) body.password = newPassword;
 
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients/${id}`, {
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admints/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${store.admintToken}`
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
         });
 
         if (resp.ok) {
-            const updatedClient = await resp.json();
+            const updatedAdmin = await resp.json();
             dispatch({
-                type: "set_clients",
-                payload: clients.map(c => c.id === id ? updatedClient : c)
+                type: "set_admints",
+                payload: admints.map(a => a.id === id ? updatedAdmin : a)
             });
             setEditingId(null);
         }
@@ -67,12 +68,11 @@ const ClientsList = () => {
         <div className="container" style={{ marginTop: "80px", width: "1000px" }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h2 className="mt-5" style={{ fontWeight: "700", marginBottom: "0" }}>Clients</h2>
-                    <small className="text-muted">Manage your client users</small>
+                    <h2 className="mt-5" style={{ fontWeight: "700", marginBottom: "0" }}>Admins</h2>
+                    <small className="text-muted">Manage administrators</small>
                 </div>
-
-                <Link to="/clients/create" className="btn btn-dark">
-                    + New Client
+                <Link to="/admints/create" className="btn btn-dark">
+                    + New Admin
                 </Link>
             </div>
 
@@ -93,18 +93,16 @@ const ClientsList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {clients.length === 0 ? (
+                        {admints.length === 0 ? (
                             <tr>
-                                <td colSpan="4" className="text-center py-5 text-muted">
-                                    No clients registered
-                                </td>
+                                <td colSpan="4" className="text-center py-5 text-muted">No admins registered</td>
                             </tr>
                         ) : (
-                            clients.map(client => (
-                                <tr key={client.id}>
-                                    <td style={{ fontWeight: "500" }}>{client.id}</td>
+                            admints.map(admint => (
+                                <tr key={admint.id}>
+                                    <td>{admint.id}</td>
                                     <td>
-                                        {editingId === client.id ? (
+                                        {editingId === admint.id ? (
                                             <input
                                                 className="form-control form-control-sm"
                                                 value={editEmail}
@@ -112,17 +110,17 @@ const ClientsList = () => {
                                                 autoFocus
                                             />
                                         ) : (
-                                            client.email
+                                            admint.email
                                         )}
                                     </td>
                                     <td className="text-muted" style={{ fontSize: "0.9rem" }}>
-                                        {new Date(client.sign_up_date).toLocaleDateString()}
+                                        {new Date(admint.sign_up_date).toLocaleDateString()}
                                     </td>
                                     <td className="text-end">
                                         <div className="d-flex justify-content-end gap-2">
-                                            {editingId === client.id ? (
+                                            {editingId === admint.id ? (
                                                 <>
-                                                    <button className="btn btn-sm btn-success" onClick={() => handleQuickUpdate(client.id)}>Save</button>
+                                                    <button className="btn btn-sm btn-success" onClick={() => handleQuickUpdate(admint.id)}>Save</button>
                                                     <button className="btn btn-sm btn-light" onClick={() => setEditingId(null)}>Cancel</button>
                                                 </>
                                             ) : (
@@ -130,15 +128,15 @@ const ClientsList = () => {
                                                     <button
                                                         className="btn btn-sm btn-outline-primary"
                                                         onClick={() => {
-                                                            setEditingId(client.id);
-                                                            setEditEmail(client.email);
+                                                            setEditingId(admint.id);
+                                                            setEditEmail(admint.email);
                                                         }}
                                                     >
                                                         Edit
                                                     </button>
                                                     <button
                                                         className="btn btn-sm btn-outline-danger"
-                                                        onClick={() => handleDelete(client.id)}
+                                                        onClick={() => handleDelete(admint.id)}
                                                     >
                                                         Delete
                                                     </button>
@@ -156,4 +154,4 @@ const ClientsList = () => {
     );
 };
 
-export default ClientsList;
+export default AdmintsList;

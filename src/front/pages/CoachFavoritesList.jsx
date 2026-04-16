@@ -3,16 +3,16 @@
 /// fetch con Auth bearer token
 
 import { useEffect } from "react";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 const CoachFavoritesList = () => {
     const { store, dispatch } = useGlobalReducer();
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/coach-favorites`)
-    .then(resp => resp.json())
-    .then(data => dispatch({ type: "set_coach_favorites", payload: Array.isArray(data) ? data : []}))
-    .catch(err => console.error("Error fetching favorites:", err));
+            .then(resp => resp.json())
+            .then(data => dispatch({ type: "set_coach_favorites", payload: Array.isArray(data) ? data : [] }))
+            .catch(err => console.error("Error fetching favorites:", err));
     }, []);
 
     const handleDelete = async (id) => {
@@ -21,10 +21,10 @@ const CoachFavoritesList = () => {
             method: "DELETE"
         });
         if (!resp.ok) {
-        const data = await resp.json();
-        alert(data.error || "Error removing favorite");
-        return;
-    }
+            const data = await resp.json();
+            alert(data.error || "Error removing favorite");
+            return;
+        }
         dispatch({
             type: "set_coach_favorites",
             payload: store.coach_favorites.filter(f => f.id !== id)
@@ -32,7 +32,7 @@ const CoachFavoritesList = () => {
     };
 
     return (
-        <div className="container" style={{ maxWidth: "800px", paddingTop: "80px"}}>
+        <div className="container" style={{ maxWidth: "800px", paddingTop: "80px" }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="mt-5" style={{ fontWeight: "600" }}>Favorites</h2>
             </div>

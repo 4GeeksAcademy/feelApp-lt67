@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useGlobalReducer from "../../../hooks/useGlobalReducer";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const AccessCoachCreate = () => {
     const { store, dispatch } = useGlobalReducer();
@@ -17,7 +17,7 @@ export const AccessCoachCreate = () => {
         }
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
-            headers: { Authorization: `Bearer ${store.coachToken}` } 
+            headers: { Authorization: `Bearer ${store.coachToken}` }
         })
             .then(res => res.json())
             .then(data => dispatch({ type: "set_clients", payload: data }));
@@ -32,7 +32,7 @@ export const AccessCoachCreate = () => {
 
     }, [store.coachToken, dispatch, navigate]);
 
-    const filteredClients = store.clients?.filter(c => 
+    const filteredClients = store.clients?.filter(c =>
         (c.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
         (c.name || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -46,7 +46,7 @@ export const AccessCoachCreate = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${store.coachToken}` 
+                    Authorization: `Bearer ${store.coachToken}`
                 },
                 body: JSON.stringify({
                     client_id: selectedClient.id,
@@ -84,12 +84,12 @@ export const AccessCoachCreate = () => {
                                 setSelectedClient(null);
                             }}
                         />
-                        
+
                         {searchTerm && !selectedClient && (
                             <ul className="list-group position-absolute w-100 shadow-lg" style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}>
                                 {filteredClients?.map(c => (
-                                    <li 
-                                        key={c.id} 
+                                    <li
+                                        key={c.id}
                                         className="list-group-item list-group-item-action"
                                         onClick={() => {
                                             setSelectedClient(c);
@@ -130,10 +130,9 @@ export const AccessCoachCreate = () => {
                             <tr key={item.id}>
                                 <td>{item.client_email}</td>
                                 <td className="text-end">
-                                    <span className={`badge ${
-                                        item.status === 'approved' ? 'bg-success' : 
-                                        item.status === 'pending' ? 'bg-warning text-dark' : 'bg-danger'
-                                    }`}>
+                                    <span className={`badge ${item.status === 'approved' ? 'bg-success' :
+                                            item.status === 'pending' ? 'bg-warning text-dark' : 'bg-danger'
+                                        }`}>
                                         {item.status}
                                     </span>
                                 </td>

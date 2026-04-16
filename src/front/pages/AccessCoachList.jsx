@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useGlobalReducer from "../../../hooks/useGlobalReducer";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const AccessCoachList = () => {
     const { store, dispatch } = useGlobalReducer();
@@ -23,7 +23,7 @@ export const AccessCoachList = () => {
             });
     }, [store.coachToken, store.admintToken, dispatch, navigate]);
 
-    const approvedClients = store.access_coach?.filter(item => 
+    const approvedClients = store.access_coach?.filter(item =>
         item.status.toLowerCase() === "approved"
     ) || [];
 
