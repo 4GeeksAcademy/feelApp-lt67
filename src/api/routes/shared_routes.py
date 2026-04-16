@@ -201,20 +201,23 @@ def get_profile():
 @shared_bp.route('/seed-all-data', methods=['GET'])
 def seed_database():
     try:
+
         db.session.query(ReactionAdmintPost).delete()
         db.session.query(ReactionClientPost).delete()
-        db.session.query(AccessCoach).delete()
-        db.session.query(AccessClient).delete()
         db.session.query(ClientFavorites).delete()
         db.session.query(CoachFavorites).delete()
+
+        db.session.query(AccessCoach).delete()
+        db.session.query(AccessClient).delete()
+
         db.session.query(Entry).delete()
         db.session.query(AdmintPost).delete()
         db.session.query(ClientPost).delete()
-        Client.query.delete()
-        Coach.query.delete()
-        Admint.query.delete()
-        
-        db.session.commit() 
+
+        db.session.query(Client).delete()
+        db.session.query(Coach).delete()
+        db.session.query(Admint).delete()
+        db.session.query(Emotion).delete()
 
         success = run_seeding()
         
