@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost, Client, Coach, Admint, Entry, ClientPost
+from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost, Client, Coach, Admint, Entry, ClientPost, ClientFavorites, CoachFavorites
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from math import radians, sin, cos, sqrt, atan2
 from api.commands import run_seeding
