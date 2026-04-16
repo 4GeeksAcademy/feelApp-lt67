@@ -1,63 +1,150 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import useGlobalReducer from "../../../hooks/useGlobalReducer";
 
 const CoachsList = () => {
     const { store, dispatch } = useGlobalReducer();
+    const navigate = useNavigate();
+    const coachs = store.coachs || [];
+    const [editingId, setEditingId] = useState(null);
+    const [editEmail, setEditEmail] = useState("");
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/coachs`)
+        if (!store.admintToken) navigate("/");
+    }, [store.admintToken, navigate]);
+
+    useEffect(() => {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/coachs`, {
+            headers: { Authorization: `Bearer ${store.admintToken}` }
+        })
             .then(resp => resp.json())
-            .then(data => dispatch({ type: "set_coachs", payload: data }));
-    }, []);
+            .then(data => {
+                if (Array.isArray(data)) dispatch({ type: "set_coachs", payload: data });
+            });
+    }, [dispatch, store.admintToken]);
+
+    const handleDelete = async (id) => {
+        if (!confirm("Are you sure you want to delete this coach?")) return;
+
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/coachs/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${store.admintToken}` }
+        });
+
+        if (resp.ok) {
+            dispatch({
+                type: "set_coachs",
+                payload: coachs.filter(c => c.id !== id)
+            });
+        }
+    };
+
+    const handleQuickUpdate = async (id) => {
+        const newPassword = prompt("Enter new password for this coach (leave blank to keep current):");
+        const body = { email: editEmail };
+        if (newPassword) body.password = newPassword;
+
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/coachs/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${store.admintToken}`
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (resp.ok) {
+            const updatedCoach = await resp.json();
+            dispatch({
+                type: "set_coachs",
+                payload: coachs.map(c => c.id === id ? updatedCoach : c)
+            });
+            setEditingId(null);
+        }
+    };
 
     return (
-        <div className="container" style={{marginTop: "80px"}}>
-
+        <div className="container" style={{ marginTop: "80px", width: "1000px" }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h2 className="mt-5" style={{ fontWeight: "600" }}>Coachs</h2>
-                <Link to="/coachs/create" className="btn btn-primary">
-                    Create Coach
+                <div>
+                    <h2 className="mt-5" style={{ fontWeight: "700", marginBottom: "0" }}>Coaches</h2>
+                    <small className="text-muted">Manage coach accounts</small>
+                </div>
+
+                <Link to="/coachs/create" className="btn btn-dark">
+                    + New Coach
                 </Link>
             </div>
 
             <div style={{
-                background: "#fff",
-                borderRadius: "10px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                padding: "15px"
+                background: "#ffffff",
+                borderRadius: "16px",
+                boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+                padding: "20px",
+                marginTop: "10px"
             }}>
-                <table className="table table-hover align-middle mb-0">
-                    <thead className="table-light">
+                <table className="table align-middle">
+                    <thead style={{ background: "#f8f9fa" }}>
                         <tr>
-                            <th style={{ width: "80px" }}>ID</th>
-                            <th>Email</th>
-                            <th style={{ width: "180px" }}>Sign up date</th>
-                            <th style={{ width: "120px" }}></th>
+                            <th style={{ width: "70px" }}>ID</th>
+                            <th>Email Address</th>
+                            <th style={{ width: "180px" }}>Joined Date</th>
+                            <th style={{ width: "220px" }} className="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {store.coachs.length === 0 ? (
+                        {coachs.length === 0 ? (
                             <tr>
-                                <td colSpan="4" className="text-center text-muted py-4">
-                                    No coachs yet
+                                <td colSpan="4" className="text-center py-5 text-muted">
+                                    No coaches registered
                                 </td>
                             </tr>
                         ) : (
-                            store.coachs.map(coach => (
+                            coachs.map(coach => (
                                 <tr key={coach.id}>
                                     <td style={{ fontWeight: "500" }}>{coach.id}</td>
-                                    <td>{coach.email}</td>
                                     <td>
+                                        {editingId === coach.id ? (
+                                            <input
+                                                className="form-control form-control-sm"
+                                                value={editEmail}
+                                                onChange={(e) => setEditEmail(e.target.value)}
+                                                autoFocus
+                                            />
+                                        ) : (
+                                            coach.email
+                                        )}
+                                    </td>
+                                    <td className="text-muted" style={{ fontSize: "0.9rem" }}>
                                         {new Date(coach.sign_up_date).toLocaleDateString()}
                                     </td>
-                                    <td>
-                                        <Link
-                                            to={`/coachs/${coach.id}`}
-                                            className="btn btn-outline-secondary btn-sm"
-                                        >
-                                            Details
-                                        </Link>
+                                    <td className="text-end">
+                                        <div className="d-flex justify-content-end gap-2">
+                                            {editingId === coach.id ? (
+                                                <>
+                                                    <button className="btn btn-sm btn-success" onClick={() => handleQuickUpdate(coach.id)}>Save</button>
+                                                    <button className="btn btn-sm btn-light" onClick={() => setEditingId(null)}>Cancel</button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        className="btn btn-sm btn-outline-primary"
+                                                        onClick={() => {
+                                                            setEditingId(coach.id);
+                                                            setEditEmail(coach.email);
+                                                        }}
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        className="btn btn-sm btn-outline-danger"
+                                                        onClick={() => handleDelete(coach.id)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -65,7 +152,6 @@ const CoachsList = () => {
                     </tbody>
                 </table>
             </div>
-
         </div>
     );
 };

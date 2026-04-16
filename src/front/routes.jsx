@@ -28,17 +28,11 @@ import EmotionsList from "./pages/CRUDs/emotionsCRUD/EmotionList";
 // USERS CRUDS
 import ClientsList from "./pages/CRUDs/clientsCRUD/ClientsList";
 import ClientsCreate from "./pages/CRUDs/clientsCRUD/ClientsCreate";
-import ClientsDetails from "./pages/CRUDs/clientsCRUD/ClientsDetails";
-import ClientsUpdate from "./pages/CRUDs/clientsCRUD/ClientsUpdate";
 
 import CoachsList from "./pages/CRUDs/coachesCRUD/coachsList";
 import CoachsCreate from "./pages/CRUDs/coachesCRUD/coachsCreate";
-import CoachsDetails from "./pages/CRUDs/coachesCRUD/coachsDetails";
-import CoachsUpdate from "./pages/CRUDs/coachesCRUD/coachsUpdate";
 
 import AdmintsCreate from "./pages/CRUDs/adminsCRUD/AdminsCreate";
-import AdmintsDetails from "./pages/CRUDs/adminsCRUD/AdminsDetails";
-import AdmintsUpdate from "./pages/CRUDs/adminsCRUD/AdminsUpdate";
 import AdmintsList from "./pages/CRUDs/adminsCRUD/AdminsList";
 
 // ACCESS
@@ -92,18 +86,12 @@ export const router = createBrowserRouter(
 
       <Route path="/clients" element={<ClientsList />} />
       <Route path="/clients/create" element={<ClientsCreate />} />
-      <Route path="/clients/:id" element={<ClientsDetails />} />
-      <Route path="/clients/:id/edit" element={<ClientsUpdate />} />
 
       <Route path="/coachs" element={<CoachsList />} />
       <Route path="/coachs/create" element={<CoachsCreate />} />
-      <Route path="/coachs/:id" element={<CoachsDetails />} />
-      <Route path="/coachs/:id/edit" element={<CoachsUpdate />} />
 
       <Route path="/admints" element={<AdmintsList />} />
       <Route path="/admints/create" element={<AdmintsCreate />} />
-      <Route path="/admints/:id" element={<AdmintsDetails />} />
-      <Route path="/admints/:id/edit" element={<AdmintsUpdate />} />
 
       <Route path="/emotions" element={<EmotionsList />} />
       <Route path="/emotions/create" element={<EmotionsCreate />} />

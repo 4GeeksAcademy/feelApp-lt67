@@ -40,7 +40,7 @@ const AdmintsCreate = () => {
     };
 
     return (
-        <div className="clients-page container" style={{marginTop:"80px"}}>
+        <div className="container text-center" style={{marginTop:"80px", width:"250px"}}>
             <h2 className="mb-3 mt-5">Create Admin </h2>
 
             {error && <div className="alert alert-danger">{error}</div>}
@@ -67,7 +67,7 @@ const AdmintsCreate = () => {
                 <div className="d-flex justify-content-between">
                     <button className="btn btn-dark px-4">Create</button>
 
-                    <Link to="/admins" className="btn btn-outline-secondary">
+                    <Link to="/admints" className="btn btn-outline-secondary">
                         Back
                     </Link>
                 </div>
