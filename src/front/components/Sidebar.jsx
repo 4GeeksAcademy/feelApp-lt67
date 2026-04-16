@@ -167,7 +167,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 >
                   Forum
                 </h6>
-                      <Link to="/client/post" style={linkStyle("/client/post")}>
+                <Link to="/client/post" style={linkStyle("/client/post")}>
                   <i className="bi bi-plus-circle"></i>
                   <span>New Post</span>
                 </Link>
@@ -201,26 +201,52 @@ export const Sidebar = ({ isOpen, onClose }) => {
               </div>
             </>
           )}
-
           {isCoach && (
-            <div style={{ marginBottom: "28px" }}>
-              <h6
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: "700",
-                  color: "#9ca3af",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                  margin: "0 8px 12px",
-                }}
-              >
-                Clients
-              </h6>
-              <Link to="/coach-private" style={linkStyle("/coach-private")}>
-                <i className="bi bi-people"></i>
-                <span>My Clients</span>
-              </Link>
-            </div>
+            <>
+              <div style={{ marginBottom: "28px" }}>
+                <h6
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "700",
+                    color: "#9ca3af",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    margin: "8px 12px"
+                  }}
+                >
+                  Tools
+                </h6>
+                <Link to="/coach-favorites" style={linkStyle("/coach-favorites")}>
+                  <i className="bi bi-star"></i>
+                  <span>my favorites entries</span>
+                </Link>
+
+                <Link to="/access-coach" style={linkStyle("/access-coach")}>
+                  <i className="bi bi-chat-dots"></i>
+                  <span>Access</span>
+                </Link>
+              </div>
+
+              <div style={{ marginBottom: "28px" }}>
+                <h6
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "700",
+                    color: "#9ca3af",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    margin: "8px 12px"
+                  }}
+                >
+                  Clients
+                </h6>
+
+                <Link to="/coach-private" style={linkStyle("/coach-private")}>
+                  <i className="bi bi-people"></i>
+                  <span>My Clients</span>
+                </Link>
+              </div>
+            </>
           )}
 
           {isAdmin && (

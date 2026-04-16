@@ -17,17 +17,18 @@ class Client(db.Model):
     bio = db.Column(db.Text, nullable=True)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
-    
+
     reactions = db.relationship("ReactionAdmintPost", back_populates="client")
     entries = db.relationship("Entry", back_populates="client")
     favorites = db.relationship("ClientFavorites", back_populates="client")
     posts = db.relationship("ClientPost", back_populates="client")
-    reaction_client = db.relationship("ReactionClientPost", back_populates="client")
-    coach_requests = db.relationship("AccessCoach",back_populates="client")
+    reaction_client = db.relationship(
+        "ReactionClientPost", back_populates="client")
+    coach_requests = db.relationship("AccessCoach", back_populates="client")
     access_given = db.relationship(
-    "AccessClient",
-    foreign_keys="AccessClient.client_id",
-    back_populates="client"
+        "AccessClient",
+        foreign_keys="AccessClient.client_id",
+        back_populates="client"
     )
     access_received = db.relationship(
         "AccessClient",
@@ -80,7 +81,7 @@ class Coach(db.Model):
     longitude = db.Column(db.Float, nullable=True)
 
     favorites = db.relationship("CoachFavorites", back_populates="coach")
-    coach_requests = db.relationship("AccessCoach",back_populates="coach")
+    coach_requests = db.relationship("AccessCoach", back_populates="coach")
 
     def serialize(self):
         return {
@@ -203,6 +204,7 @@ class ClientFavorites(db.Model):
             "entry_id": self.entry_id
         }
 
+
 class CoachFavorites(db.Model):
     __tablename__ = "coach_favorites"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -215,10 +217,18 @@ class CoachFavorites(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id,
-            "coach_id": self.coach_id,
-            "entry_id": self.entry_id
-        }
+             "id": self.id,
+             "coach_id": self.coach_id,
+             "entry_id": self.entry_id,
+
+             "title": self.entry.title if self.entry else None,
+             "description": self.entry.description if self.entry else None,
+             "date": self.entry.date if self.entry else None,
+
+             "client_id": self.entry.client.id if self.entry and self.entry.client else None,
+             "client_email": self.entry.client.email if self.entry and self.entry.client else None,
+             "entry_date": self.entry.date if self.entry else None
+    }
 
 
 class ClientPost(db.Model):
@@ -231,7 +241,8 @@ class ClientPost(db.Model):
     date: Mapped[datetime] = mapped_column(
         DateTime(), nullable=False, default=lambda: datetime.now(timezone.utc))
     client = db.relationship("Client", back_populates="posts")
-    reaction_client = db.relationship("ReactionClientPost", back_populates="post")
+    reaction_client = db.relationship(
+        "ReactionClientPost", back_populates="post")
 
     def serialize(self):
         return {
@@ -242,6 +253,7 @@ class ClientPost(db.Model):
             "text": self.text,
             "date": self.date.isoformat()
         }
+
 
 class ReactionClientPost(db.Model):
 
@@ -264,7 +276,7 @@ class ReactionClientPost(db.Model):
     client = db.relationship("Client", back_populates="reaction_client")
     post = db.relationship("ClientPost", back_populates="reaction_client")
 
-    def serialize(self):       
+    def serialize(self):
         return {
             "id": self.id,
             "client_id": self.client_id,
@@ -277,31 +289,35 @@ class AccessCoach(db.Model):
     __tablename__ = "access_coach"
 
     id = db.Column(db.Integer, primary_key=True)
-    client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
-    coach_id = db.Column(db.Integer, db.ForeignKey("coaches.id"), nullable=False)
+    client_id = db.Column(db.Integer, db.ForeignKey(
+        "clients.id"), nullable=False)
+    coach_id = db.Column(db.Integer, db.ForeignKey(
+        "coaches.id"), nullable=False)
     status = db.Column(db.String(50), nullable=False, default="pending")
 
     coach = db.relationship("Coach", back_populates="coach_requests")
     client = db.relationship("Client", back_populates="coach_requests")
-    
-    def serialize(self):
-         return {
-        "id": self.id,
-        "client_id": self.client_id,
-        "client_email": self.client.email,
-        "coach_id": self.coach_id,
-        "coach_email": self.coach.email,
-        "status": self.status
-    }
 
-    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_id": self.client_id,
+            "client_email": self.client.email,
+            "coach_id": self.coach_id,
+            "coach_email": self.coach.email,
+            "status": self.status
+        }
+
+
 class AccessClient(db.Model):
     __tablename__ = "access_clients"
 
     id = db.Column(db.Integer, primary_key=True)
 
-    client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
-    shared_with_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
+    client_id = db.Column(db.Integer, db.ForeignKey(
+        "clients.id"), nullable=False)
+    shared_with_id = db.Column(
+        db.Integer, db.ForeignKey("clients.id"), nullable=False)
 
     status = db.Column(db.String(20), nullable=False, default="pending")
 
@@ -325,6 +341,4 @@ class AccessClient(db.Model):
             "shared_with_id": self.shared_with_id,
             "shared_with_email": self.shared_with.email,
             "status": self.status
-    }
-
-
+        }

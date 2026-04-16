@@ -105,3 +105,9 @@ def delete_access_coach(id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({"msg": "Deleted"}), 200
+
+@coach_bp.route('/entries', methods=['GET'])
+@jwt_required()
+def get_all_entries_for_coach():
+    entries = Entry.query.all()
+    return jsonify([entry.serialize() for entry in entries]), 200

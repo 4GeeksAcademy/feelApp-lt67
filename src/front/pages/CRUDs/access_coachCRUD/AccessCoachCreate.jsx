@@ -51,7 +51,7 @@ export const AccessCoachCreate = () => {
     };
 
     return (
-        <div className="container mt-5">
+        <div className="container" style={{ paddingTop: "110px", maxWidth: "680px", margin: "0 auto" }}>
             <h2 className="mt-5">Create Access Coach</h2>
 
             <form onSubmit={handleSubmit}>
@@ -66,6 +66,7 @@ export const AccessCoachCreate = () => {
                     {store.clients?.map(c => (
                         <option key={c.id} value={c.id}>
                             {c.email || c.name || `Client ${c.id}`}
+
                         </option>
                     ))}
                 </select>
@@ -90,7 +91,6 @@ export const AccessCoachCreate = () => {
                 >
                     Back
                 </button>
-
             </form>
         </div>
     );

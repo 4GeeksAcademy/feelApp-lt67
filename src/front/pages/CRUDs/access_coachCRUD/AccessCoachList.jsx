@@ -41,10 +41,10 @@ export const AccessCoachList = () => {
     };
 
     return (
-        <div className="container mt-5">
+        <div className="container" style={{ paddingTop: "110px", maxWidth: "680px", margin: "0 auto" }}>
             <h2 className="mt-5">Access Coach List</h2>
 
-            <table className="table mt-3">
+            <table className="table ">
                 <thead className="table-light">
                     <tr>
                         <th>ID</th>

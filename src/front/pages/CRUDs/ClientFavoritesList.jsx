@@ -5,7 +5,7 @@ const ClientFavoritesList = () => {
     const { store, dispatch } = useGlobalReducer();
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/coach-favorites`)
             .then(resp => resp.json())
             .then(data => {
             const favorites = data.results ?? data.favorites ?? data ?? [];
