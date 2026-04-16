@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost, Client, Coach, Admint
+from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost, Client, Coach, Admint, Entry, ClientPost
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from math import radians, sin, cos, sqrt, atan2
 from api.commands import run_seeding
@@ -201,9 +201,25 @@ def get_profile():
 @shared_bp.route('/seed-all-data', methods=['GET'])
 def seed_database():
     try:
+        ReactionAdmintPost.query.delete()
+        ReactionClientPost.query.delete()
+        AccessCoach.query.delete()
+        AccessClient.query.delete()
+        Entry.query.delete()
+        AdmintPost.query.delete()
+        ClientPost.query.delete()
+        Client.query.delete()
+        Coach.query.delete()
+        Admint.query.delete()
+        
+        db.session.commit() 
+
         success = run_seeding()
+        
         if success:
             return jsonify({"message": "Database seeded successfully from route"}), 200
         return jsonify({"error": "Seeding failed"}), 500
+        
     except Exception as e:
+        db.session.rollback() 
         return jsonify({"error": str(e)}), 500
