@@ -1,10 +1,10 @@
 import click
 from api.models import db, Client, Coach, Admint, Emotion, Entry, ClientPost, AdmintPost, ReactionClientPost, ReactionAdmintPost, AccessClient, AccessCoach
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import random
 
 def run_seeding():
-    # --- 1. Emotions (Full List) ---
+    # 1. Emotions
     emotions_list = [
         {"name": "joy", "color": "#FFD700", "emoji": "😊"},
         {"name": "sadness", "color": "#6495ED", "emoji": "😢"},
@@ -28,25 +28,25 @@ def run_seeding():
     db.session.commit()
     all_emo_ids = [e.id for e in Emotion.query.all()]
 
-    # --- 2. Clients (3 Clients) ---
+    # 2. Clients (3 units)
     clients = []
     for i in range(1, 4):
         email = f"client{i}@test.com"
         client = Client.query.filter_by(email=email).first()
         if not client:
             client = Client(
-                email=email, password="123",
-                bio=f"Exploring my mental health journey - Client {i}",
-                latitude=-34.6037, longitude=-58.3816,
-                profile_image=f"https://i.pravatar.cc/150?u={email}"
+                email=email, 
+                password="123",
+                bio=f"Mental health journey of client {i}",
+                profile_image=f"https://i.pravatar.cc/150?u={email}",
+                latitude=-34.6037, 
+                longitude=-58.3816
             )
             db.session.add(client)
-        else:
-            client.password = "123"
         db.session.flush()
         clients.append(client)
 
-    # --- 3. Coaches (3 Coaches) ---
+    # 3. Coaches (3 units)
     coaches = []
     coach_bios = ["Anxiety Specialist", "Ontological Coach", "Gestalt Therapist"]
     for i in range(1, 4):
@@ -54,60 +54,63 @@ def run_seeding():
         coach = Coach.query.filter_by(email=email).first()
         if not coach:
             coach = Coach(
-                email=email, password="123",
+                email=email, 
+                password="123",
                 bio=coach_bios[i-1],
-                latitude=-34.5834, longitude=-58.4210,
-                profile_image=f"https://i.pravatar.cc/150?u={email}"
+                profile_image=f"https://i.pravatar.cc/150?u={email}",
+                latitude=-34.5834, 
+                longitude=-58.4210
             )
             db.session.add(coach)
-        else:
-            coach.password = "123"
         db.session.flush()
         coaches.append(coach)
 
-    # --- 4. Admins (3 Admins) ---
+    # 4. Admins (3 units) - REMOVED bio/lat/lng as they don't exist in your model
     admins = []
     for i in range(1, 4):
         email = f"admin{i}@test.com"
         admin = Admint.query.filter_by(email=email).first()
         if not admin:
-            admin = Admint(email=email, password="123", bio="System Administrator")
+            admin = Admint(
+                email=email, 
+                password="123",
+                profile_image=f"https://i.pravatar.cc/150?u={email}"
+            )
             db.session.add(admin)
-        else:
-            admin.password = "123"
         db.session.flush()
         admins.append(admin)
+    
     db.session.commit()
 
-    # --- 5. Entries (10 different entries per client) ---
-    entry_titles = [
-        "Feeling better today", "Night reflection", "Productive day", 
-        "A bit stressed", "Small steps forward", "Meditation finished",
-        "Quiet morning", "New goals", "Gratitude journal", "Weekly wrap-up"
-    ]
+    # 5. Entries (10 different ones per client)
+    entry_titles = ["Happy", "Sad", "Neutral", "Anxious", "Hopeful", "Bored", "Proud", "Angry", "Fearful", "Lonely"]
     for c in clients:
         for j in range(10):
-            db.session.add(Entry(
-                client_id=c.id, title=entry_titles[j], 
-                description="This is a test entry for emotional tracking.",
+            new_entry = Entry(
+                client_id=c.id,
+                title=entry_titles[j],
+                description="Seeded emotional entry description content.",
                 date=(datetime.now() - timedelta(days=j)).strftime("%Y-%m-%d"),
                 emotion_id=random.choice(all_emo_ids)
-            ))
+            )
+            db.session.add(new_entry)
 
-    # --- 6. Client Posts (3 per client) ---
+    # 6. Client Posts (3 per client)
     for c in clients:
         for j in range(1, 4):
             db.session.add(ClientPost(
-                client_id=c.id, title=f"My Progress Post #{j}", 
-                text="Sharing my mental health path with the community."
+                client_id=c.id, 
+                title=f"Client Story {j}", 
+                text="Community post content text."
             ))
 
-    # --- 7. Admin Posts (3 per admin) ---
+    # 7. Admin Posts (3 per admin)
     for a in admins:
         for j in range(1, 4):
             db.session.add(AdmintPost(
-                admint_id=a.id, title=f"System Update #{j}", 
-                text="Please remember to follow our community guidelines."
+                admint_id=a.id, 
+                title=f"Official News {j}", 
+                text="Important update from the administration."
             ))
 
     db.session.commit()
