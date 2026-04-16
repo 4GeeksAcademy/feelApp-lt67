@@ -220,12 +220,10 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <i className="bi bi-people"></i>
                   <span>My clients</span>
                 </Link>
-                {/*
               <Link to="/coach-favorites" style={linkStyle("/coach-favorites")}>
                 <i className="bi-star"></i>
                 <span>My favorite entries</span>
               </Link>
-              */}
               <Link to="/access-coach/create" style={linkStyle("/access-coach/create")}>
                 <i className="bi-chat-dots"></i>
                 <span>Access</span>
@@ -283,17 +281,9 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <i className="bi bi-pencil-square"></i>
                   <span>Clients Posts</span>
                 </Link>
-                 <Link to="/reactions-client" style={linkStyle("/reactions-client")}>
-                  <i className="bi bi-emoji-smile"></i>
-                  <span>Reaction Client Post</span>
-                </Link>
                 <Link to="/admint-posts" style={linkStyle("/admint-posts")}>
                   <i className="bi bi-pencil-square"></i>
                   <span>Admin Posts</span>
-                </Link>
-                <Link to="/reactions" style={linkStyle("/reactions")}>
-                  <i className="bi bi-emoji-smile"></i>
-                  <span>Reaction admin Post</span>
                 </Link>
               </div>
 
@@ -318,30 +308,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <i className="bi bi-plus-circle"></i>
                   <span>New emotion</span>
                 </Link>
-              </div>
-
-                <div style={{ marginBottom: "28px" }}>
-                <h6
-                  style={{
-                    fontSize: "0.75rem",
-                    fontWeight: "700",
-                    color: "#9ca3af",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                    margin: "0 8px 12px",
-                  }}
-                >
-                  Access
-                </h6>
-                <Link to="/access-clients" style={linkStyle("/access-clients")}>
-                  <i className="bi bi-share"></i>
-                  <span>Access client to client</span>
-                </Link>
-                 <Link to="/access-coach" style={linkStyle("/access-coach")}>
-                  <i className="bi bi-share"></i>
-                  <span>Access coach to coach</span>
-                </Link>
-              </div>         
+              </div> 
             </>
             )}
         </nav>
