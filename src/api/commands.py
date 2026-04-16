@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import random
 
 def run_seeding():
-    # --- Step 1: Emotions ---
+    # --- Step 1: Emotions (Esto funciona bien) ---
     emotions_list = [
         {"name": "joy",       "color": "#FFD700", "emoji": "😊"},
         {"name": "sadness",   "color": "#6495ED", "emoji": "😢"},
@@ -26,38 +26,37 @@ def run_seeding():
         if not Emotion.query.filter_by(name=emo["name"]).first():
             db.session.add(Emotion(name=emo["name"], color=emo["color"], emoji=emo["emoji"]))
     db.session.commit()
-
     all_emo_ids = [e.id for e in Emotion.query.all()]
 
-    # --- Step 2: Clients (12 Clients) ---
+    # --- Step 2: Clients (CORREGIDO) ---
     clients_dict = {}
     for i in range(1, 13):
         email = f"client{i}@test.com"
-        existing_client = Client.query.filter_by(email=email).first()
-        if not existing_client:
+        client = Client.query.filter_by(email=email).first()
+        if not client:
             client = Client(
                 email=email,
                 password="123", 
-                bio=f"Mental health journey explorer #{i}. Focus on growth.",
+                bio=f"Mental health journey explorer #{i}.",
                 latitude=-34.60 + (random.uniform(-0.05, 0.05)),
                 longitude=-58.40 + (random.uniform(-0.05, 0.05)),
                 profile_image=f"https://i.pravatar.cc/150?u={email}"
             )
             db.session.add(client)
-            db.session.flush()
-            clients_dict[email] = client
         else:
-            existing_client.password = "123" # Update to plain text
-            clients_dict[email] = existing_client
+            client.password = "123" # Actualizamos pass plano
+        
+        db.session.flush() # Para obtener el ID si es nuevo
+        clients_dict[email] = client # IMPORTANTE: Siempre guardar en el dict
     db.session.commit()
 
-    # --- Step 3: Coaches (6 Coaches) ---
+    # --- Step 3: Coaches (CORREGIDO) ---
     coaches_dict = {}
     coach_bios = ["CBT Expert", "Mindfulness Coach", "Burnout Recovery", "Life Strategist"]
     for i in range(1, 7):
         email = f"coach{i}@test.com"
-        existing_coach = Coach.query.filter_by(email=email).first()
-        if not existing_coach:
+        coach = Coach.query.filter_by(email=email).first()
+        if not coach:
             coach = Coach(
                 email=email,
                 password="123",
@@ -67,55 +66,51 @@ def run_seeding():
                 profile_image=f"https://i.pravatar.cc/150?u={email}"
             )
             db.session.add(coach)
-            db.session.flush()
-            coaches_dict[email] = coach
         else:
-            existing_coach.password = "123" # Update to plain text
-            coaches_dict[email] = existing_coach
+            coach.password = "123"
+        
+        db.session.flush()
+        coaches_dict[email] = coach
     db.session.commit()
 
-    # --- Step 4: Admins ---
+    # --- Step 4: Admins (CORREGIDO) ---
     admins_dict = {}
     for i in range(1, 4):
         email = f"admin{i}@test.com"
-        existing_admin = Admint.query.filter_by(email=email).first()
-        if not existing_admin:
+        admin = Admint.query.filter_by(email=email).first()
+        if not admin:
             admin = Admint(email=email, password="123", bio="System Administrator")
             db.session.add(admin)
-            db.session.flush()
-            admins_dict[email] = admin
         else:
-            existing_admin.password = "123" # Update to plain text
-            admins_dict[email] = existing_admin
+            admin.password = "123"
+        
+        db.session.flush()
+        admins_dict[email] = admin
     db.session.commit()
 
-    # --- Step 5: Entries (15-20 per client) ---
+    # --- Step 5 en adelante (Igual que antes, pero ahora all_clients sí tendrá datos) ---
     entry_titles = ["Morning Thoughts", "Daily Reflection", "Mood Update", "Journal Entry"]
-    entry_texts = ["Taking it slow today.", "Had a great breakthrough.", "Feeling a bit overwhelmed but managing.", "Grateful for the support."]
+    entry_texts = ["Taking it slow today.", "Had a great breakthrough.", "Feeling a bit overwhelmed.", "Grateful."]
     
     now = datetime.now()
     all_clients = list(clients_dict.values())
+    
     for client in all_clients:
         for _ in range(random.randint(15, 20)):
-            new_entry = Entry(
+            db.session.add(Entry(
                 client_id=client.id,
                 title=random.choice(entry_titles),
                 description=random.choice(entry_texts),
                 date=(now - timedelta(days=random.randint(1, 60))).strftime("%Y-%m-%d"),
                 emotion_id=random.choice(all_emo_ids),
-            )
-            db.session.add(new_entry)
+            ))
     db.session.commit()
 
-    # --- Step 6: Client Posts (2 per client) ---
+    # --- Step 6: Client Posts ---
     all_client_posts = []
     for client in all_clients:
         for j in range(2):
-            post = ClientPost(
-                client_id=client.id,
-                title=f"Progress Report #{j+1}",
-                text="I've been working on my mindfulness journey and it's paying off."
-            )
+            post = ClientPost(client_id=client.id, title=f"Progress Report #{j+1}", text="I've been working on my mindfulness journey.")
             db.session.add(post)
             db.session.flush()
             all_client_posts.append(post)
@@ -124,11 +119,7 @@ def run_seeding():
     # --- Step 7: Admin Posts ---
     admin_posts = []
     for admin in admins_dict.values():
-        post = AdmintPost(
-            admint_id=admin.id,
-            title="System Announcement",
-            text="Welcome to the community. Please follow our safety guidelines."
-        )
+        post = AdmintPost(admint_id=admin.id, title="System Announcement", text="Welcome to the community.")
         db.session.add(post)
         db.session.flush()
         admin_posts.append(post)
@@ -137,26 +128,23 @@ def run_seeding():
     # --- Step 8: Reactions ---
     reactions_list = ["👍", "🎉", "💪", "❤️", "💡"]
     for client in all_clients:
-        # React to other client posts
         other_posts = [p for p in all_client_posts if p.client_id != client.id]
-        to_react = random.sample(other_posts, min(5, len(other_posts)))
-        for p in to_react:
-            db.session.add(ReactionClientPost(client_id=client.id, client_post_id=p.id, reaction=random.choice(reactions_list)))
+        if other_posts:
+            to_react = random.sample(other_posts, min(5, len(other_posts)))
+            for p in to_react:
+                db.session.add(ReactionClientPost(client_id=client.id, client_post_id=p.id, reaction=random.choice(reactions_list)))
         
-        # React to admin posts
         for ap in admin_posts:
             if random.random() > 0.5:
                 db.session.add(ReactionAdmintPost(client_id=client.id, admint_post_id=ap.id, reaction=random.choice(reactions_list)))
     db.session.commit()
 
     # --- Step 9: Access Requests ---
-    # Client to Client
     for _ in range(10):
         c1, c2 = random.sample(all_clients, 2)
         if not AccessClient.query.filter_by(client_id=c1.id, shared_with_id=c2.id).first():
             db.session.add(AccessClient(client_id=c1.id, shared_with_id=c2.id, status="approved"))
     
-    # Client to Coach
     all_coaches = list(coaches_dict.values())
     for client in all_clients:
         coach = random.choice(all_coaches)
