@@ -168,8 +168,8 @@ const EmotionalStats = () => {
             `}</style>
 
             <div className="mb-4 mt-5">
-                <h2 className="fw-normal mb-0">{viewingOwnData ? "My Emotional Stats" : "Client Insight"}</h2>
-                <p className="text-muted small">AI analysis based on written entries</p>
+                <h2 className="mb-0">{viewingOwnData ? "My Emotional Stats" : "Client Insight"}</h2>
+                <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>AI analysis based on written entries</p>
             </div>
 
             <div className="d-flex gap-2 mb-4 overflow-auto pb-2">

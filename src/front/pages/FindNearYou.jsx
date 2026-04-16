@@ -272,11 +272,11 @@ export default function FindNearYou() {
   }, [dispatch]);
 
   return (
-    <div className="container" style={{maxWidth: 680, paddingTop: "80px"}}>
-      <h2 className="mt-5" style={{ fontWeight: 500, marginBottom: 4 }}>
+    <div className="container" style={{maxWidth: 680, paddingTop: "80px", paddingBottom: "60px"}}>
+      <h2 className="mt-5 mb-0" style={{ fontWeight: 500, marginBottom: 4 }}>
         {defaultMode === "coach" ? "Find coaches near you" : "Find clients near you"}
       </h2>
-      <p style={{ fontSize: 14, color: "#888", marginBottom: "1.25rem" }}>
+      <p className="text-muted" style={{ fontSize: 14, marginBottom: "1.25rem" }}>
         Search a location to discover {defaultMode === "coach" ? "professionals" : "clients"} in that area.
       </p>
 
@@ -412,7 +412,7 @@ export default function FindNearYou() {
             <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-              gap: 10,
+              gap: 10, marginBottom: "40px"
             }}>
               {nearbyUsers.map((user, i) => (
                 <UserCard key={`${defaultMode}-${user.id}`} user={user} index={i} />

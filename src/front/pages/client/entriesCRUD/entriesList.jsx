@@ -7,6 +7,7 @@ const EntriesList = () => {
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState([]);
   const [deleteModal, setDeleteModal] = useState(null);
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false); 
 
   useEffect(() => {
     if (!store.clientToken) navigate("/");
@@ -64,11 +65,15 @@ const EntriesList = () => {
       console.error(error);
     }
   };
+
+  const displayedEntries = showOnlyFavorites 
+    ? store.entries.filter(entry => favorites.includes(entry.id))
+    : store.entries;
   
   return (
     <div className="container" style={{ 
       maxWidth: "680px", 
-      paddingTop: "120px", 
+      paddingTop: "80px", 
       paddingBottom: "100px",
       minHeight: "100vh"
     }}>
@@ -100,26 +105,53 @@ const EntriesList = () => {
           border: 1px solid rgba(255, 255, 255, 0.5);
           border-radius: 15px;
         }
+
+        .btn-fav-filter {
+          background: none;
+          border: 1px solid #e2e8f0;
+          color: #64748b;
+          transition: all 0.2s;
+        }
+
+        .btn-fav-filter.active {
+          background: #fee2e2;
+          border-color: #fca5a5;
+          color: #ef4444;
+        }
       `}</style>
 
-      <div className="text-start mb-2">
-        <h2 style={{ fontWeight: "500", margin: 0 }}>Entries</h2>
-        <p className="text-muted">Record your thoughts and feelings</p>
-      </div>
-        
-      <div className="d-flex justify-content-end mb-5">
-        <Link to="/entries/create" className="btn btn-custom rounded-pill px-4">
-          <i className="bi bi-plus-lg me-2"></i> New Entry
-        </Link>
+      <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
+        <div className="text-start">
+          <h2 className="mb-0">Entries</h2>
+          <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>
+            Record your thoughts and feelings
+          </p>
+        </div>
+
+        <div className="d-flex gap-2">
+          <button 
+            className={`btn btn-fav-filter rounded-pill px-3 ${showOnlyFavorites ? 'active' : ''}`}
+            onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+            title={showOnlyFavorites ? "Show all" : "Show favorites"}
+          >
+            <i className={`bi ${showOnlyFavorites ? 'bi-heart-fill' : 'bi-heart'}`}></i>
+          </button>
+
+          <Link to="/entries/create" className="btn btn-custom rounded-pill px-4">
+            <i className="bi bi-plus-lg me-2"></i> New Entry
+          </Link>
+        </div>
       </div>
 
-      {store.entries.length === 0 ? (
+      {displayedEntries.length === 0 ? (
         <div className="text-center py-5">
-          <p className="text-muted">No entries yet.</p>
+          <p className="text-muted">
+            {showOnlyFavorites ? "No favorite entries yet." : "No entries yet."}
+          </p>
         </div>
       ) : (
         <div className="row g-4">
-          {store.entries.map(entry => {
+          {displayedEntries.map(entry => {
             const emotion = store.emotions.find(em => em.id === entry.emotion_id);
             const isFav = favorites.includes(entry.id);
             return (

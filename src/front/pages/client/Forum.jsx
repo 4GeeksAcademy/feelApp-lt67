@@ -162,8 +162,11 @@ const Forum = () => {
           <h2 className="mb-0">Forum</h2>
           <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>
             {view === "clients" ? "Community posts" : "Info from admins"}
-          </p>
+          </p>        
         </div>
+          <button className="btn btn-custom rounded-pill px-4" onClick={() => navigate("/client/post")}>
+            <i className="bi bi-plus-lg me-1"></i>New Post
+          </button>
       </div>
 
       <div className="d-flex gap-2 mb-4">
