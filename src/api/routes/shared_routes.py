@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost, Client, Coach, Admint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from math import radians, sin, cos, sqrt, atan2
+from api.commands import run_seeding
 
 shared_bp = Blueprint('shared_routes', __name__)
 
@@ -196,3 +197,13 @@ def get_profile():
         return jsonify({"error": "User not found"}), 404
     
     return jsonify(user.serialize()), 200
+
+@shared_bp.route('/seed-all-data', methods=['GET'])
+def seed_database():
+    try:
+        success = run_seeding()
+        if success:
+            return jsonify({"message": "Database seeded successfully from route"}), 200
+        return jsonify({"error": "Seeding failed"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
