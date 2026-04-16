@@ -33,7 +33,8 @@ def run_seeding():
     clients_dict = {}
     for i in range(1, 13):
         email = f"client{i}@test.com"
-        if not Client.query.filter_by(email=email).first():
+        existing_client = Client.query.filter_by(email=email).first()
+        if not existing_client:
             client = Client(
                 email=email,
                 password="123", 
@@ -46,7 +47,8 @@ def run_seeding():
             db.session.flush()
             clients_dict[email] = client
         else:
-            clients_dict[email] = Client.query.filter_by(email=email).first()
+            existing_client.password = "123" # Update to plain text
+            clients_dict[email] = existing_client
     db.session.commit()
 
     # --- Step 3: Coaches (6 Coaches) ---
@@ -54,7 +56,8 @@ def run_seeding():
     coach_bios = ["CBT Expert", "Mindfulness Coach", "Burnout Recovery", "Life Strategist"]
     for i in range(1, 7):
         email = f"coach{i}@test.com"
-        if not Coach.query.filter_by(email=email).first():
+        existing_coach = Coach.query.filter_by(email=email).first()
+        if not existing_coach:
             coach = Coach(
                 email=email,
                 password="123",
@@ -67,20 +70,23 @@ def run_seeding():
             db.session.flush()
             coaches_dict[email] = coach
         else:
-            coaches_dict[email] = Coach.query.filter_by(email=email).first()
+            existing_coach.password = "123" # Update to plain text
+            coaches_dict[email] = existing_coach
     db.session.commit()
 
     # --- Step 4: Admins ---
     admins_dict = {}
     for i in range(1, 4):
         email = f"admin{i}@test.com"
-        if not Admint.query.filter_by(email=email).first():
+        existing_admin = Admint.query.filter_by(email=email).first()
+        if not existing_admin:
             admin = Admint(email=email, password="123", bio="System Administrator")
             db.session.add(admin)
             db.session.flush()
             admins_dict[email] = admin
         else:
-            admins_dict[email] = Admint.query.filter_by(email=email).first()
+            existing_admin.password = "123" # Update to plain text
+            admins_dict[email] = existing_admin
     db.session.commit()
 
     # --- Step 5: Entries (15-20 per client) ---
