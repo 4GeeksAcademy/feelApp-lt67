@@ -1,201 +1,168 @@
-from werkzeug.security import generate_password_hash
+import click
+from api.models import db, Client, Coach, Admint, Emotion, Entry, ClientPost, AdmintPost, ReactionClientPost, ReactionAdmintPost, AccessClient, AccessCoach
+from datetime import datetime, timedelta
+import random
+
+def run_seeding():
+    # --- Step 1: Emotions ---
+    emotions_list = [
+        {"name": "joy",       "color": "#FFD700", "emoji": "😊"},
+        {"name": "sadness",   "color": "#6495ED", "emoji": "😢"},
+        {"name": "anger",     "color": "#FF4500", "emoji": "😡"},
+        {"name": "fear",      "color": "#9370DB", "emoji": "😨"},
+        {"name": "surprise",  "color": "#FF69B4", "emoji": "😮"},
+        {"name": "disgust",   "color": "#2E8B57", "emoji": "🤢"},
+        {"name": "neutral",   "color": "#A9A9A9", "emoji": "😐"},
+        {"name": "anxiety",   "color": "#FF8C00", "emoji": "😰"},
+        {"name": "love",      "color": "#FF1493", "emoji": "❤️"},
+        {"name": "shame",     "color": "#BC8F8F", "emoji": "😳"},
+        {"name": "guilt",     "color": "#4B0082", "emoji": "😔"},
+        {"name": "pride",     "color": "#4169E1", "emoji": "😌"},
+        {"name": "hope",      "color": "#00FF7F", "emoji": "🌱"},
+        {"name": "loneliness","color": "#191970", "emoji": "👤"},
+        {"name": "boredom",   "color": "#808080", "emoji": "😑"}
+    ]
+    for emo in emotions_list:
+        if not Emotion.query.filter_by(name=emo["name"]).first():
+            db.session.add(Emotion(name=emo["name"], color=emo["color"], emoji=emo["emoji"]))
+    db.session.commit()
+
+    all_emo_ids = [e.id for e in Emotion.query.all()]
+
+    # --- Step 2: Clients (12 Clients) ---
+    clients_dict = {}
+    for i in range(1, 13):
+        email = f"client{i}@test.com"
+        if not Client.query.filter_by(email=email).first():
+            client = Client(
+                email=email,
+                password="123", 
+                bio=f"Mental health journey explorer #{i}. Focus on growth.",
+                latitude=-34.60 + (random.uniform(-0.05, 0.05)),
+                longitude=-58.40 + (random.uniform(-0.05, 0.05)),
+                profile_image=f"https://i.pravatar.cc/150?u={email}"
+            )
+            db.session.add(client)
+            db.session.flush()
+            clients_dict[email] = client
+        else:
+            clients_dict[email] = Client.query.filter_by(email=email).first()
+    db.session.commit()
+
+    # --- Step 3: Coaches (6 Coaches) ---
+    coaches_dict = {}
+    coach_bios = ["CBT Expert", "Mindfulness Coach", "Burnout Recovery", "Life Strategist"]
+    for i in range(1, 7):
+        email = f"coach{i}@test.com"
+        if not Coach.query.filter_by(email=email).first():
+            coach = Coach(
+                email=email,
+                password="123",
+                bio=random.choice(coach_bios),
+                latitude=-34.59 + (random.uniform(-0.05, 0.05)),
+                longitude=-58.43 + (random.uniform(-0.05, 0.05)),
+                profile_image=f"https://i.pravatar.cc/150?u={email}"
+            )
+            db.session.add(coach)
+            db.session.flush()
+            coaches_dict[email] = coach
+        else:
+            coaches_dict[email] = Coach.query.filter_by(email=email).first()
+    db.session.commit()
+
+    # --- Step 4: Admins ---
+    admins_dict = {}
+    for i in range(1, 4):
+        email = f"admin{i}@test.com"
+        if not Admint.query.filter_by(email=email).first():
+            admin = Admint(email=email, password="123", bio="System Administrator")
+            db.session.add(admin)
+            db.session.flush()
+            admins_dict[email] = admin
+        else:
+            admins_dict[email] = Admint.query.filter_by(email=email).first()
+    db.session.commit()
+
+    # --- Step 5: Entries (15-20 per client) ---
+    entry_titles = ["Morning Thoughts", "Daily Reflection", "Mood Update", "Journal Entry"]
+    entry_texts = ["Taking it slow today.", "Had a great breakthrough.", "Feeling a bit overwhelmed but managing.", "Grateful for the support."]
+    
+    now = datetime.now()
+    all_clients = list(clients_dict.values())
+    for client in all_clients:
+        for _ in range(random.randint(15, 20)):
+            new_entry = Entry(
+                client_id=client.id,
+                title=random.choice(entry_titles),
+                description=random.choice(entry_texts),
+                date=(now - timedelta(days=random.randint(1, 60))).strftime("%Y-%m-%d"),
+                emotion_id=random.choice(all_emo_ids),
+            )
+            db.session.add(new_entry)
+    db.session.commit()
+
+    # --- Step 6: Client Posts (2 per client) ---
+    all_client_posts = []
+    for client in all_clients:
+        for j in range(2):
+            post = ClientPost(
+                client_id=client.id,
+                title=f"Progress Report #{j+1}",
+                text="I've been working on my mindfulness journey and it's paying off."
+            )
+            db.session.add(post)
+            db.session.flush()
+            all_client_posts.append(post)
+    db.session.commit()
+
+    # --- Step 7: Admin Posts ---
+    admin_posts = []
+    for admin in admins_dict.values():
+        post = AdmintPost(
+            admint_id=admin.id,
+            title="System Announcement",
+            text="Welcome to the community. Please follow our safety guidelines."
+        )
+        db.session.add(post)
+        db.session.flush()
+        admin_posts.append(post)
+    db.session.commit()
+
+    # --- Step 8: Reactions ---
+    reactions_list = ["👍", "🎉", "💪", "❤️", "💡"]
+    for client in all_clients:
+        # React to other client posts
+        other_posts = [p for p in all_client_posts if p.client_id != client.id]
+        to_react = random.sample(other_posts, min(5, len(other_posts)))
+        for p in to_react:
+            db.session.add(ReactionClientPost(client_id=client.id, client_post_id=p.id, reaction=random.choice(reactions_list)))
+        
+        # React to admin posts
+        for ap in admin_posts:
+            if random.random() > 0.5:
+                db.session.add(ReactionAdmintPost(client_id=client.id, admint_post_id=ap.id, reaction=random.choice(reactions_list)))
+    db.session.commit()
+
+    # --- Step 9: Access Requests ---
+    # Client to Client
+    for _ in range(10):
+        c1, c2 = random.sample(all_clients, 2)
+        if not AccessClient.query.filter_by(client_id=c1.id, shared_with_id=c2.id).first():
+            db.session.add(AccessClient(client_id=c1.id, shared_with_id=c2.id, status="approved"))
+    
+    # Client to Coach
+    all_coaches = list(coaches_dict.values())
+    for client in all_clients:
+        coach = random.choice(all_coaches)
+        if not AccessCoach.query.filter_by(client_id=client.id, coach_id=coach.id).first():
+            db.session.add(AccessCoach(client_id=client.id, coach_id=coach.id, status="pending"))
+    
+    db.session.commit()
+    return True
 
 def setup_commands(app):
- 
     @app.cli.command("insert-test-data")
     def insert_test_data():
-        from api.models import db, Client, Coach, Admint, Emotion, Entry, ClientPost, AdmintPost, ReactionClientPost, ReactionAdmintPost, AccessClient, AccessCoach
-        from datetime import datetime, timedelta
-        import random
-        
-        # ---------------------------------------------------------
-        # EMOTIONS
-        # ---------------------------------------------------------
-        emotions_list = [
-            {"name": "joy",      "color": "#FFD700", "emoji": "😊"},
-            {"name": "sadness",  "color": "#6495ED", "emoji": "😢"},
-            {"name": "anger",    "color": "#FF4500", "emoji": "😡"},
-            {"name": "fear",     "color": "#9370DB", "emoji": "😨"},
-            {"name": "surprise", "color": "#FF69B4", "emoji": "😮"},
-            {"name": "disgust",  "color": "#2E8B57", "emoji": "🤢"},
-            {"name": "neutral",  "color": "#A9A9A9", "emoji": "😐"},
-            {"name": "anxiety",  "color": "#FF8C00", "emoji": "😰"},
-            {"name": "love",     "color": "#FF1493", "emoji": "❤️"},
-            {"name": "shame",    "color": "#BC8F8F", "emoji": "😳"},
-            {"name": "guilt",    "color": "#4B0082", "emoji": "😔"},
-            {"name": "pride",    "color": "#4169E1", "emoji": "😌"},
-            {"name": "hope",     "color": "#00FF7F", "emoji": "🌱"},
-            {"name": "loneliness","color": "#191970", "emoji": "👤"},
-            {"name": "boredom",  "color": "#808080", "emoji": "😑"}
-        ]
-        for emo in emotions_list:
-            if not Emotion.query.filter_by(name=emo["name"]).first():
-                db.session.add(Emotion(name=emo["name"], color=emo["color"], emoji=emo["emoji"]))
-        db.session.commit()
- 
-        joy_id     = Emotion.query.filter_by(name="joy").first().id
-        sad_id     = Emotion.query.filter_by(name="sadness").first().id
-        anger_id   = Emotion.query.filter_by(name="anger").first().id
-        fear_id    = Emotion.query.filter_by(name="fear").first().id
-        neutral_id = Emotion.query.filter_by(name="neutral").first().id
-
-        # ---------------------------------------------------------
-        # CLIENTS
-        # ---------------------------------------------------------
-        password_hash = generate_password_hash("123")
-        clients_data = [
-            {"email": "client1@test.com"},
-            {"email": "client2@test.com"},
-            {"email": "maria.gomez@test.com", "bio": "Work stress.", "lat": -34.6037, "lon": -58.3816},
-            {"email": "lucas.ramos@test.com", "bio": "Burnout recovery.", "lat": -34.5875, "lon": -58.4370},
-            {"email": "sofia.diaz@test.com", "bio": "Self-esteem.", "lat": -34.6158, "lon": -58.4333},
-            {"email": "andres.villa@test.com", "bio": "Career transition.", "lat": -34.5711, "lon": -58.4109},
-        ]
- 
-        clients_dict = {}
-        for c in clients_data:
-            if not Client.query.filter_by(email=c["email"]).first():
-                new_client = Client(
-                    email=c["email"],
-                    password=password_hash,
-                    bio=c.get("bio"),
-                    latitude=c.get("lat"),
-                    longitude=c.get("lon")
-                )
-                db.session.add(new_client)
-                db.session.flush()
-                clients_dict[c["email"]] = new_client
-            else:
-                clients_dict[c["email"]] = Client.query.filter_by(email=c["email"]).first()
-        db.session.commit()
-        
-        # ---------------------------------------------------------
-        # COACHES
-        # ---------------------------------------------------------
-        coaches_data = [
-            {"email": "coach.ana@test.com", "bio": "Mindfulness.", "lat": -34.5995, "lon": -58.3855},
-            {"email": "coach.jorge@test.com", "bio": "Burnout expert.", "lat": -34.5826, "lon": -58.4347},
-            {"email": "coach.valentina@test.com", "bio": "Life coach.", "lat": -34.6218, "lon": -58.4094},
-            {"email": "coach.martin@test.com", "bio": "Motivational.", "lat": -34.5643, "lon": -58.4588},
-        ]
- 
-        coaches_dict = {}
-        for c in coaches_data:
-            if not Coach.query.filter_by(email=c["email"]).first():
-                new_coach = Coach(
-                    email=c["email"],
-                    password=password_hash,
-                    bio=c["bio"],
-                    latitude=c.get("lat"),
-                    longitude=c.get("lon")
-                )
-                db.session.add(new_coach)
-                db.session.flush()
-                coaches_dict[c["email"]] = new_coach
-            else:
-                coaches_dict[c["email"]] = Coach.query.filter_by(email=c["email"]).first()
-        db.session.commit()
-
-        # ---------------------------------------------------------
-        # ADMINTS
-        # ---------------------------------------------------------
-        admins_data = [
-            {"email": "admin.support@test.com", "bio": "Support Team"},
-            {"email": "admin.wellness@test.com", "bio": "Wellness Resources"},
-            {"email": "admin.info@test.com", "bio": "Guidelines"}
-        ]
-
-        admins_dict = {}
-        for a in admins_data:
-            if not Admint.query.filter_by(email=a["email"]).first():
-                new_admin = Admint(
-                    email=a["email"],
-                    password=password_hash,
-                    bio=a["bio"]
-                )
-                db.session.add(new_admin)
-                db.session.flush()
-                admins_dict[a["email"]] = new_admin
-            else:
-                admins_dict[a["email"]] = Admint.query.filter_by(email=a["email"]).first()
-        db.session.commit()
-
-        # ---------------------------------------------------------
-        # ENTRIES
-        # ---------------------------------------------------------
-        now = datetime.now()
-        entry_templates = [
-            {"title": "Amazing Morning", "text": "I feel incredible!", "emotion": joy_id},
-            {"title": "A bit down", "text": "Hard day today.", "emotion": sad_id},
-            {"title": "Meeting at work", "text": "Very frustrated.", "emotion": anger_id},
-            {"title": "Midnight walk", "text": "I felt scared.", "emotion": fear_id},
-            {"title": "Just Tuesday", "text": "Standard routine.", "emotion": neutral_id},
-        ]
-
-        all_entries = []
-        for client in clients_dict.values():
-            for i in range(3):
-                template = entry_templates[i % len(entry_templates)]
-                new_entry = Entry(
-                    client_id=client.id,
-                    title=template["title"],
-                    description=template["text"],
-                    date=(now - timedelta(days=random.randint(1, 30))).strftime("%Y-%m-%d"),
-                    emotion_id=template["emotion"],
-                )
-                db.session.add(new_entry)
-                all_entries.append(new_entry)
-        db.session.commit()
-
-        # ---------------------------------------------------------
-        # POSTS
-        # ---------------------------------------------------------
-        client_posts = []
-        for email, client in clients_dict.items():
-            new_post = ClientPost(
-                client_id=client.id,
-                title=f"Update from {email}",
-                text="Sharing my progress with the community."
-            )
-            db.session.add(new_post)
-            db.session.flush()
-            client_posts.append(new_post)
-
-        admin_posts = []
-        for email, admin in admins_dict.items():
-            new_post = AdmintPost(
-                admint_id=admin.id,
-                title=f"Announcement by {email}",
-                text="Official platform update and safety guidelines."
-            )
-            db.session.add(new_post)
-            db.session.flush()
-            admin_posts.append(new_post)
-        db.session.commit()
-
-        # ---------------------------------------------------------
-        # REACTIONS
-        # ---------------------------------------------------------
-        reactions_list = ["👍", "🎉", "💪", "❤️", "💡"]
-        for client in clients_dict.values():
-            target_posts = random.sample(client_posts, 2)
-            for p in target_posts:
-                if p.client_id != client.id:
-                    db.session.add(ReactionClientPost(
-                        client_id=client.id,
-                        client_post_id=p.id,
-                        reaction=random.choice(reactions_list)
-                    ))
-        db.session.commit()
-
-        # ---------------------------------------------------------
-        # ACCESS REQUESTS
-        # ---------------------------------------------------------
-        for client in list(clients_dict.values())[:3]:
-            coach = random.choice(list(coaches_dict.values()))
-            db.session.add(AccessCoach(
-                client_id=client.id,
-                coach_id=coach.id,
-                status="pending"
-            ))
-        db.session.commit()
+        print("Starting data injection...")
+        run_seeding()
+        print("Success! Database populated.")
