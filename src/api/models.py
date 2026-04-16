@@ -217,7 +217,8 @@ class CoachFavorites(db.Model):
         return {
             "id": self.id,
             "coach_id": self.coach_id,
-            "entry_id": self.entry_id
+            "entry_id": self.entry_id,
+            "entry": self.entry.serialize()
         }
 
 

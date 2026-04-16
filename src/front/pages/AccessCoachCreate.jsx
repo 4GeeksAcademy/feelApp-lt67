@@ -33,13 +33,12 @@ export const AccessCoachCreate = () => {
     }, [store.coachToken, dispatch, navigate]);
 
     const filteredClients = store.clients?.filter(c =>
-        (c.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (c.name || "").toLowerCase().includes(searchTerm.toLowerCase())
+        (c.email || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!selectedClient) return alert("Please select a client from the list");
+        if (!selectedClient) return;
 
         try {
             const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-request`, {
@@ -59,43 +58,66 @@ export const AccessCoachCreate = () => {
                 dispatch({ type: "add_access_coach", payload: data });
                 setSearchTerm("");
                 setSelectedClient(null);
-            } else {
-                alert(data.msg || "Error sending request");
             }
         } catch (error) {
             console.error("Error creating access coach:", error);
         }
     };
 
+    const statusBadge = (status) => {
+        const map = {
+            pending:  { bg: "#fff9c4", color: "#b45309" },
+            approved: { bg: "#d1fae5", color: "#065f46" },
+            rejected: { bg: "#fee2e2", color: "#991b1b" },
+        };
+        const s = map[status] || map.pending;
+        return (
+            <span
+                style={{
+                    backgroundColor: s.bg, color: s.color,
+                    padding: "2px 10px", borderRadius: "20px",
+                    fontSize: "0.75rem", fontWeight: 500,
+                }}
+            >
+                {status}
+            </span>
+        );
+    };
+
     return (
-        <div className="container" style={{ paddingTop: "100px", maxWidth: "800px" }}>
-            <div className="card p-4 shadow-sm mb-5">
-                <h2 className="h4 fw-bold mb-4">Request Access</h2>
+        <div className="container" style={{ maxWidth: "680px", paddingTop: "80px", marginBottom:"80px" }}>
+            <div className="mb-4 mt-5">
+                <h2 className="fw-500 mb-0">Request Access</h2>
+                <p className="text-muted" style={{ fontSize: "0.9rem" }}>Find and connect with your clients</p>
+            </div>
+
+            <div className="forum-card p-4 mb-4" style={{ background: "#fff", borderRadius: "20px", border: "1px solid #f1f5f9" }}>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3 position-relative">
-                        <label className="form-label small fw-bold">Search Client by Email</label>
+                        <label className="form-label small fw-500 text-muted mb-2">Client Email</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className="form-control rounded-pill border-light"
+                            style={{ padding: "10px 20px", background: "#f8fafc", fontSize: "0.95rem" }}
                             placeholder="Type to search..."
                             value={searchTerm}
                             onChange={(e) => {
                                 setSearchTerm(e.target.value);
-                                setSelectedClient(null);
+                                if (selectedClient) setSelectedClient(null);
                             }}
                         />
 
                         {searchTerm && !selectedClient && (
-                            <ul className="list-group position-absolute w-100 shadow-lg" style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}>
+                            <ul className="list-group position-absolute w-100 shadow mt-2" style={{ zIndex: 1000, maxHeight: "160px", overflowY: "auto", borderRadius: "12px" }}>
                                 {filteredClients?.map(c => (
                                     <li
                                         key={c.id}
-                                        className="list-group-item list-group-item-action"
+                                        className="list-group-item list-group-item-action border-0 py-2 px-3"
                                         onClick={() => {
                                             setSelectedClient(c);
-                                            setSearchTerm(c.email || c.name);
+                                            setSearchTerm(c.email);
                                         }}
-                                        style={{ cursor: "pointer" }}
+                                        style={{ cursor: "pointer", fontSize: "0.9rem" }}
                                     >
                                         {c.email}
                                     </li>
@@ -104,48 +126,37 @@ export const AccessCoachCreate = () => {
                         )}
                     </div>
 
-                    {selectedClient && (
-                        <div className="alert alert-info py-2 small">
-                            Selected: <strong>{selectedClient.email}</strong>
-                        </div>
-                    )}
-
-                    <button className="btn btn-primary w-100" disabled={!selectedClient}>
+                    <button 
+                        className="btn btn-custom w-100 rounded-pill py-2 fw-500 mt-2" 
+                        disabled={!selectedClient}
+                        style={{ border: "none" }}
+                    >
                         Send Request
                     </button>
                 </form>
             </div>
 
-            <div className="card p-4 shadow-sm">
-                <h2 className="h4 fw-bold mb-4">Current Requests</h2>
-                <table className="table align-middle">
-                    <thead className="table-light">
-                        <tr>
-                            <th>Client Email</th>
-                            <th className="text-end">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {store.access_coach?.map(item => (
-                            <tr key={item.id}>
-                                <td>{item.client_email}</td>
-                                <td className="text-end">
-                                    <span className={`badge ${item.status === 'approved' ? 'bg-success' :
-                                            item.status === 'pending' ? 'bg-warning text-dark' : 'bg-danger'
-                                        }`}>
-                                        {item.status}
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
-                        {(!store.access_coach || store.access_coach.length === 0) && (
-                            <tr>
-                                <td colSpan="2" className="text-center text-muted py-3">No requests found.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+            <div className="mt-4">
+                <h4 className="fw-500 h6 mb-3 text-muted">Recent requests</h4>
+                <div className="d-flex flex-column gap-2">
+                    {store.access_coach?.length > 0 ? (
+                        store.access_coach.map(item => (
+                            <div 
+                                key={item.id} 
+                                className="forum-card p-3 d-flex justify-content-between align-items-center"
+                                style={{ background: "#fff", borderRadius: "16px", border: "1px solid #f1f5f9" }}
+                            >
+                                <span className="fw-500 text-muted" style={{ fontSize: "0.9rem" }}>
+                                    {item.client_email}
+                                </span>
+                                <div>{statusBadge(item.status)}</div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-muted text-center small py-3">No activity yet</p>
+                    )}
+                </div>
             </div>
         </div>
     );
-};
+};     

@@ -7,6 +7,7 @@ const SharedEntriesList = () => {
   const navigate = useNavigate();
   const { clientId } = useParams();
 
+  const isCoach = !!store.coachToken;
   const activeToken = store.clientToken || store.coachToken;
 
   useEffect(() => {
@@ -29,16 +30,17 @@ const SharedEntriesList = () => {
         .then((data) => dispatch({ type: "set_emotions", payload: data }));
     }
 
-    if (store.favorites.length === 0) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`, {
-        headers: { Authorization: `Bearer ${activeToken}` },
-      })
-        .then((r) => r.json())
-        .then((data) => {
-          if (Array.isArray(data))
-            dispatch({ type: "set_favorites", payload: data });
-        });
-    }
+    const favEndpoint = isCoach ? "coach-favorites" : "client-favorites";
+    const favAction = isCoach ? "set_coach_favorites" : "set_favorites";
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${favEndpoint}`, {
+      headers: { Authorization: `Bearer ${activeToken}` },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data))
+          dispatch({ type: favAction, payload: data });
+      });
 
     if (store.clients.length === 0) {
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
@@ -50,9 +52,10 @@ const SharedEntriesList = () => {
             dispatch({ type: "set_clients", payload: data });
         });
     }
-  }, [clientId]);
+  }, [clientId, isCoach]);
 
-  const favoriteEntryIds = new Set(store.favorites.map((f) => f.entry_id));
+  const currentFavs = isCoach ? store.coach_favorites : store.favorites;
+  const favoriteEntryIds = new Set(currentFavs.map((f) => f.entry_id));
 
   const friendEmail =
     store.clients.find((c) => String(c.id) === String(clientId))?.email ||
@@ -60,22 +63,27 @@ const SharedEntriesList = () => {
 
   const toggleFavorite = async (entryId) => {
     const isFav = favoriteEntryIds.has(entryId);
+    const endpointBase = isCoach ? "coach-favorites" : "client-favorites";
+    const addAction = isCoach ? "add_coach_favorite" : "add_favorite";
+    const removeAction = isCoach ? "remove_coach_favorite" : "remove_favorite";
 
     if (isFav) {
+      const fav = currentFavs.find((f) => f.entry_id === entryId);
+      if (!fav) return;
+
       const resp = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/client-favorites/entry/${entryId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/${endpointBase}/${fav.id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${activeToken}` },
         }
       );
       if (resp.ok) {
-        const fav = store.favorites.find((f) => f.entry_id === entryId);
-        if (fav) dispatch({ type: "remove_favorite", payload: fav.id });
+        dispatch({ type: removeAction, payload: fav.id });
       }
     } else {
       const resp = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/client-favorites`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/${endpointBase}`,
         {
           method: "POST",
           headers: {
@@ -87,7 +95,7 @@ const SharedEntriesList = () => {
       );
       if (resp.ok) {
         const data = await resp.json();
-        dispatch({ type: "add_favorite", payload: data });
+        dispatch({ type: addAction, payload: data });
       }
     }
   };

@@ -28,57 +28,73 @@ export const AccessCoachList = () => {
     ) || [];
 
     return (
-        <div className="container" style={{ paddingTop: "80px", maxWidth: "800px", margin: "0 auto" }}>
-            <h2 className="mt-5 fw-normal" style={{ color: "#1e293b" }}>My Clients</h2>
+        <div className="container" style={{ maxWidth: "680px", paddingTop: "80px", marginBottom: "50px" }}>
+            <div className="mb-4 mt-5">
+                <h2 className="fw-500 mb-0" style={{ color: "#1e293b" }}>My Clients</h2>
+                <p className="text-muted" style={{ fontSize: "0.9rem" }}>
+                    Manage access to your clients' progress and statistics
+                </p>
+            </div>
 
-            <div className="card shadow-sm border-0 mt-4" style={{ overflow: "hidden" }}>
-                <table className="table align-middle mb-0">
-                    <thead className="table-light">
-                        <tr>
-                            <th className="ps-4">Client Email</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {approvedClients.length > 0 ? (
-                            approvedClients.map(item => (
-                                <tr key={item.id}>
-                                    <td className="ps-4 fw-medium" style={{ color: "#475569" }}>
-                                        {item.client_email}
-                                    </td>
-                                    <td>
-                                        <span className="text-success small fw-bold">
-                                            {item.status}
-                                        </span>
-                                    </td>
-                                    <td className="text-end pe-4">
-                                        <div className="d-flex justify-content-end gap-2">
-                                            <button
-                                                className="btn btn-sm btn-outline-secondary border-dark"
-                                                onClick={() => navigate(`/entries/friend/${item.client_id}`)}
-                                            >
-                                                Entries
-                                            </button>
-                                            <button
-                                                className="btn btn-sm btn-outline-secondary border-dark"
-                                                onClick={() => navigate(`/stats/${item.client_id}`)}
-                                            >
-                                                Stats
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="3" className="text-center py-5 text-muted">
-                                    No approved clients found.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+            <div className="d-flex flex-column gap-3">
+                {approvedClients.length > 0 ? (
+                    approvedClients.map(item => (
+                        <div 
+                            key={item.id} 
+                            className="forum-card p-4 d-flex justify-content-between align-items-center"
+                            style={{
+                                background: "#fff",
+                                borderRadius: "20px",
+                                border: "1px solid #f1f5f9",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.03)"
+                            }}
+                        >
+                            <div>
+                                <p className="mb-1 fw-bold" style={{ color: "#334155", fontSize: "1rem" }}>
+                                    {item.client_email}
+                                </p>
+                                <span 
+                                    style={{
+                                        backgroundColor: "#d1fae5", 
+                                        color: "#065f46",
+                                        padding: "3px 12px", 
+                                        borderRadius: "20px",
+                                        fontSize: "0.7rem", 
+                                        fontWeight: 700,
+                                    }}
+                                >
+                                    {item.status}
+                                </span>
+                            </div>
+
+                            <div className="d-flex gap-2">
+                                <button
+                                    className="btn btn-sm rounded-pill px-4"
+                                    style={{ 
+                                        background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+                                        border: "1px solid #e2e8f0",
+                                        color: "#475569",
+                                        fontWeight: "600",
+                                        fontSize: "0.85rem"
+                                    }}
+                                    onClick={() => navigate(`/entries/friend/${item.client_id}`)}
+                                >
+                                    Entries
+                                </button>
+                                <button
+                                    className="btn btn-custom btn-sm rounded-pill px-4"
+                                    onClick={() => navigate(`/stats/${item.client_id}`)}
+                                >
+                                    Stats
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center py-5">
+                        <p className="text-muted italic">No approved clients found.</p>
+                    </div>
+                )}
             </div>
         </div>
     );
