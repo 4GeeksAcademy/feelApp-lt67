@@ -6,6 +6,7 @@ const AccessClient = () => {
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
   const [searchClient, setSearchClient] = useState("");
+  const [selectedFriend, setSelectedFriend] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -37,6 +38,27 @@ const AccessClient = () => {
     }
   }, [dispatch, store.clientToken, store.clients.length]);
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setError("");
+      setSuccess("");
+      
+      const friend = store.clients.find(
+        (c) => 
+          c.email?.toLowerCase() === searchClient.toLowerCase().trim() &&
+          String(c.id) !== String(myId)
+      );
+
+      if (friend) {
+        setSelectedFriend(friend);
+      } else {
+        setSelectedFriend(null);
+        setError("Friend not found with that exact email.");
+      }
+    }
+  };
+
   const sendClientRequest = async (sharedWithId) => {
     setError("");
     setSuccess("");
@@ -46,7 +68,7 @@ const AccessClient = () => {
         String(a.shared_with_id) === String(sharedWithId)
     );
     if (already) {
-      setError("Request already sent to this client");
+      setError("Request already sent to this friend");
       return;
     }
 
@@ -65,6 +87,8 @@ const AccessClient = () => {
     if (resp.ok) {
       dispatch({ type: "add_access_client", payload: data });
       setSuccess("Request sent!");
+      setSearchClient("");
+      setSelectedFriend(null);
     } else {
       setError(data.msg || "Error sending request");
     }
@@ -141,12 +165,6 @@ const AccessClient = () => {
       String(a.client_id) !== String(myId)
   );
 
-  const filteredClients = store.clients.filter(
-    (c) =>
-      String(c.id) !== String(myId) &&
-      c.email?.toLowerCase().includes(searchClient.toLowerCase())
-  );
-
   return (
     <div className="container mt-5" style={{ maxWidth: "680px", paddingTop: "80px" }}>
       <div className="mb-4 d-flex justify-content-between align-items-center">
@@ -174,66 +192,48 @@ const AccessClient = () => {
           </p>
           <input
             className="form-control forum-input mb-3"
-            placeholder="Search by email..."
+            placeholder="Search by email and press Enter..."
             value={searchClient}
-            onChange={(e) => setSearchClient(e.target.value)}
+            onChange={(e) => {
+              setSearchClient(e.target.value);
+              if (selectedFriend) setSelectedFriend(null);
+            }}
+            onKeyDown={handleKeyDown}
           />
-          {searchClient && (
+          
+          {selectedFriend && (
             <div className="d-flex flex-column gap-2">
-              {filteredClients.length === 0 && (
-                <p className="text-muted" style={{ fontSize: "0.85rem" }}>
-                  No friends found
-                </p>
-              )}
-              {filteredClients.map((c) => {
-                const alreadySent = sentToClients.find(
-                  (a) => String(a.shared_with_id) === String(c.id)
-                );
-                return (
-                  <div
-                    key={c.id}
-                    className="d-flex justify-content-between align-items-center p-2 rounded"
-                    style={{ backgroundColor: "#f9fafb" }}
+              <div
+                className="d-flex justify-content-between align-items-center p-2 rounded"
+                style={{ backgroundColor: "#f9fafb" }}
+              >
+                <span style={{ fontSize: "0.9rem" }}>{selectedFriend.email}</span>
+                {sentToClients.find(a => String(a.shared_with_id) === String(selectedFriend.id)) ? (
+                  statusBadge(sentToClients.find(a => String(a.shared_with_id) === String(selectedFriend.id)).status)
+                ) : (
+                  <button
+                    className="btn btn-sm btn-custom rounded-pill px-3"
+                    onClick={() => sendClientRequest(selectedFriend.id)}
                   >
-                    <span style={{ fontSize: "0.9rem" }}>{c.email}</span>
-                    {alreadySent ? (
-                      statusBadge(alreadySent.status)
-                    ) : (
-                      <button
-                        className="btn btn-sm btn-custom rounded-pill px-3"
-                        onClick={() => sendClientRequest(c.id)}
-                      >
-                        <i className="bi bi-send me-1"></i>Send
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+                    <i className="bi bi-send me-1"></i>Send
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>
 
         {sentToClients.length > 0 && (
           <div className="mb-4">
-            <p className="fw-semibold mb-2" style={{ fontSize: "0.9rem" }}>
-              Sent requests
-            </p>
+            <p className="fw-semibold mb-2" style={{ fontSize: "0.9rem" }}>Sent requests</p>
             <div className="d-flex flex-column gap-2">
               {sentToClients.map((a) => (
-                <div
-                  key={a.id}
-                  className="forum-card p-3 d-flex justify-content-between align-items-center"
-                >
+                <div key={a.id} className="forum-card p-3 d-flex justify-content-between align-items-center">
                   <div>
-                    <span style={{ fontSize: "0.9rem" }}>
-                      {a.shared_with_email || `Friend #${a.shared_with_id}`}
-                    </span>
+                    <span style={{ fontSize: "0.9rem" }}>{a.shared_with_email || `Friend #${a.shared_with_id}`}</span>
                     <div className="mt-1">{statusBadge(a.status)}</div>
                   </div>
-                  <button
-                    className="btn btn-sm btn-forum-switch rounded-pill"
-                    onClick={() => deleteClientAccess(a.id)}
-                  >
+                  <button className="btn btn-sm btn-forum-switch rounded-pill" onClick={() => deleteClientAccess(a.id)}>
                     <i className="bi bi-x"></i> Cancel
                   </button>
                 </div>
@@ -244,47 +244,24 @@ const AccessClient = () => {
 
         {receivedFromClients.length > 0 && (
           <div className="mb-4">
-            <p className="fw-semibold mb-2" style={{ fontSize: "0.9rem" }}>
-              Received requests
-            </p>
+            <p className="fw-semibold mb-2" style={{ fontSize: "0.9rem" }}>Received requests</p>
             <div className="d-flex flex-column gap-2">
               {receivedFromClients.map((a) => (
                 <div key={a.id} className="forum-card p-3">
                   <div className="d-flex justify-content-between align-items-center">
                     <div>
-                      <span style={{ fontSize: "0.9rem" }}>
-                        {a.client_email || `Friend #${a.client_id}`}
-                      </span>
+                      <span style={{ fontSize: "0.9rem" }}>{a.client_email || `Friend #${a.client_id}`}</span>
                       <div className="mt-1">{statusBadge(a.status)}</div>
                     </div>
                     {a.status === "pending" && (
                       <div className="d-flex gap-2">
-                        <button
-                          className="btn btn-sm rounded-pill px-3"
-                          style={{
-                            backgroundColor: "#d1fae5",
-                            color: "#065f46",
-                          }}
-                          onClick={() => updateClientAccess(a.id, "approved")}
-                        >
+                        <button className="btn btn-sm rounded-pill px-3" style={{ backgroundColor: "#d1fae5", color: "#065f46" }} onClick={() => updateClientAccess(a.id, "approved")}>
                           <i className="bi bi-check me-1"></i>Approve
                         </button>
-                        <button
-                          className="btn btn-sm rounded-pill px-3"
-                          style={{ backgroundColor: "#fee2e2", color: "#991b1b" }}
-                          onClick={() => updateClientAccess(a.id, "rejected")}
-                        >
+                        <button className="btn btn-sm rounded-pill px-3" style={{ backgroundColor: "#fee2e2", color: "#991b1b" }} onClick={() => updateClientAccess(a.id, "rejected")}>
                           <i className="bi bi-x me-1"></i>Reject
                         </button>
                       </div>
-                    )}
-                    {a.status !== "pending" && (
-                      <button
-                        className="btn btn-sm btn-forum-switch rounded-pill"
-                        onClick={() => deleteClientAccess(a.id)}
-                      >
-                        <i className="bi bi-trash"></i>
-                      </button>
                     )}
                   </div>
                 </div>
@@ -292,14 +269,6 @@ const AccessClient = () => {
             </div>
           </div>
         )}
-
-        {sentToClients.length === 0 &&
-          receivedFromClients.length === 0 &&
-          !searchClient && (
-            <p className="text-muted text-center mt-4">
-              No access requests yet
-            </p>
-          )}
       </div>
     </div>
   );
