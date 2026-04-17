@@ -20,8 +20,8 @@ const EmotionalStats = () => {
     const [analyzedEntries, setAnalyzedEntries] = useState([]);
     const [range, setRange] = useState("week");
     
-    const token = sessionStorage.getItem("coachToken") || sessionStorage.getItem("clientToken") || store.coachToken || store.clientToken;
-    const isCoach = !!sessionStorage.getItem("coachToken") || !!store.coachToken;
+    const token = store.coachToken || store.clientToken;
+    const isCoach = !!store.coachToken;
     const viewingOwnData = !clientId;
     
     const endpoint = (clientId && isCoach) 
