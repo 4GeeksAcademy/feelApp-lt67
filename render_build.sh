@@ -9,7 +9,7 @@ pip install pipenv
 
 pipenv install
 
-pipenv run upgrade
+pipenv run flask db upgrade
 #!/usr/bin/env bash
 set -o errexit
 
