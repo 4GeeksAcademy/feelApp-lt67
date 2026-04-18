@@ -228,3 +228,9 @@ def seed_database():
     except Exception as e:
         db.session.rollback() 
         return jsonify({"error": str(e)}), 500
+    
+@shared_bp.route('/reset-db')
+def reset_db():
+    db.drop_all()
+    db.create_all()
+    return "Database deleted successfully.", 200    
