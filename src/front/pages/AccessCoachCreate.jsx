@@ -9,6 +9,7 @@ export const AccessCoachCreate = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedClient, setSelectedClient] = useState(null);
     const [status] = useState("pending");
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (!store.coachToken) {
@@ -32,14 +33,23 @@ export const AccessCoachCreate = () => {
 
     }, [store.coachToken, dispatch, navigate]);
 
-    const filteredClients = store.clients?.filter(c =>
-        (c.email || "").toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const handleSubmit = async (e) => {
+    const handleSearch = (e) => {
         e.preventDefault();
-        if (!selectedClient) return;
+        setError(null);
+        
+        const client = store.clients?.find(c => 
+            c.email.toLowerCase() === searchTerm.toLowerCase().trim()
+        );
 
+        if (client) {
+            setSelectedClient(client);
+        } else {
+            setSelectedClient(null);
+            setError("Client not found. Check the email and try again.");
+        }
+    };
+
+    const handleSendRequest = async () => {
         try {
             const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-request`, {
                 method: "POST",
@@ -72,67 +82,62 @@ export const AccessCoachCreate = () => {
         };
         const s = map[status] || map.pending;
         return (
-            <span
-                style={{
-                    backgroundColor: s.bg, color: s.color,
-                    padding: "2px 10px", borderRadius: "20px",
-                    fontSize: "0.75rem", fontWeight: 500,
-                }}
-            >
+            <span style={{ backgroundColor: s.bg, color: s.color, padding: "2px 10px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 500 }}>
                 {status}
             </span>
         );
     };
 
     return (
-        <div className="container" style={{ maxWidth: "680px", paddingTop: "80px", marginBottom:"80px" }}>
+        <div className="container" style={{ maxWidth: "680px", paddingTop: "80px" }}>
             <div className="mb-4 mt-5">
                 <h2 className="fw-500 mb-0">Request Access</h2>
                 <p className="text-muted" style={{ fontSize: "0.9rem" }}>Find and connect with your clients</p>
             </div>
 
             <div className="forum-card p-4 mb-4" style={{ background: "#fff", borderRadius: "20px", border: "1px solid #f1f5f9" }}>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3 position-relative">
+                <form onSubmit={!selectedClient ? handleSearch : (e) => e.preventDefault()}>
+                    <div className="mb-3">
                         <label className="form-label small fw-500 text-muted mb-2">Client Email</label>
-                        <input
-                            type="text"
-                            className="form-control rounded-pill border-light"
-                            style={{ padding: "10px 20px", background: "#f8fafc", fontSize: "0.95rem" }}
-                            placeholder="Type to search..."
-                            value={searchTerm}
-                            onChange={(e) => {
-                                setSearchTerm(e.target.value);
-                                if (selectedClient) setSelectedClient(null);
-                            }}
-                        />
-
-                        {searchTerm && !selectedClient && (
-                            <ul className="list-group position-absolute w-100 shadow mt-2" style={{ zIndex: 1000, maxHeight: "160px", overflowY: "auto", borderRadius: "12px" }}>
-                                {filteredClients?.map(c => (
-                                    <li
-                                        key={c.id}
-                                        className="list-group-item list-group-item-action border-0 py-2 px-3"
-                                        onClick={() => {
-                                            setSelectedClient(c);
-                                            setSearchTerm(c.email);
-                                        }}
-                                        style={{ cursor: "pointer", fontSize: "0.9rem" }}
-                                    >
-                                        {c.email}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                        <div className="d-flex gap-2">
+                            <input
+                                type="text"
+                                className="form-control rounded-pill border-light"
+                                style={{ padding: "10px 20px", background: "#f8fafc", fontSize: "0.95rem" }}
+                                placeholder="example@email.com"
+                                value={searchTerm}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value);
+                                    if (selectedClient) setSelectedClient(null);
+                                    if (error) setError(null);
+                                }}
+                            />
+                            {!selectedClient && (
+                                <button className="btn btn-custom rounded-pill px-4 fw-500" type="submit">
+                                    Search
+                                </button>
+                            )}
+                        </div>
                     </div>
 
-                    <button 
-                        className="btn btn-custom w-100 rounded-pill py-2 fw-500 mt-2" 
-                        disabled={!selectedClient}
-                        style={{ border: "none" }}
-                    >
-                        Send Request
-                    </button>
+                    {error && <p className="text-danger small ms-2">{error}</p>}
+
+                    {selectedClient && (
+                        <div className="p-3 mb-3 rounded-3 bg-light border-0 d-flex justify-content-between align-items-center">
+                            <div>
+                                <small className="d-block text-muted fw-500" style={{fontSize:"0.7rem"}}>CLIENT FOUND</small>
+                                <span className="fw-500">{selectedClient.email}</span>
+                            </div>
+                            <button 
+                                type="button"
+                                className="btn btn-custom rounded-pill px-4 fw-500" 
+                                style={{ border: "none" }}
+                                onClick={handleSendRequest}
+                            >
+                                Send Request
+                            </button>
+                        </div>
+                    )}
                 </form>
             </div>
 
@@ -159,4 +164,4 @@ export const AccessCoachCreate = () => {
             </div>
         </div>
     );
-};     
+};

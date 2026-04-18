@@ -192,11 +192,14 @@ function Intro() {
 function Features() {
   const features = [
     { title: "📝 Smart Journaling", text: "Record entries with emotion tags to identify patterns." },
-    { title: "📊 Advanced Analytics", text: "Interactive charts powered by AI sentiment analysis." },
+    { title: "🤖 AI Coach Advice", text: "Ask Google Gemini for immediate advice based on your lately emotional status." },
     { title: "👥 Community Forum", text: "Share posts, react with emojis, and explore content." },
     { title: "📍 Find a Professional", text: "Connect with psychologists, coaches, and therapists.", primary: true },
     { title: "🔐 Secure Sharing", text: "Control who can access your records with visibility permissions." },
-    { title: "🤝 Friends Access", text: "Share your entries with trusted users through mutual access." }
+    { title: "💬 Chat with Coach", text: "Send a message to your Coach for easier communication." },
+    { title: "🤝 Friends Access", text: "Share your entries with trusted users through mutual access." },
+    { title: "⭐ Favorite Entries", text: "Coaches can save important client updates for quick future reference." },
+    { title: "📈 Emotional Stats", text: "Track emotional evolution over weeks, months, or years with AI." }
   ];
 
   return (

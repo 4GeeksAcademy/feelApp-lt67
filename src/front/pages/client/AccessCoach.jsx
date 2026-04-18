@@ -6,6 +6,7 @@ const AccessCoach = () => {
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
   const [searchCoach, setSearchCoach] = useState("");
+  const [selectedCoach, setSelectedCoach] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -35,6 +36,25 @@ const AccessCoach = () => {
     }
   }, [dispatch, store.clientToken, store.coachs.length]);
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setError("");
+      setSuccess("");
+      
+      const coach = store.coachs.find(
+        (c) => c.email?.toLowerCase() === searchCoach.toLowerCase().trim()
+      );
+
+      if (coach) {
+        setSelectedCoach(coach);
+      } else {
+        setSelectedCoach(null);
+        setError("Coach not found with that exact email.");
+      }
+    }
+  };
+
   const sendCoachRequest = async (coachId) => {
     setError("");
     setSuccess("");
@@ -50,6 +70,8 @@ const AccessCoach = () => {
     if (resp.ok) {
       dispatch({ type: "add_access_coach", payload: data });
       setSuccess("Request sent to coach!");
+      setSearchCoach("");
+      setSelectedCoach(null);
     } else {
       setError(data.msg || "Error sending request");
     }
@@ -109,10 +131,6 @@ const AccessCoach = () => {
     (a) => String(a.client_id) === String(myId) && a.status === "pending"
   );
 
-  const filteredCoaches = store.coachs.filter((c) =>
-    c.email?.toLowerCase().includes(searchCoach.toLowerCase())
-  );
-
   return (
     <div className="container mt-5" style={{ maxWidth: "680px", paddingTop: "80px" }}>
       <div className="mb-4">
@@ -157,25 +175,27 @@ const AccessCoach = () => {
         </p>
         <input
           className="form-control forum-input mb-3"
-          placeholder="Search by email..."
+          placeholder="Search by email and press Enter..."
           value={searchCoach}
-          onChange={(e) => setSearchCoach(e.target.value)}
+          onChange={(e) => {
+            setSearchCoach(e.target.value);
+            if (selectedCoach) setSelectedCoach(null);
+          }}
+          onKeyDown={handleKeyDown}
         />
-        {searchCoach && (
+        
+        {selectedCoach && (
           <div className="d-flex flex-column gap-2">
-            {filteredCoaches.map((c) => {
-              const alreadyRelated = store.access_coach.find(a => String(a.coach_id) === String(c.id));
-              return (
-                <div key={c.id} className="d-flex justify-content-between align-items-center p-2 rounded" style={{ backgroundColor: "#f9fafb" }}>
-                  <span style={{ fontSize: "0.9rem" }}>{c.email}</span>
-                  {alreadyRelated ? statusBadge(alreadyRelated.status) : (
-                    <button className="btn btn-sm btn-custom rounded-pill px-3" onClick={() => sendCoachRequest(c.id)}>
-                      Grant Access
-                    </button>
-                  )}
-                </div>
-              );
-            })}
+            <div className="d-flex justify-content-between align-items-center p-2 rounded" style={{ backgroundColor: "#f9fafb" }}>
+              <span style={{ fontSize: "0.9rem" }}>{selectedCoach.email}</span>
+              {store.access_coach.find(a => String(a.coach_id) === String(selectedCoach.id)) ? (
+                statusBadge(store.access_coach.find(a => String(a.coach_id) === String(selectedCoach.id)).status)
+              ) : (
+                <button className="btn btn-sm btn-custom rounded-pill px-3" onClick={() => sendCoachRequest(selectedCoach.id)}>
+                  Grant Access
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>

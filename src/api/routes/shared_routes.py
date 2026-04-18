@@ -264,3 +264,4 @@ def get_messages(user_id):
     ).order_by(Message.created_at.asc()).all()
 
     return jsonify([m.serialize() for m in messages]), 200
+     

@@ -3,6 +3,38 @@ import os
 import requests
 from api.models import db, Client, Entry, Emotion, ClientFavorites, ClientPost, ReactionClientPost, ReactionAdmintPost, AdmintPost, AccessCoach, AccessClient
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+import google.generativeai as genai
+import re
+from werkzeug.security import generate_password_hash, check_password_hash
+
+def is_valid_password(password):
+    regex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d|.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    return re.match(regex, password)
+
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
+try:
+    model = genai.GenerativeModel(
+        model_name='gemini-3-flash-preview', 
+        system_instruction=(
+            "You are a professional emotional coach for the Feel App. "
+            "Your goal is to provide brief, empathetic, and actionable advice. "
+            "Analyze the user's recent emotions and offer a supportive perspective. "
+            "Keep your response under 3 sentences."
+        )
+    )
+except Exception as e:
+    print(f"Switching to fallback model due to: {e}")
+    model = genai.GenerativeModel(
+        model_name='gemini-2.0-flash',
+        system_instruction=(
+            "You are a professional emotional coach for the Feel App. "
+            "Your goal is to provide brief, empathetic, and actionable advice. "
+            "Analyze the user's recent emotions and offer a supportive perspective. "
+            "Keep your response under 3 sentences."
+        )
+    )
+
 
 client_bp = Blueprint('client_routes', __name__)
 
@@ -12,29 +44,34 @@ def signup():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
+
     if not email or not password:
         return jsonify({"msg": "Email and password are required"}), 400
+    
+    if not is_valid_password(password):
+        return jsonify({"msg": "Password must be at least 8 characters long, include uppercase, lowercase and a special character"}), 400
+
     if Client.query.filter_by(email=email).first():
         return jsonify({"msg": "Client already exists"}), 400
-    new_client = Client(email=email, password=password)
+
+    hashed_password = generate_password_hash(password)
+    new_client = Client(email=email, password=hashed_password)
+    
     db.session.add(new_client)
     db.session.commit()
     return jsonify({"msg": "Client created"}), 201
 
-@client_bp.route('/login', methods=['POST', 'OPTIONS'])
+@client_bp.route('/login', methods=['POST'])
 def login():
-    if request.method == 'OPTIONS':
-        return '', 200
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
-    if not email or not password:
-        return jsonify({"msg": "Email and password are required"}), 400
+
     client = Client.query.filter_by(email=email).first()
-    if not client:
-        return jsonify({"msg": "Client not found"}), 404
-    if client.password != password:
+    
+    if not client or not check_password_hash(client.password, password):
         return jsonify({"msg": "Bad credentials"}), 401
+    
     access_token = create_access_token(identity=str(client.id))
     return jsonify({"token": access_token, "client": client.serialize()}), 200
 
@@ -369,7 +406,11 @@ def get_posts_by_client(client_id):
 def get_entries_by_client(client_id):
     current_id = get_jwt_identity()
 
-    access = AccessClient.query.filter(
+    if str(current_id) == str(client_id):
+        entries = Entry.query.filter_by(client_id=client_id).all()
+        return jsonify([e.serialize() for e in entries]), 200
+
+    access_friend = AccessClient.query.filter(
         (
             (AccessClient.client_id == client_id) &
             (AccessClient.shared_with_id == current_id)
@@ -381,7 +422,13 @@ def get_entries_by_client(client_id):
         AccessClient.status == "approved"
     ).first()
 
-    if str(current_id) != str(client_id) and not access:
+    access_coach = AccessCoach.query.filter_by(
+        client_id=client_id,
+        coach_id=current_id,
+        status="approved"
+    ).first()
+
+    if not access_friend and not access_coach:
         return jsonify({"error": "Access denied"}), 403
 
     entries = Entry.query.filter_by(client_id=client_id).all()
@@ -536,3 +583,31 @@ def get_my_coach():
 
     return jsonify([a.serialize() for a in access]), 200
 
+
+# GEMINI
+@client_bp.route('/emotional-advice', methods=['GET'])
+@jwt_required()
+def get_emotional_advice():
+    try:
+        current_client_id = get_jwt_identity()
+        
+        last_entries = Entry.query.filter_by(client_id=current_client_id)\
+            .order_by(Entry.id.desc())\
+            .limit(3)\
+            .all()
+
+        if not last_entries:
+            return jsonify({"advice": "No entries found yet."}), 200
+
+        emotion_names = [entry.emotion.name for entry in last_entries if entry.emotion]
+        history = ", ".join(emotion_names)
+        
+        prompt = f"The user feels: {history}. Give a short advice."
+        
+        response = model.generate_content(prompt)
+        
+        return jsonify({"advice": response.text.strip()}), 200
+
+    except Exception as e:
+        print(f"CRITICAL ERROR: {str(e)}") 
+        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500

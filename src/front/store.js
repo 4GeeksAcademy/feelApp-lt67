@@ -41,6 +41,7 @@ export default function storeReducer(store, action = {}) {
   switch (action.type) {
     // AUTH
     case "login_client":
+      sessionStorage.clear(); // Limpia sesiones anteriores
       sessionStorage.setItem("clientToken", action.payload.token);
       sessionStorage.setItem("clientEmail", action.payload.client?.email || "");
       sessionStorage.setItem("clientId", action.payload.client?.id || "");
@@ -49,7 +50,7 @@ export default function storeReducer(store, action = {}) {
         action.payload.client?.sign_up_date || "",
       );
       return {
-        ...store,
+        ...initialStore(), // Resetea el store a su estado base
         clientToken: action.payload.token,
         clientEmail: action.payload.client?.email || null,
         clientId: action.payload.client?.id || null,
@@ -57,6 +58,7 @@ export default function storeReducer(store, action = {}) {
       };
 
     case "login_coach":
+      sessionStorage.clear();
       sessionStorage.setItem("coachToken", action.payload.token);
       sessionStorage.setItem("coachEmail", action.payload.coach?.email || "");
       sessionStorage.setItem("coachId", action.payload.coach?.id || "");
@@ -65,7 +67,7 @@ export default function storeReducer(store, action = {}) {
         action.payload.coach?.sign_up_date || "",
       );
       return {
-        ...store,
+        ...initialStore(),
         coachToken: action.payload.token,
         coachEmail: action.payload.coach?.email || null,
         coachId: action.payload.coach?.id || null,
@@ -73,6 +75,7 @@ export default function storeReducer(store, action = {}) {
       };
 
     case "login_admint":
+      sessionStorage.clear();
       sessionStorage.setItem("admintToken", action.payload.token);
       sessionStorage.setItem("admintEmail", action.payload.admint?.email || "");
       sessionStorage.setItem("admintId", action.payload.admint?.id || "");
@@ -81,7 +84,7 @@ export default function storeReducer(store, action = {}) {
         action.payload.admint?.sign_up_date || "",
       );
       return {
-        ...store,
+        ...initialStore(),
         admintToken: action.payload.token,
         admintEmail: action.payload.admint?.email || null,
         admintId: action.payload.admint?.id || null,
@@ -93,44 +96,13 @@ export default function storeReducer(store, action = {}) {
       return { ...store, userAvatar: action.payload };
 
     case "logout_client":
-      sessionStorage.removeItem("clientToken");
-      sessionStorage.removeItem("userAvatar");
-      return {
-        ...store,
-        clientToken: null,
-        clientEmail: null,
-        clientId: null,
-        clientSignupDate: null,
-        userAvatar: null,
-      };
-
     case "logout_coach":
-      sessionStorage.removeItem("coachToken");
-      sessionStorage.removeItem("userAvatar");
-      return {
-        ...store,
-        coachToken: null,
-        coachEmail: null,
-        coachId: null,
-        coachSignupDate: null,
-        userAvatar: null,
-      };
-
     case "logout_admint":
-      sessionStorage.removeItem("admintToken");
-      sessionStorage.removeItem("userAvatar");
-      return {
-        ...store,
-        admintToken: null,
-        admintEmail: null,
-        admintId: null,
-        admintSignupDate: null,
-        userAvatar: null,
-      };
+    case "logout":
+      sessionStorage.clear();
+      return initialStore();
 
-    // USERS
-
-    // CLIENTS
+    // USERS (CLIENTS)
     case "set_clients":
       return { ...store, clients: action.payload };
     case "add_client":
@@ -139,7 +111,7 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         clients: store.clients.map((c) =>
-          c.id === action.payload.id ? { ...c, ...action.payload } : c,
+          c.id === action.payload.id ? { ...c, ...action.payload } : c
         ),
       };
     case "remove_client":
@@ -157,7 +129,7 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         admints: store.admints.map((a) =>
-          a.id === action.payload.id ? { ...a, ...action.payload } : a,
+          a.id === action.payload.id ? { ...a, ...action.payload } : a
         ),
       };
     case "remove_admint":
@@ -175,7 +147,7 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         coachs: store.coachs.map((c) =>
-          c.id === action.payload.id ? { ...c, ...action.payload } : c,
+          c.id === action.payload.id ? { ...c, ...action.payload } : c
         ),
       };
     case "remove_coach":
@@ -193,7 +165,7 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         emotions: store.emotions.map((e) =>
-          e.id === action.payload.id ? { ...e, ...action.payload } : e,
+          e.id === action.payload.id ? { ...e, ...action.payload } : e
         ),
       };
     case "remove_emotion":
@@ -206,15 +178,12 @@ export default function storeReducer(store, action = {}) {
     case "set_admint_posts":
       return { ...store, admint_posts: action.payload };
     case "add_admint_post":
-      return {
-        ...store,
-        admint_posts: [...store.admint_posts, action.payload],
-      };
+      return { ...store, admint_posts: [...store.admint_posts, action.payload] };
     case "update_admint_post":
       return {
         ...store,
         admint_posts: store.admint_posts.map((p) =>
-          p.id === action.payload.id ? { ...p, ...action.payload } : p,
+          p.id === action.payload.id ? { ...p, ...action.payload } : p
         ),
       };
     case "remove_admint_post":
@@ -232,7 +201,7 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         reactions: store.reactions.map((r) =>
-          r.id === action.payload.id ? { ...r, ...action.payload } : r,
+          r.id === action.payload.id ? { ...r, ...action.payload } : r
         ),
       };
     case "remove_reaction":
@@ -250,7 +219,7 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         entries: store.entries.map((e) =>
-          e.id === action.payload.id ? { ...e, ...action.payload } : e,
+          e.id === action.payload.id ? { ...e, ...action.payload } : e
         ),
       };
     case "remove_entry":
@@ -270,110 +239,80 @@ export default function storeReducer(store, action = {}) {
         favorites: store.favorites.filter((f) => f.id !== action.payload),
       };
 
-    //  COACH FAVORITES
+    // COACH FAVORITES 
     case "set_coach_favorites":
       return { ...store, coach_favorites: action.payload };
     case "add_coach_favorite":
-      return {
-        ...store,
-        coach_favorites: [...store.coach_favorites, action.payload],
-      };
+      return { ...store, coach_favorites: [...store.coach_favorites, action.payload] };
     case "remove_coach_favorite":
       return {
         ...store,
-        coach_favorites: store.coach_favorites.filter(
-          (f) => f.id !== action.payload,
-        ),
+        coach_favorites: store.coach_favorites.filter((f) => f.id !== action.payload),
       };
 
-    // CLIENTS POSTS
+    // CLIENTS POSTS 
     case "set_clients_posts":
       return { ...store, clients_posts: action.payload };
     case "add_client_post":
-      return {
-        ...store,
-        clients_posts: [...store.clients_posts, action.payload],
-      };
+      return { ...store, clients_posts: [...store.clients_posts, action.payload] };
     case "update_client_post":
       return {
         ...store,
         clients_posts: store.clients_posts.map((p) =>
-          p.id === action.payload.id ? { ...p, ...action.payload } : p,
+          p.id === action.payload.id ? { ...p, ...action.payload } : p
         ),
       };
     case "remove_client_post":
       return {
         ...store,
-        clients_posts: store.clients_posts.filter(
-          (p) => p.id !== action.payload,
-        ),
+        clients_posts: store.clients_posts.filter((p) => p.id !== action.payload),
       };
 
-    // REACTION CLIENT
+    // REACTION CLIENT 
     case "set_reaction_client":
       return { ...store, reaction_client: action.payload };
     case "add_reaction_client":
-      return {
-        ...store,
-        reaction_client: [...store.reaction_client, action.payload],
-      };
+      return { ...store, reaction_client: [...store.reaction_client, action.payload] };
     case "update_reaction_client":
       return {
         ...store,
         reaction_client: store.reaction_client.map((r) =>
-          r.id === action.payload.id ? { ...r, ...action.payload } : r,
+          r.id === action.payload.id ? { ...r, ...action.payload } : r
         ),
       };
     case "remove_reaction_client":
       return {
         ...store,
-        reaction_client: store.reaction_client.filter(
-          (r) => r.id !== action.payload,
-        ),
+        reaction_client: store.reaction_client.filter((r) => r.id !== action.payload),
       };
 
     // ACCESS COACH
     case "set_access_coach":
       return { ...store, access_coach: action.payload };
     case "add_access_coach":
-      return {
-        ...store,
-        access_coach: [...store.access_coach, action.payload],
-      };
+      return { ...store, access_coach: [...store.access_coach, action.payload] };
     case "remove_access_coach":
       return {
         ...store,
         access_coach: store.access_coach.filter((a) => a.id !== action.payload),
       };
 
-    // ACCESS CLIENTS
+    // ACCESS CLIENTS 
     case "set_access_clients":
       return { ...store, access_clients: action.payload };
     case "add_access_client":
-      return {
-        ...store,
-        access_clients: [...store.access_clients, action.payload],
-      };
+      return { ...store, access_clients: [...store.access_clients, action.payload] };
     case "remove_access_client":
       return {
         ...store,
-        access_clients: store.access_clients.filter(
-          (a) => a.id !== action.payload,
-        ),
+        access_clients: store.access_clients.filter((a) => a.id !== action.payload),
       };
+
     case "set_nearby_users":
       return { ...store, nearbyUsers: action.payload };
 
     case "clear_nearby_users":
       return { ...store, nearbyUsers: [] };
-
-    // CHATS
-
-    case "set_messages":
-      return { ...store, messages: action.payload };
-
-    case "add_message":
-      return { ...store, messages: [...store.messages, action.payload] };
 
     default:
       throw Error(`Unknown action: "${action.type}"`);

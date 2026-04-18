@@ -1,6 +1,12 @@
 from flask import Blueprint, request, jsonify
 from api.models import db, Coach, CoachFavorites, Entry, AccessCoach
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+import re
+from werkzeug.security import generate_password_hash, check_password_hash
+
+def is_valid_password(password):
+    regex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d|.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    return re.match(regex, password)
 
 coach_bp = Blueprint('coach_routes', __name__)
 
@@ -10,29 +16,31 @@ def coach_signup():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
-    if not email or not password:
-        return jsonify({"msg": "Email and password are required"}), 400
+
+    if not is_valid_password(password):
+        return jsonify({"msg": "Password too weak"}), 400
+
     if Coach.query.filter_by(email=email).first():
         return jsonify({"msg": "Coach already exists"}), 400
-    new_coach = Coach(email=email, password=password)
+
+    hashed_password = generate_password_hash(password)
+    new_coach = Coach(email=email, password=hashed_password)
+    
     db.session.add(new_coach)
     db.session.commit()
     return jsonify({"msg": "Coach created"}), 201
 
-@coach_bp.route('/coach-login', methods=['POST', 'OPTIONS'])
+@coach_bp.route('/coach-login', methods=['POST'])
 def coach_login():
-    if request.method == 'OPTIONS':
-        return '', 200
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
-    if not email or not password:
-        return jsonify({"msg": "Email and password are required"}), 400
+
     coach = Coach.query.filter_by(email=email).first()
-    if not coach:
-        return jsonify({"msg": "Coach not found"}), 404
-    if coach.password != password:
+    
+    if not coach or not check_password_hash(coach.password, password):
         return jsonify({"msg": "Bad credentials"}), 401
+    
     access_token = create_access_token(identity=str(coach.id))
     return jsonify({"token": access_token, "coach": coach.serialize()}), 200
 

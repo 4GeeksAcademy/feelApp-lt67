@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 
@@ -14,7 +14,15 @@ const SharedEntriesList = () => {
     if (!activeToken) navigate("/");
   }, [activeToken]);
 
+  const currentFavs = isCoach ? store.coach_favorites : store.favorites;
+
+  const favoriteEntryIds = useMemo(() => {
+    return new Set(currentFavs.map((f) => f.entry_id));
+  }, [currentFavs]);
+
   useEffect(() => {
+    if (!activeToken) return;
+
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/client/${clientId}`, {
       headers: { Authorization: `Bearer ${activeToken}` },
     })
@@ -30,17 +38,19 @@ const SharedEntriesList = () => {
         .then((data) => dispatch({ type: "set_emotions", payload: data }));
     }
 
-    const favEndpoint = isCoach ? "coach-favorites" : "client-favorites";
-    const favAction = isCoach ? "set_coach_favorites" : "set_favorites";
+    if (currentFavs.length === 0) {
+      const favEndpoint = isCoach ? "coach-favorites" : "client-favorites";
+      const favAction = isCoach ? "set_coach_favorites" : "set_favorites";
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${favEndpoint}`, {
-      headers: { Authorization: `Bearer ${activeToken}` },
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data))
-          dispatch({ type: favAction, payload: data });
-      });
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${favEndpoint}`, {
+        headers: { Authorization: `Bearer ${activeToken}` },
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data))
+            dispatch({ type: favAction, payload: data });
+        });
+    }
 
     if (store.clients.length === 0) {
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/clients`, {
@@ -52,10 +62,7 @@ const SharedEntriesList = () => {
             dispatch({ type: "set_clients", payload: data });
         });
     }
-  }, [clientId, isCoach]);
-
-  const currentFavs = isCoach ? store.coach_favorites : store.favorites;
-  const favoriteEntryIds = new Set(currentFavs.map((f) => f.entry_id));
+  }, [clientId, isCoach, activeToken]);
 
   const friendEmail =
     store.clients.find((c) => String(c.id) === String(clientId))?.email ||
@@ -102,17 +109,18 @@ const SharedEntriesList = () => {
 
   return (
     <div className="container" style={{ maxWidth: "680px", paddingTop: "120px"}}>
-      <div className="text-start">
-        <h2 style={{ margin: 0 }}>Entries</h2>
-        <p className="text-muted">{friendEmail}</p>
-      </div>
-      <div className="d-flex justify-content-end mb-5">
+      <div className="d-flex justify-content-between align-items-center mb-5">
+        <div className="text-start">
+          <h2 style={{ margin: 0 }}>Entries</h2>
+          <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>{friendEmail}</p>
+        </div>
+        
         <button
-        className="btn btn-forum-switch rounded-pill px-4"
-        onClick={() => navigate(store.clientToken ? "/shared" : "/access-coach")}
-      >
-        <i className="bi bi-arrow-left me-2"></i>Back
-      </button>
+          className="btn btn-forum-switch rounded-pill px-4"
+          onClick={() => navigate(store.clientToken ? "/shared" : "/access-coach")}
+        >
+          <i className="bi bi-arrow-left me-2"></i>Back
+        </button>
       </div>
 
       {store.entries.length === 0 ? (
