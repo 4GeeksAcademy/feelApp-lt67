@@ -9,7 +9,7 @@ pip install pipenv
 
 pipenv install
 
-pipenv run python reset_db.py
+pipenv run python src/reset_db.py
 
 pipenv run flask db stamp head || true
 
