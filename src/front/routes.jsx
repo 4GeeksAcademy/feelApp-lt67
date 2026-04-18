@@ -69,7 +69,6 @@ import { AdminPrivate } from "./pages/login/AdminPrivate";
 
 // CHAT
 import Chat from "./pages/chat/chat";
-import ClientChat from "./pages/chat/client-chat";
 
 
 export const router = createBrowserRouter(
@@ -125,8 +124,6 @@ export const router = createBrowserRouter(
       <Route path="/aboutUs" element={<AboutUs />} />
 
       <Route path="/chat" element={<Chat />} />
-      <Route path="/client-chat" element={<ClientChat />} />
-
 
       <Route path="/stats/:clientId" element={<EmotionalStats />} />
 

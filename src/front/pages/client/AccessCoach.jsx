@@ -212,9 +212,14 @@ const AccessCoach = () => {
                   <span style={{ fontSize: "0.9rem" }}>{a.coach_email || `Coach #${a.coach_id}`}</span>
                   <div className="mt-1">{statusBadge(a.status)}</div>
                 </div>
-                <button className="btn btn-sm btn-forum-switch rounded-pill" onClick={() => deleteCoachAccess(a.id)}>
-                  <i className="bi bi-trash me-1"></i> Revoke
-                </button>
+               <div className="d-flex gap-2">
+              <button className="btn btn-sm btn-forum-switch rounded-pill" onClick={() => navigate(`/chat`)}>
+                <i className="bi bi-chat-dots"></i> Chat
+              </button>
+              <button className="btn btn-sm btn-forum-switch rounded-pill" onClick={() => deleteCoachAccess(a.id)}>
+                <i className="bi bi-trash me-1"></i> Revoke
+              </button>
+            </div>
               </div>
             ))}
           </div>

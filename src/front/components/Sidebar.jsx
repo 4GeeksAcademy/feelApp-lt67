@@ -152,11 +152,6 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <i className="bi bi-share"></i>
                   <span>Shared Entries</span>
                 </Link>
-
-                <Link to="/client-chat" style={linkStyle("/client-chat")}>
-                  <i className="bi bi-chat-fill"></i>
-                  <span>Chat</span>
-                </Link>
               </div>
 
               <div style={{ marginBottom: "28px" }}>
@@ -203,6 +198,10 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <i className="bi bi-briefcase"></i>
                   <span>My Coach</span>
                 </Link>
+               <Link to="/chat" style={linkStyle("/client-chat")}>
+                  <i className="bi bi-chat-dots"></i>
+                  <span>Chat</span>
+                </Link>
               </div>
             </>
           )}
@@ -233,16 +232,14 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 <i className="bi-chat-dots"></i>
                 <span>Access</span>
               </Link>
+              <Link to="/chat" style={linkStyle("/client-chat")}>
+                  <i className="bi bi-chat-dots"></i>
+                  <span>Chat</span>
+                </Link>
                     <Link to="/nearyou" style={linkStyle("/nearyou")}>
                   <i className="bi bi-geo-alt"></i>
                   <span>Find Near You</span>
-                </Link>
-
-                 <Link to="/chat" style={linkStyle("/chat")}>
-                  <i className="bi bi-chat-fill"></i>
-                  <span>Chat</span>
-                </Link>
-                
+                </Link>                
             </div>
           )}
 

@@ -308,6 +308,18 @@ export default function storeReducer(store, action = {}) {
         access_clients: store.access_clients.filter((a) => a.id !== action.payload),
       };
 
+    // CHAT MESSAGES 
+    case "set_messages":
+      return { ...store, messages: action.payload };
+    
+    case "add_message":
+      return { ...store, messages: [...store.messages, action.payload] };
+
+    case "clear_chat":
+      return { ...store, messages: [] };  
+
+    // MAPS
+    
     case "set_nearby_users":
       return { ...store, nearbyUsers: action.payload };
 

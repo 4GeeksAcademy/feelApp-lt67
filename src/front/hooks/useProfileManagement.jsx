@@ -40,6 +40,7 @@ export const useProfileManagement = () => {
  
   const handleLogout = () => {
     const role = getUserRole();
+    sessionStorage.clear();
     if (role === "client") dispatch({ type: "logout_client" });
     else if (role === "coach") dispatch({ type: "logout_coach" });
     else if (role === "admint") dispatch({ type: "logout_admint" });
