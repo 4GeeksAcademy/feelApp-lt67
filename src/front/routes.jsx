@@ -67,6 +67,10 @@ import { ClientPrivate } from "./pages/client/ClientPrivate";
 import { CoachPrivate } from "./pages/login/CoachPrivate";
 import { AdminPrivate } from "./pages/login/AdminPrivate";
 
+// CHAT
+import Chat from "./pages/chat/chat";
+import ClientChat from "./pages/chat/client-chat";
+
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -119,6 +123,10 @@ export const router = createBrowserRouter(
       <Route path="/client-signup" element={<SignUp title="Client Sign Up" apiEndpoint="/api/signup" loginPath="/login" />} />
       <Route path="/coach-signup" element={<SignUp title="Coach Sign Up" apiEndpoint="/api/coach-signup" loginPath="/login" />} />
       <Route path="/aboutUs" element={<AboutUs />} />
+
+      <Route path="/chat" element={<Chat />} />
+      <Route path="/client-chat" element={<ClientChat />} />
+
 
       <Route path="/stats/:clientId" element={<EmotionalStats />} />
 

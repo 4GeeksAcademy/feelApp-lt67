@@ -14,6 +14,7 @@ export const initialStore = () => {
     access_coach: [],
     access_clients: [],
     nearbyUsers: [],
+    messages: [],
 
     // Auth — client
     clientToken: sessionStorage.getItem("clientToken") || null,
@@ -24,7 +25,7 @@ export const initialStore = () => {
 
     // Auth — coach
     coachToken: sessionStorage.getItem("coachToken") || null,
-    coachId: sessionStorage.getItem("coachId") || null,        
+    coachId: sessionStorage.getItem("coachId") || null,
     coachEmail: sessionStorage.getItem("coachEmail") || null,
     coachSignupDate: sessionStorage.getItem("coachSignupDate") || null,
 
@@ -38,14 +39,16 @@ export const initialStore = () => {
 
 export default function storeReducer(store, action = {}) {
   switch (action.type) {
-
     // AUTH
     case "login_client":
       sessionStorage.clear(); // Limpia sesiones anteriores
       sessionStorage.setItem("clientToken", action.payload.token);
       sessionStorage.setItem("clientEmail", action.payload.client?.email || "");
       sessionStorage.setItem("clientId", action.payload.client?.id || "");
-      sessionStorage.setItem("clientSignupDate", action.payload.client?.sign_up_date || "");
+      sessionStorage.setItem(
+        "clientSignupDate",
+        action.payload.client?.sign_up_date || "",
+      );
       return {
         ...initialStore(), // Resetea el store a su estado base
         clientToken: action.payload.token,
@@ -59,7 +62,10 @@ export default function storeReducer(store, action = {}) {
       sessionStorage.setItem("coachToken", action.payload.token);
       sessionStorage.setItem("coachEmail", action.payload.coach?.email || "");
       sessionStorage.setItem("coachId", action.payload.coach?.id || "");
-      sessionStorage.setItem("coachSignupDate", action.payload.coach?.sign_up_date || "");
+      sessionStorage.setItem(
+        "coachSignupDate",
+        action.payload.coach?.sign_up_date || "",
+      );
       return {
         ...initialStore(),
         coachToken: action.payload.token,
@@ -73,7 +79,10 @@ export default function storeReducer(store, action = {}) {
       sessionStorage.setItem("admintToken", action.payload.token);
       sessionStorage.setItem("admintEmail", action.payload.admint?.email || "");
       sessionStorage.setItem("admintId", action.payload.admint?.id || "");
-      sessionStorage.setItem("admintSignupDate", action.payload.admint?.sign_up_date || "");
+      sessionStorage.setItem(
+        "admintSignupDate",
+        action.payload.admint?.sign_up_date || "",
+      );
       return {
         ...initialStore(),
         admintToken: action.payload.token,

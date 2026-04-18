@@ -41,12 +41,14 @@ setup_commands(app)
 
 # Add all endpoints form the API with a "api" prefix
 
-from api.routes import client_bp, coach_bp, admin_bp, shared_bp
+from api.routes import client_bp, coach_bp, admin_bp, shared_bp, chat_bp
 
 app.register_blueprint(client_bp, url_prefix='/api')
 app.register_blueprint(coach_bp, url_prefix='/api')
 app.register_blueprint(admin_bp, url_prefix='/api')
 app.register_blueprint(shared_bp, url_prefix='/api')
+app.register_blueprint(chat_bp, url_prefix='/api')
+
 
 # Handle/serialize errors like a JSON object
 

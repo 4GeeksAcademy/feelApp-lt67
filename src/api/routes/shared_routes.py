@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost, Client, Coach, Admint, Entry, ClientPost, ClientFavorites, CoachFavorites
+from api.models import db, Emotion, AdmintPost, AccessCoach, AccessClient, ReactionAdmintPost, ReactionClientPost, Client, Coach, Admint, Entry, ClientPost, ClientFavorites, CoachFavorites,Message
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from math import radians, sin, cos, sqrt, atan2
 from api.commands import run_seeding
@@ -228,4 +228,40 @@ def seed_database():
     except Exception as e:
         db.session.rollback() 
         return jsonify({"error": str(e)}), 500
+
+@shared_bp.route('/chat/message', methods=['POST'])
+@jwt_required()
+def send_message():
+    current_user_id = get_jwt_identity()
+    data = request.get_json()
+
+    receiver_id = data.get("receiver_id")
+    content = data.get("content")
+
+    if not receiver_id or not content:
+        return jsonify({"msg": "receiver_id and content are required"}), 400
+
+    new_message = Message(
+        sender_id=current_user_id,
+        receiver_id=receiver_id,
+        content=content
+    )
+
+    db.session.add(new_message)
+    db.session.commit()
+
+    return jsonify(new_message.serialize()), 201
+
+
+@shared_bp.route('/chat/<int:user_id>', methods=['GET'])
+@jwt_required()
+def get_messages(user_id):
+    current_user_id = get_jwt_identity()
+
+    messages = Message.query.filter(
+        ((Message.sender_id == current_user_id) & (Message.receiver_id == user_id)) |
+        ((Message.sender_id == user_id) & (Message.receiver_id == current_user_id))
+    ).order_by(Message.created_at.asc()).all()
+
+    return jsonify([m.serialize() for m in messages]), 200
      
