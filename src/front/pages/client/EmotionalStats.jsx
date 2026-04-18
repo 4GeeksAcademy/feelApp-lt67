@@ -168,9 +168,24 @@ const EmotionalStats = () => {
             `}</style>
 
             <div className="mb-4 mt-5">
-                <h2 className="mb-0">{viewingOwnData ? "My Emotional Stats" : "Client Insight"}</h2>
-                <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>AI analysis based on written entries</p>
+            <div className="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 className="mb-0">
+                        {viewingOwnData ? "My Emotional Stats" : "Client Insight"}
+                    </h2>
+                    <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>
+                        AI analysis based on written entries
+                    </p>
+                </div>
+                
+                <button
+                    className="btn btn-forum-switch rounded-pill px-4"
+                    onClick={() => navigate(store.clientToken ? "/shared" : "/access-coach")}
+                >
+                    <i className="bi bi-arrow-left me-2"></i>Back
+                </button>
             </div>
+        </div>
 
             <div className="d-flex gap-2 mb-4 overflow-auto pb-2">
                 {['week', 'month', 'quarter', 'year'].map(r => (
