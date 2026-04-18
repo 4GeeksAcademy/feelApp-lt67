@@ -9,8 +9,8 @@ pip install pipenv
 
 pipenv install
 
-pipenv run flask db stamp head
+pipenv run python reset_db.py
+
+pipenv run flask db stamp head || true
 
 pipenv run flask db upgrade
-
-
