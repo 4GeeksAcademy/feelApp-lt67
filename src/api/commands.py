@@ -1,6 +1,7 @@
 import click
 import random
 from datetime import datetime, timedelta, timezone
+from werkzeug.security import generate_password_hash
 from api.models import db, Client, Coach, Admint, Emotion, Entry, ClientPost, AdmintPost, ReactionClientPost, ReactionAdmintPost, AccessClient, AccessCoach, ClientFavorites, CoachFavorites
 
 def days_ago(n):
@@ -12,6 +13,8 @@ def format_date(dt):
 def run_seeding():
 
     now = datetime.now(timezone.utc)
+    # Contraseña que cumple con los nuevos requisitos
+    test_password = generate_password_hash("FeelApp2026!")
 
     # ---------------- EMOTIONS ----------------
     EMOTIONS_DATA = [
@@ -57,7 +60,7 @@ def run_seeding():
         if not admin:
             admin = Admint(
                 email=email,
-                password="123",
+                password=test_password, # CIFRADO
                 profile_image=f"https://i.pravatar.cc/150?img={i+1}"
             )
             db.session.add(admin)
@@ -99,7 +102,7 @@ def run_seeding():
         if not Coach.query.filter_by(email=email).first():
             db.session.add(Coach(
                 email=email,
-                password="123",
+                password=test_password, # CIFRADO
                 bio=bio,
                 latitude=-34.60 + random.uniform(-0.05, 0.05),
                 longitude=-58.40 + random.uniform(-0.05, 0.05),
@@ -126,7 +129,7 @@ def run_seeding():
         if not client:
             client = Client(
                 email=email,
-                password="123",
+                password=test_password, # CIFRADO
                 sign_up_date=days_ago(days),
                 bio=bio,
                 latitude=-34.60 + random.uniform(-0.05, 0.05),

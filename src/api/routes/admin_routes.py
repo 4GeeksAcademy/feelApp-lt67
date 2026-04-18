@@ -1,31 +1,54 @@
 from flask import Blueprint, request, jsonify
 from api.models import db, Client, Admint, Coach, Emotion, AdmintPost, ReactionAdmintPost, ReactionClientPost
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+import re
+from werkzeug.security import generate_password_hash, check_password_hash
+
+def is_valid_password(password):
+    regex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d|.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    return re.match(regex, password)
 
 admin_bp = Blueprint('admin_routes', __name__)
 
-# AUTH
+from werkzeug.security import generate_password_hash, check_password_hash
+
+# AUTH ADMIN
 @admin_bp.route('/admint-signup', methods=['POST'])
 def admint_signup():
     body = request.get_json()
-    if Admint.query.filter_by(email=body["email"]).first():
-        return jsonify({"msg": "Admin already exists"}), 401
-    new_admint = Admint(email=body["email"], password=body["password"])
+    email = body.get("email")
+    password = body.get("password")
+
+    if not email or not password:
+        return jsonify({"msg": "Email and password are required"}), 400
+
+    if not is_valid_password(password):
+        return jsonify({"msg": "Password must be at least 8 characters long, include uppercase, lowercase and a special character"}), 400
+
+    if Admint.query.filter_by(email=email).first():
+        return jsonify({"msg": "Admin already exists"}), 400
+
+    hashed_password = generate_password_hash(password)
+    new_admint = Admint(email=email, password=hashed_password)
+    
     db.session.add(new_admint)
     db.session.commit()
-    return jsonify({"msg": "Admint created"}), 200
+    return jsonify({"msg": "Admint created"}), 201
 
 @admin_bp.route('/admint-login', methods=['POST', 'OPTIONS'])
 def admint_login():
     if request.method == 'OPTIONS':
         return '', 200
-    email = request.json.get("email")
-    password = request.json.get("password")
+    
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
     admint = Admint.query.filter_by(email=email).first()
-    if admint is None:
-        return jsonify({"msg": "Admin not found"}), 401
-    if password != admint.password:
+    
+    if admint is None or not check_password_hash(admint.password, password):
         return jsonify({"msg": "Bad credentials"}), 401
+
     access_token = create_access_token(identity=str(admint.id))
     return jsonify({"token": access_token, "admint": admint.serialize()}), 200
 

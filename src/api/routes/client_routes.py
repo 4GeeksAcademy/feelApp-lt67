@@ -4,6 +4,12 @@ import requests
 from api.models import db, Client, Entry, Emotion, ClientFavorites, ClientPost, ReactionClientPost, ReactionAdmintPost, AdmintPost, AccessCoach, AccessClient
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import google.generativeai as genai
+import re
+from werkzeug.security import generate_password_hash, check_password_hash
+
+def is_valid_password(password):
+    regex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d|.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    return re.match(regex, password)
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
@@ -38,29 +44,34 @@ def signup():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
+
     if not email or not password:
         return jsonify({"msg": "Email and password are required"}), 400
+    
+    if not is_valid_password(password):
+        return jsonify({"msg": "Password must be at least 8 characters long, include uppercase, lowercase and a special character"}), 400
+
     if Client.query.filter_by(email=email).first():
         return jsonify({"msg": "Client already exists"}), 400
-    new_client = Client(email=email, password=password)
+
+    hashed_password = generate_password_hash(password)
+    new_client = Client(email=email, password=hashed_password)
+    
     db.session.add(new_client)
     db.session.commit()
     return jsonify({"msg": "Client created"}), 201
 
-@client_bp.route('/login', methods=['POST', 'OPTIONS'])
+@client_bp.route('/login', methods=['POST'])
 def login():
-    if request.method == 'OPTIONS':
-        return '', 200
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
-    if not email or not password:
-        return jsonify({"msg": "Email and password are required"}), 400
+
     client = Client.query.filter_by(email=email).first()
-    if not client:
-        return jsonify({"msg": "Client not found"}), 404
-    if client.password != password:
+    
+    if not client or not check_password_hash(client.password, password):
         return jsonify({"msg": "Bad credentials"}), 401
+    
     access_token = create_access_token(identity=str(client.id))
     return jsonify({"token": access_token, "client": client.serialize()}), 200
 
