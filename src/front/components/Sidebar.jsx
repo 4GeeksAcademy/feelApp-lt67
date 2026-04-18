@@ -152,6 +152,11 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <i className="bi bi-share"></i>
                   <span>Shared Entries</span>
                 </Link>
+
+                <Link to="/client-chat" style={linkStyle("/client-chat")}>
+                  <i className="bi bi-chat-fill"></i>
+                  <span>Chat</span>
+                </Link>
               </div>
 
               <div style={{ marginBottom: "28px" }}>
@@ -232,6 +237,12 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <i className="bi bi-geo-alt"></i>
                   <span>Find Near You</span>
                 </Link>
+
+                 <Link to="/chat" style={linkStyle("/chat")}>
+                  <i className="bi bi-chat-fill"></i>
+                  <span>Chat</span>
+                </Link>
+                
             </div>
           )}
 

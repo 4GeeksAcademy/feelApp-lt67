@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1336f38fcde9
+Revision ID: 277e817fddb7
 Revises: 
-Create Date: 2026-04-15 20:31:59.151607
+Create Date: 2026-04-17 23:30:03.029442
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1336f38fcde9'
+revision = '277e817fddb7'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -58,6 +58,14 @@ def upgrade():
     sa.Column('color', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
+    )
+    op.create_table('message',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('sender_id', sa.Integer(), nullable=True),
+    sa.Column('receiver_id', sa.Integer(), nullable=True),
+    sa.Column('content', sa.String(length=500), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('access_clients',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -156,6 +164,7 @@ def downgrade():
     op.drop_table('admint_posts')
     op.drop_table('access_coach')
     op.drop_table('access_clients')
+    op.drop_table('message')
     op.drop_table('emotions')
     op.drop_table('coaches')
     op.drop_table('clients')

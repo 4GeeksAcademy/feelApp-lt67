@@ -443,7 +443,7 @@ def create_access_coach():
     new_item = AccessCoach(
         client_id=current_user_id,
         coach_id=body["coach_id"],
-        status="approved"  
+        status="pending"  
     )
     
     db.session.add(new_item)
@@ -524,3 +524,15 @@ def analyze_emotion():
             
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@client_bp.route('/access-coach', methods=['GET'])
+@jwt_required()
+def get_my_coach():
+    current_user_id = get_jwt_identity()
+
+    access = AccessCoach.query.filter_by(
+        client_id=current_user_id
+    ).all()
+
+    return jsonify([a.serialize() for a in access]), 200
+
