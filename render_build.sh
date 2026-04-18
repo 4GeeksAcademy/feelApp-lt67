@@ -9,6 +9,8 @@ pip install pipenv
 
 pipenv install
 
+pipenv run flask db stamp head
+
 pipenv run flask db upgrade
 #!/usr/bin/env bash
 set -o errexit
