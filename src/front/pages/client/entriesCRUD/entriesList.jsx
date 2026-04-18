@@ -7,7 +7,9 @@ const EntriesList = () => {
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState([]);
   const [deleteModal, setDeleteModal] = useState(null);
-  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false); 
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [advice, setAdvice] = useState("");
+  const [loadingAdvice, setLoadingAdvice] = useState(false);
 
   useEffect(() => {
     if (!store.clientToken) navigate("/");
@@ -32,6 +34,21 @@ const EntriesList = () => {
       .then(resp => resp.json())
       .then(data => setFavorites(data.map(f => f.entry_id)));
   }, [dispatch, store.clientToken]);
+
+  const getGeminiAdvice = async () => {
+    setLoadingAdvice(true);
+    try {
+      const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emotional-advice`, {
+        headers: { Authorization: `Bearer ${store.clientToken}` }
+      });
+      const data = await resp.json();
+      if (data.advice) setAdvice(data.advice);
+    } catch (error) {
+      console.error("Error fetching advice:", error);
+    } finally {
+      setLoadingAdvice(false);
+    }
+  };
 
   const toggleFavorite = async (entryId) => {
     const isFav = favorites.includes(entryId);
@@ -99,6 +116,22 @@ const EntriesList = () => {
           box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.1);
         }
 
+        .glass-advice-card {
+          background: rgba(255, 255, 255, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.8);
+          border-radius: 20px;
+          padding: 20px;
+          margin-bottom: 25px;
+          border-left: 4px solid #f4b6c2;
+          animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
         .dropdown-menu {
           background: rgba(255, 255, 255, 0.8);
           backdrop-filter: blur(10px);
@@ -118,9 +151,51 @@ const EntriesList = () => {
           border-color: #fca5a5;
           color: #ef4444;
         }
+
+        .btn-gemini {
+          background: linear-gradient(135deg, #a5c8ff, #f4b6c2);
+          color: #181717c0;
+          border: none;
+          transition: all 0.3s ease;
+        }
+
+        .btn-gemini:hover {
+          opacity: 0.9;
+          transform: scale(1.02);
+          color: #272323c0;
+        }
       `}</style>
 
-      <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
+      <div className="d-flex justify-content-center mb-4 mt-2">
+        <button 
+          className="btn btn-gemini rounded-pill px-4 py-2 shadow-sm fw-bold"
+          onClick={getGeminiAdvice}
+          disabled={loadingAdvice}
+        >
+          {loadingAdvice ? (
+            <span className="spinner-border spinner-border-sm me-2"></span>
+          ) : (
+            <i className="bi bi-stars me-2"></i>
+          )}
+          Get immediate advice from Gemini
+        </button>
+      </div>
+
+      {advice && (
+        <div className="glass-advice-card shadow-sm">
+          <div className="d-flex justify-content-between align-items-start">
+            <small className="text-uppercase fw-bold text-muted mb-2 d-block" style={{ letterSpacing: "1px", fontSize: "0.7rem" }}>
+              Gemini Coach says:
+            </small>
+            <button className="btn-close" style={{ fontSize: "0.7rem" }} onClick={() => setAdvice("")}></button>
+          </div>
+          <p className="mb-0" style={{ fontStyle: "italic", color: "#475569", lineHeight: "1.5" }}>
+            "{advice}"
+          </p>
+        </div>
+      )}
+
+      <div className="d-flex justify-content-between align-items-center mb-4">
         <div className="text-start">
           <h2 className="mb-0">Entries</h2>
           <p className="text-muted mb-0" style={{ fontSize: "0.9rem" }}>
