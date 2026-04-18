@@ -395,7 +395,11 @@ def get_posts_by_client(client_id):
 def get_entries_by_client(client_id):
     current_id = get_jwt_identity()
 
-    access = AccessClient.query.filter(
+    if str(current_id) == str(client_id):
+        entries = Entry.query.filter_by(client_id=client_id).all()
+        return jsonify([e.serialize() for e in entries]), 200
+
+    access_friend = AccessClient.query.filter(
         (
             (AccessClient.client_id == client_id) &
             (AccessClient.shared_with_id == current_id)
@@ -407,7 +411,13 @@ def get_entries_by_client(client_id):
         AccessClient.status == "approved"
     ).first()
 
-    if str(current_id) != str(client_id) and not access:
+    access_coach = AccessCoach.query.filter_by(
+        client_id=client_id,
+        coach_id=current_id,
+        status="approved"
+    ).first()
+
+    if not access_friend and not access_coach:
         return jsonify({"error": "Access denied"}), 403
 
     entries = Entry.query.filter_by(client_id=client_id).all()
