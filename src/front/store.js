@@ -41,7 +41,7 @@ export default function storeReducer(store, action = {}) {
   switch (action.type) {
     // AUTH
     case "login_client":
-      sessionStorage.clear(); // Limpia sesiones anteriores
+      sessionStorage.clear(); 
       sessionStorage.setItem("clientToken", action.payload.token);
       sessionStorage.setItem("clientEmail", action.payload.client?.email || "");
       sessionStorage.setItem("clientId", action.payload.client?.id || "");
@@ -50,7 +50,7 @@ export default function storeReducer(store, action = {}) {
         action.payload.client?.sign_up_date || "",
       );
       return {
-        ...initialStore(), // Resetea el store a su estado base
+        ...initialStore(),
         clientToken: action.payload.token,
         clientEmail: action.payload.client?.email || null,
         clientId: action.payload.client?.id || null,

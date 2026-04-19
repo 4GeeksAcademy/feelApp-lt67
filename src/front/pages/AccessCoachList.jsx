@@ -7,24 +7,38 @@ export const AccessCoachList = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!store.coachToken && !store.admintToken) {
+        const token = store.coachToken || store.admintToken;
+        if (!token) {
             navigate("/");
             return;
         }
 
+        dispatch({ type: "set_access_coach", payload: [] });
+
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/access-coach`, {
-            headers: { Authorization: `Bearer ${store.coachToken}` }
+            headers: { Authorization: `Bearer ${token}` }
         })
-            .then(res => res.json())
+            .then(res => {
+                if (res.status === 401) throw new Error("Unauthorized");
+                return res.json();
+            })
             .then(data => {
                 if (Array.isArray(data)) {
                     dispatch({ type: "set_access_coach", payload: data });
                 }
+            })
+            .catch(err => {
+                console.error("Error fetching access:", err);
+                // Si hay error, nos aseguramos de que la lista quede vacía
+                dispatch({ type: "set_access_coach", payload: [] });
             });
+        return () => {
+            dispatch({ type: "set_access_coach", payload: [] });
+        };
     }, [store.coachToken, store.admintToken, dispatch, navigate]);
 
     const approvedClients = store.access_coach?.filter(item =>
-        item.status.toLowerCase() === "approved"
+        item.status && item.status.toLowerCase() === "approved"
     ) || [];
 
     return (
@@ -54,6 +68,7 @@ export const AccessCoachList = () => {
                                     {item.client_email}
                                 </p>
                                 <span 
+                                    className="text-capitalize"
                                     style={{
                                         backgroundColor: "#d1fae5", 
                                         color: "#065f46",
@@ -92,7 +107,8 @@ export const AccessCoachList = () => {
                     ))
                 ) : (
                     <div className="text-center py-5">
-                        <p className="text-muted italic">No approved clients found.</p>
+                        <i className="bi bi-people text-muted opacity-25" style={{ fontSize: "3rem" }}></i>
+                        <p className="text-muted italic mt-3">No approved clients found.</p>
                     </div>
                 )}
             </div>

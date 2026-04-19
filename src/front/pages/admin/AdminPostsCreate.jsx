@@ -8,7 +8,6 @@ const AdminsPostsCreate = () => {
 
     const [title, setTitle] = useState("");
     const [text, setText] = useState("");
-    const [imgUrl, setImgUrl] = useState("");
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -29,8 +28,7 @@ const AdminsPostsCreate = () => {
             },
             body: JSON.stringify({
                 title,
-                text,
-                img_url: imgUrl || null
+                text
             })
         });
 
@@ -51,7 +49,7 @@ const AdminsPostsCreate = () => {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "90vh", marginTop: "80px" }}>
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "90vh", marginTop: "50px" }}>
             <div
                 className="bg-white p-5"
                 style={{
@@ -89,17 +87,6 @@ const AdminsPostsCreate = () => {
                             value={text}
                             onChange={e => setText(e.target.value)}
                             required
-                        />
-                    </div>
-
-                    <div className="text-start mb-4">
-                        <label className="form-label small fw-bold text-muted">Cover Image URL (Optional)</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="https://images.unsplash.com/..."
-                            value={imgUrl}
-                            onChange={e => setImgUrl(e.target.value)}
                         />
                     </div>
 

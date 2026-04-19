@@ -9,7 +9,6 @@ const AdminsPostsList = () => {
     const [editingId, setEditingId] = useState(null);
     const [editTitle, setEditTitle] = useState("");
     const [editText, setEditText] = useState("");
-    const [editImgUrl, setEditImgUrl] = useState("");
 
     useEffect(() => {
         if (!store.admintToken) navigate("/");
@@ -44,8 +43,7 @@ const AdminsPostsList = () => {
     const handleSaveUpdate = async (id) => {
         const body = {
             title: editTitle,
-            text: editText,
-            img_url: editImgUrl || null
+            text: editText
         };
 
         const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admint-posts/${id}`, {
@@ -71,7 +69,6 @@ const AdminsPostsList = () => {
         setEditingId(post.id);
         setEditTitle(post.title);
         setEditText(post.text);
-        setEditImgUrl(post.img_url || "");
     };
 
     return (
@@ -97,7 +94,6 @@ const AdminsPostsList = () => {
                         <tr>
                             <th style={{ width: "200px" }}>Title</th>
                             <th>Content Preview</th>
-                            <th style={{ width: "80px" }}>Image</th>
                             <th style={{ width: "120px" }}>Date</th>
                             <th className="text-end" style={{ width: "180px" }}>Actions</th>
                         </tr>
@@ -133,20 +129,6 @@ const AdminsPostsList = () => {
                                             <div className="text-truncate text-muted" style={{ fontSize: "0.9rem" }}>
                                                 {post.text}
                                             </div>
-                                        )}
-                                    </td>
-                                    <td>
-                                        {editingId === post.id ? (
-                                            <input
-                                                className="form-control form-control-sm"
-                                                placeholder="Img URL"
-                                                value={editImgUrl}
-                                                onChange={e => setEditImgUrl(e.target.value)}
-                                            />
-                                        ) : (
-                                            post.img_url ? (
-                                                <img src={post.img_url} alt="thumb" style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "8px" }} />
-                                            ) : <span className="text-muted">—</span>
                                         )}
                                     </td>
                                     <td className="text-muted" style={{ fontSize: "0.85rem" }}>
