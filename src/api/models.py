@@ -329,19 +329,20 @@ class AccessClient(db.Model):
     }
 
 class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer)
-    receiver_id = db.Column(db.Integer)
-    content = db.Column(db.String(500))
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    __tablename__ = "message"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    sender_id: Mapped[int] = mapped_column(nullable=False)
+    receiver_id: Mapped[int] = mapped_column(nullable=False)
+    sender_type: Mapped[str] = mapped_column(db.String(10))
+    content: Mapped[str] = mapped_column(db.String(500))
+    created_at: Mapped[datetime] = mapped_column(DateTime(), default=lambda: datetime.now(timezone.utc))
 
     def serialize(self):
         return {
             "id": self.id,
             "sender_id": self.sender_id,
             "receiver_id": self.receiver_id,
+            "sender_type": self.sender_type,
             "content": self.content,
-            "created_at": self.created_at
+            "created_at": self.created_at.isoformat()
         }
-
-

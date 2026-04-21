@@ -234,34 +234,32 @@ def seed_database():
 def send_message():
     current_user_id = get_jwt_identity()
     data = request.get_json()
-
+    sender_type = data.get("sender_type") 
     receiver_id = data.get("receiver_id")
     content = data.get("content")
-
-    if not receiver_id or not content:
-        return jsonify({"msg": "receiver_id and content are required"}), 400
 
     new_message = Message(
         sender_id=current_user_id,
         receiver_id=receiver_id,
+        sender_type=sender_type,
         content=content
     )
 
     db.session.add(new_message)
     db.session.commit()
-
     return jsonify(new_message.serialize()), 201
 
 
-@shared_bp.route('/chat/<int:user_id>', methods=['GET'])
+@shared_bp.route('/chat/<int:other_id>', methods=['GET'])
 @jwt_required()
-def get_messages(user_id):
+def get_messages(other_id):
     current_user_id = get_jwt_identity()
+    my_role = request.args.get("role") 
+    other_role = "client" if my_role == "coach" else "coach"
 
     messages = Message.query.filter(
-        ((Message.sender_id == current_user_id) & (Message.receiver_id == user_id)) |
-        ((Message.sender_id == user_id) & (Message.receiver_id == current_user_id))
+        ((Message.sender_id == current_user_id) & (Message.sender_type == my_role) & (Message.receiver_id == other_id)) |
+        ((Message.sender_id == other_id) & (Message.sender_type == other_role) & (Message.receiver_id == current_user_id))
     ).order_by(Message.created_at.asc()).all()
 
     return jsonify([m.serialize() for m in messages]), 200
-     

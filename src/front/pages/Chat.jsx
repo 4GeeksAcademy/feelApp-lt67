@@ -12,6 +12,7 @@ const Chat = () => {
 
   const activeToken = store.coachToken || store.clientToken;
   const isCoach = !!store.coachToken;
+  const myRole = isCoach ? "coach" : "client";
   const API_URL = import.meta.env.VITE_BACKEND_URL;
   const scrollRef = useRef();
 
@@ -49,7 +50,7 @@ const Chat = () => {
     if (!receiverId || !activeToken) return;
 
     try {
-      const res = await fetch(`${API_URL}/api/chat/${receiverId}`, {
+      const res = await fetch(`${API_URL}/api/chat/${receiverId}?role=${myRole}`, {
         headers: {
           "Authorization": `Bearer ${activeToken}`,
           "Cache-Control": "no-cache"
@@ -64,7 +65,7 @@ const Chat = () => {
 
       const formatted = data.map((msg) => ({
         ...msg,
-        isMine: String(msg.sender_id) === String(currentUserId),
+        isMine: String(msg.sender_id) === String(currentUserId) && msg.sender_type === myRole,
       }));
 
       dispatch({ type: "set_messages", payload: formatted });
@@ -95,6 +96,7 @@ const Chat = () => {
         body: JSON.stringify({
           receiver_id: receiverId,
           content: input,
+          sender_type: myRole
         }),
       });
 
