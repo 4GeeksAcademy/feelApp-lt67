@@ -1,15 +1,15 @@
 import { useEffect, useState, useRef } from "react";
-import useGlobalReducer from "../../hooks/useGlobalReducer";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 import { useNavigate } from "react-router-dom";
 
 const Chat = () => {
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
-  
+
   const [input, setInput] = useState("");
   const [receiverId, setReceiverId] = useState(null);
   const [showContacts, setShowContacts] = useState(true);
-  
+
   const activeToken = store.coachToken || store.clientToken;
   const isCoach = !!store.coachToken;
   const API_URL = import.meta.env.VITE_BACKEND_URL;
@@ -20,7 +20,7 @@ const Chat = () => {
       navigate("/");
     }
     return () => {
-      dispatch({ type: "clear_chat" }); 
+      dispatch({ type: "clear_chat" });
       dispatch({ type: "set_access_coach", payload: [] });
       setReceiverId(null);
     };
@@ -30,9 +30,9 @@ const Chat = () => {
     if (!activeToken) return;
     try {
       const res = await fetch(`${API_URL}/api/access-coach`, {
-        headers: { 
-            "Authorization": `Bearer ${activeToken}`,
-            "Cache-Control": "no-cache"
+        headers: {
+          "Authorization": `Bearer ${activeToken}`,
+          "Cache-Control": "no-cache"
         },
       });
       const data = await res.json();
@@ -50,9 +50,9 @@ const Chat = () => {
 
     try {
       const res = await fetch(`${API_URL}/api/chat/${receiverId}`, {
-        headers: { 
+        headers: {
           "Authorization": `Bearer ${activeToken}`,
-          "Cache-Control": "no-cache" 
+          "Cache-Control": "no-cache"
         },
       });
 
@@ -66,7 +66,7 @@ const Chat = () => {
         ...msg,
         isMine: String(msg.sender_id) === String(currentUserId),
       }));
-      
+
       dispatch({ type: "set_messages", payload: formatted });
     } catch (err) {
       console.error("Error fetching messages:", err);
@@ -77,9 +77,9 @@ const Chat = () => {
     if (receiverId) fetchMessages();
     const interval = setInterval(() => {
       if (receiverId && activeToken) fetchMessages();
-    }, 3000); 
-    return () => clearInterval(interval); 
-  }, [receiverId, activeToken]); 
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [receiverId, activeToken]);
 
   const sendMessage = async (e) => {
     if (e) e.preventDefault();
@@ -90,7 +90,7 @@ const Chat = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${activeToken}`, 
+          "Authorization": `Bearer ${activeToken}`,
         },
         body: JSON.stringify({
           receiver_id: receiverId,
@@ -195,7 +195,7 @@ const Chat = () => {
                 className={`contact-item ${receiverId === (isCoach ? c.client_id : c.coach_id) ? 'active' : ''}`}
               >
                 <div className="small text-muted mb-1">{isCoach ? "Client" : "Coach"}</div>
-                <div className="text-truncate" style={{fontSize: "0.9rem"}}>{isCoach ? c.client_email : c.coach_email}</div>
+                <div className="text-truncate" style={{ fontSize: "0.9rem" }}>{isCoach ? c.client_email : c.coach_email}</div>
               </div>
             ))}
           </div>
@@ -206,8 +206,8 @@ const Chat = () => {
             <button className="btn btn-sm btn-light rounded-pill" onClick={() => setShowContacts(!showContacts)}>
               <i className={`bi bi-chevron-${showContacts ? 'left' : 'right'}`}></i>
             </button>
-            <span className="fw-bold" style={{color: "#333"}}>
-               {receiverId ? "Conversation" : "Select a contact"}
+            <span className="fw-bold" style={{ color: "#333" }}>
+              {receiverId ? "Conversation" : "Select a contact"}
             </span>
           </div>
 
@@ -221,7 +221,7 @@ const Chat = () => {
             {store.messages && store.messages.map((msg) => (
               <div key={msg.id} className={`d-flex flex-column mb-3 ${msg.isMine ? 'align-items-end text-end' : 'align-items-start text-start'}`}>
                 <span className="msg-label text-muted px-2">
-                    {msg.isMine ? "You" : getOtherPartyEmail()}
+                  {msg.isMine ? "You" : getOtherPartyEmail()}
                 </span>
                 <div className={`bubble ${msg.isMine ? 'bubble-mine shadow-sm' : 'bubble-other shadow-sm'}`}>
                   {msg.content}

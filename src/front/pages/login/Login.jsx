@@ -140,7 +140,7 @@ export const Login = () => {
         <div className="img-side">
           <div className="side-text-area">
             <p style={{ opacity: 0.8, marginBottom: "8px" }}>You can easily</p>
-            <h1 style={{ fontSize: "1.8rem", fontWeight: "700" }}>Get access your personal hub for clarity and wellbeing</h1>
+            <h1 style={{ fontSize: "1.8rem", fontWeight: "700" }}>Get access to your personal hub for clarity and wellbeing</h1>
           </div>
         </div>
 

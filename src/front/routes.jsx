@@ -68,7 +68,7 @@ import { CoachPrivate } from "./pages/login/CoachPrivate";
 import { AdminPrivate } from "./pages/login/AdminPrivate";
 
 // CHAT
-import Chat from "./pages/chat/chat";
+import Chat from "./pages/Chat";
 
 
 export const router = createBrowserRouter(
